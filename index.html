@@ -221,6 +221,37 @@ button.game:active { transform: scale(0.985); }
 .fold-cell.clash { outline: 3px solid var(--bad); outline-offset: -3px; }
 .meter { height: 10px; border-radius: 5px; background: var(--tile); overflow: hidden; margin-top: 8px; }
 .meter i { display: block; height: 100%; width: 50%; background: var(--accent); transition: width .2s; }
+
+.mgrid { display: grid; gap: 8px; width: 100%; max-width: 420px; margin: 0 auto; touch-action: manipulation; }
+.mgrid button { aspect-ratio: 1; border: 0; border-radius: 10px; background: var(--tile); padding: 0; cursor: pointer; }
+.mgrid button.lit { background: var(--glow); }
+.mgrid button.hit { background: var(--accent); }
+.mgrid button.miss { background: var(--bad); }
+.mgrid button.missed { background: var(--glow-soft); outline: 2px dashed var(--glow); outline-offset: -2px; }
+.ugrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 10px; min-height: 240px; align-content: start; padding: 14px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); touch-action: manipulation; }
+.ugrid button { aspect-ratio: 1; border: 2px solid transparent; border-radius: 14px; background: var(--tile); font-size: 2rem; line-height: 1; padding: 0; cursor: pointer; }
+.ugrid button.bad { border-color: var(--bad); }
+.ugrid button.free { border-color: var(--good); background: var(--surface); }
+.kbar { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.ticket { min-width: 72px; padding: 8px 10px; border-radius: 10px; background: var(--surface); border: 1px dashed var(--muted); text-align: center; font-size: 1.35rem; line-height: 1.2; }
+.ticket small { display: block; font-size: 0.7rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.kbar .ing { font-size: 1.5rem; padding: 8px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; }
+.kroom { display: flex; gap: 10px; justify-content: center; align-items: flex-end; min-height: 230px; padding: 14px 8px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); touch-action: manipulation; }
+.kst { flex: 1 1 0; max-width: 110px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.kglass { position: relative; width: 100%; max-width: 78px; height: 120px; border: 3px solid var(--muted); border-top: 0; border-radius: 0 0 14px 14px; background: var(--bg); overflow: hidden; cursor: pointer; padding: 0; font: inherit; }
+.kglass.sel { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent); }
+.kglass i { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: var(--glow); }
+.kglass.over i { background: var(--bad); }
+.kglass u { position: absolute; left: 0; right: 0; top: 18%; border-top: 2px dashed var(--good); }
+.kglass span { position: absolute; inset: auto 0 6px 0; text-align: center; font-size: 1.05rem; line-height: 1.1; }
+.kst .kbtn { width: 100%; font: inherit; font-weight: 700; font-size: 0.85rem; border: 0; border-radius: 10px; padding: 10px 2px; background: var(--tile); color: var(--fg); cursor: pointer; }
+.kst .kbtn.go { background: var(--good); color: var(--surface); }
+.kst .kbtn.no { background: var(--bad); color: var(--surface); }
+.kswitch { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.kmini { display: inline-flex; gap: 3px; align-items: flex-end; height: 22px; }
+.kmini b { width: 7px; height: 22px; background: var(--bg); border: 1px solid var(--muted); position: relative; overflow: hidden; border-radius: 2px; }
+.kmini b i { position: absolute; left: 0; right: 0; bottom: 0; background: var(--glow); }
+.kmini b.go i { background: var(--good); } .kmini b.no i { background: var(--bad); }
 .sync-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .sync-row input { flex: 1 1 200px; min-width: 0; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; }
 .sync-row .btn { flex: 0 0 auto; }
@@ -481,6 +512,75 @@ button.game:active { transform: scale(0.985); }
     </div>
   </section>
 
+  <section id="motif" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="topbar">
+      <button class="back" id="m-back" type="button">← Accueil</button>
+      <span class="eyebrow">Mémoire · rappel spatial</span>
+    </div>
+    <h2>Motif éclair</h2>
+    <div class="stats"><div class="stat"><small>Score</small><b class="num" id="m-score">0</b></div><div class="stat"><small>Cases</small><b class="num" id="m-n">3</b></div><div class="stat"><small>Essai</small><b class="num" id="m-trial">1/12</b></div></div>
+    <p class="status" id="m-status" aria-live="polite">Des cases vont s'allumer un instant. Retrouve-les toutes.</p>
+    <div class="mgrid" id="m-grid"></div>
+    <div class="actions" id="m-start-wrap"><button class="btn" id="m-start" type="button">Commencer</button></div>
+    <div class="panel" id="m-end" hidden>
+      <span class="eyebrow">Partie terminée</span>
+      <div class="big num" id="m-final">0</div>
+      <p id="m-end-detail"></p>
+      <p class="record" id="m-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="m-again" type="button">Rejouer</button>
+        <button class="btn secondary" id="m-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="unique" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="topbar">
+      <button class="back" id="u-back" type="button">← Accueil</button>
+      <span class="eyebrow">Mémoire à court terme</span>
+    </div>
+    <h2>Jamais deux fois</h2>
+    <div class="stats"><div class="stat"><small>Score</small><b class="num" id="u-score">0</b></div><div class="stat"><small>Trouvés</small><b class="num" id="u-count">0</b></div><div class="stat"><small>Manche</small><b class="num" id="u-round">1/3</b></div></div>
+    <p class="status" id="u-status" aria-live="polite">À chaque vague, touche un objet que tu n'as encore jamais choisi.</p>
+    <div class="ugrid" id="u-grid"></div>
+    <div class="actions" id="u-start-wrap"><button class="btn" id="u-start" type="button">Commencer</button></div>
+    <div class="panel" id="u-end" hidden>
+      <span class="eyebrow">Partie terminée</span>
+      <div class="big num" id="u-final">0</div>
+      <p id="u-end-detail"></p>
+      <p class="record" id="u-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="u-again" type="button">Rejouer</button>
+        <button class="btn secondary" id="u-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="plein" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="topbar">
+      <button class="back" id="k-back" type="button">← Accueil</button>
+      <span class="eyebrow">Attention partagée</span>
+    </div>
+    <h2>Plein à ras</h2>
+    <div class="stats"><div class="stat"><small>Score</small><b class="num" id="k-score">0</b></div><div class="stat"><small>Servis</small><b class="num" id="k-served">0/11</b></div><div class="stat"><small>Temps</small><b class="num" id="k-time">1:30</b></div></div>
+    <div class="kbar" id="k-tickets"></div>
+    <div class="kbar" id="k-ings"></div>
+    <p class="status" id="k-status" aria-live="polite">Prépare chaque verre commandé, lance le robinet, et sers-le au trait vert.</p>
+    <div class="kroom" id="k-room"></div>
+    <div class="kswitch" id="k-switch-wrap" hidden><button class="btn secondary" id="k-switch" type="button">Autre comptoir</button><span class="kmini" id="k-mini"></span></div>
+    <div class="actions" id="k-start-wrap"><button class="btn" id="k-start" type="button">Commencer</button></div>
+    <div class="panel" id="k-end" hidden>
+      <span class="eyebrow">Temps écoulé</span>
+      <div class="big num" id="k-final">0</div>
+      <p id="k-end-detail"></p>
+      <p class="record" id="k-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="k-again" type="button">Rejouer</button>
+        <button class="btn secondary" id="k-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
   <!-- Même symbole -->
   <section id="vapeur" hidden style="display:flex;flex-direction:column;gap:18px">
     <div class="topbar">
@@ -531,6 +631,12 @@ const GAMES = [
     icon: '<svg viewBox="0 0 26 26"><path d="M4 20V8h10v12" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linejoin="round"/><rect x="6" y="11" width="6" height="6" rx="1.5" fill="var(--glow)"/><path d="M17 20v-8l4-4 4 4v8z" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/></svg>' },
   { id: "pli", name: "Pli sur pli", skill: "Rapidité · visualisation", desc: "Imagine les volets repliés et trouve la case qui reste libre.", ready: true,
     icon: '<svg viewBox="0 0 26 26"><rect x="2" y="6" width="10" height="14" rx="2" fill="var(--glow)"/><rect x="14" y="6" width="10" height="14" rx="2" fill="var(--muted)" opacity=".35"/><circle cx="19" cy="10" r="2.2" fill="var(--accent)"/><path d="M13 3v20" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="2 2"/></svg>' },
+  { id: "motif", name: "Motif éclair", skill: "Mémoire · rappel spatial", desc: "Des cases s'allument un instant : retrouve-les toutes.", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><rect x="2" y="2" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/><rect x="10" y="2" width="6" height="6" rx="1.5" fill="var(--glow)"/><rect x="18" y="2" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/><rect x="2" y="10" width="6" height="6" rx="1.5" fill="var(--glow)"/><rect x="10" y="10" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/><rect x="18" y="10" width="6" height="6" rx="1.5" fill="var(--glow)"/><rect x="2" y="18" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/><rect x="10" y="18" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/><rect x="18" y="18" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/></svg>' },
+  { id: "unique", name: "Jamais deux fois", skill: "Mémoire à court terme", desc: "À chaque vague, choisis un objet que tu n'as encore jamais pris.", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><circle cx="8" cy="9" r="5" fill="var(--glow)"/><rect x="15" y="4" width="9" height="9" rx="2" fill="var(--accent)"/><path d="M13 15l5 9H8z" fill="var(--muted)" opacity=".5"/></svg>' },
+  { id: "plein", name: "Plein à ras", skill: "Attention partagée", desc: "Remplis plusieurs verres à la fois et sers-les au bon moment.", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><path d="M4 5h7l-1 16H5z" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linejoin="round"/><path d="M5 12h5.5l-.5 9H5.5z" fill="var(--glow)"/><path d="M15 5h7l-1 16h-5z" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linejoin="round"/><path d="M15.3 8h6.4l-.7 13h-5z" fill="var(--accent)"/></svg>' },
   { id: "tableau", name: "Le plus grand", skill: "Maths", desc: "Deux calculs : lequel donne la plus grande valeur ?", ready: true,
     icon: '<svg viewBox="0 0 26 26"><text x="13" y="17" text-anchor="middle" font-size="10" font-weight="700" font-family="sans-serif" fill="var(--accent)">7×3</text></svg>' },
   { id: "vapeur", name: "Même symbole", skill: "Vitesse", desc: "Le symbole est-il le même que le précédent ? Réponds vite.", ready: true,
@@ -716,7 +822,7 @@ function renderTrend() {
 function go(view) { location.hash = view === "home" ? "" : view; show(); }
 function show() {
   const h = location.hash.slice(1);
-  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli"];
+  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli", "motif", "unique", "plein"];
   const v = VIEWS.includes(h) ? h : "home";
   for (const id of ["home", ...VIEWS]) document.getElementById(id).hidden = id !== v;
   if (v === "courant") C.reset(); else C.stop();
@@ -724,6 +830,9 @@ function show() {
   if (v === "tableau") B.reset(); else B.stop();
   if (v === "tournee") D.reset(); else D.stop();
   if (v === "pli") F.reset(); else F.stop();
+  if (v === "motif") M.reset(); else M.stop();
+  if (v === "unique") U.reset(); else U.stop();
+  if (v === "plein") K.reset(); else K.stop();
   if (v === "trains") T.reset(); else T.stop();
   if (v === "grille") G.reset(); else G.stop();
   if (v === "vapeur") V.reset(); else V.stop();
@@ -1837,6 +1946,250 @@ const F = (() => {
   $("f-again").addEventListener("click", () => { reset(); start(); });
   $("f-home").addEventListener("click", () => go("home"));
   $("f-back").addEventListener("click", () => go("home"));
+  return { reset, stop };
+})();
+
+/* ---------- Motif éclair ---------- */
+const M = (() => {
+  const $ = id => document.getElementById(id);
+  const TRIALS = 12, grid = $("m-grid");
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const dims = n => n <= 3 ? [3, 3] : n === 4 ? [3, 4] : n <= 6 ? [4, 4] : n === 7 ? [4, 5] : n <= 9 ? [5, 5] : n <= 11 ? [5, 6] : n <= 13 ? [6, 6] : [6, 7];
+  let st = null, run = 0;
+  function paint() { $("m-score").textContent = st.score; $("m-n").textContent = st.n; $("m-trial").textContent = Math.min(st.trial, TRIALS) + "/" + TRIALS; }
+  function say(t, c) { const e = $("m-status"); e.textContent = t; e.className = "status" + (c ? " " + c : ""); }
+  function build() {
+    const [R, C] = dims(st.n);
+    grid.style.gridTemplateColumns = `repeat(${C}, 1fr)`;
+    grid.innerHTML = Array.from({ length: R * C }, (_, i) => `<button type="button" data-i="${i}" aria-label="Case ${i + 1}"></button>`).join("");
+    const idx = Array.from({ length: R * C }, (_, i) => i);
+    for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+    st.set = new Set(idx.slice(0, st.n)); st.found = 0; st.input = false;
+  }
+  function reset() {
+    run++;
+    const last = scores.find(s => s.game === "motif" && s.next);
+    const n = last ? Math.max(2, Math.min(16, last.next)) : 3;
+    st = { score: 0, n, top: 0, trial: 1, wins: 0, input: false };
+    build(); paint(); $("m-start-wrap").hidden = false; $("m-end").hidden = true;
+    say("Des cases vont s'allumer un instant. Retrouve-les toutes.");
+  }
+  function stop() { run++; }
+  async function trial() {
+    const my = run; build(); paint(); say("Regarde bien…");
+    await sleep(500); if (my !== run) return;
+    for (const i of st.set) grid.children[i].classList.add("lit");
+    await sleep(900 + st.n * 90); if (my !== run) return;
+    for (const b of grid.children) b.classList.remove("lit");
+    st.input = true; say("À toi : touche les " + st.n + " cases.");
+  }
+  async function pick(b) {
+    if (!st || !st.input || b.className) return;
+    const my = run, i = +b.dataset.i;
+    if (st.set.has(i)) {
+      b.classList.add("hit"); st.found++; st.score += 50 * st.n; paint();
+      if (st.found < st.n) return;
+      st.input = false; st.wins++; st.top = Math.max(st.top, st.n); st.score += 100 * st.n; say("Parfait !", "good");
+      st.n = Math.min(16, st.n + 1);
+    } else {
+      st.input = false; b.classList.add("miss");
+      for (const j of st.set) if (!grid.children[j].className) grid.children[j].classList.add("missed");
+      say("Raté : voici celles qui manquaient.", "bad");
+      st.n = Math.max(2, st.n - 1);
+    }
+    st.trial++; paint();
+    await sleep(1300); if (my !== run) return;
+    if (st.trial > TRIALS) end(); else trial();
+  }
+  function end() {
+    const prevBest = bestFor("motif");
+    $("m-final").textContent = st.score;
+    $("m-end-detail").textContent = `${st.wins} motifs retrouvés sur ${TRIALS}` + (st.top ? `, jusqu'à ${st.top} cases.` : ".") + ` Tu reprendras à ${st.n} cases.`;
+    $("m-end-record").hidden = !(st.score > prevBest && st.score > 0);
+    $("m-end").hidden = false; say("");
+    addScore({ game: "motif", score: st.score, tiles: st.top, next: st.n, at: new Date().toISOString() });
+  }
+  grid.addEventListener("pointerdown", e => { const b = e.target.closest("button"); if (b) { e.preventDefault(); pick(b); } });
+  $("m-start").addEventListener("click", () => { $("m-start-wrap").hidden = true; trial(); });
+  $("m-again").addEventListener("click", () => { reset(); $("m-start-wrap").hidden = true; trial(); });
+  $("m-home").addEventListener("click", () => go("home"));
+  $("m-back").addEventListener("click", () => go("home"));
+  return { reset, stop };
+})();
+
+/* ---------- Jamais deux fois ---------- */
+const U = (() => {
+  const $ = id => document.getElementById(id);
+  const ROUNDS = 3, grid = $("u-grid");
+  const POOL = [..."🍎🍋🍇🍓🍒🥝🍍🥥🥕🌽🍄🥨🧀🍩🍪🎂🍭☕🚗🚲🚀⛵🚂🎈🎁🎲🎯🎸🎺🥁🎻⚽🏀🎾🏓🔑🔔💡📷📚🧲🧭⏰👓👑🎩👟🧦🧤🌵🌻🍀🌙⭐🔥🌈🐢🐸🐙🦋🐝🐞🦀🐟🐧🦉🦊🐘🦒🦔🏠🪁🧩🪑🧸🪣🧺🍉🥐🚁🎨🧁🐳🦜🌴🍔"].filter(c => c !== "️");
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  let st = null, run = 0;
+  function paint() { $("u-score").textContent = st.score; $("u-count").textContent = st.count; $("u-round").textContent = Math.min(st.round, ROUNDS) + "/" + ROUNDS; }
+  function say(t, c) { const e = $("u-status"); e.textContent = t; e.className = "status" + (c ? " " + c : ""); }
+  function wave() {
+    const fresh = st.pool.splice(0, 3);
+    if (!fresh.length) return false;
+    st.fresh = new Set(fresh);
+    grid.innerHTML = shuffle([...st.chosen, ...fresh]).map(c => `<button type="button" data-c="${c}">${c}</button>`).join("");
+    st.input = true; return true;
+  }
+  function newRound() { st.pool = shuffle([...POOL]); st.chosen = []; st.count = 0; paint(); wave(); say("Touche un objet que tu n'as encore jamais choisi."); }
+  function reset() {
+    run++; st = { score: 0, total: 0, best: 0, round: 1, count: 0, chosen: [], input: false };
+    grid.innerHTML = ""; paint(); $("u-start-wrap").hidden = false; $("u-end").hidden = true;
+    say("À chaque vague, touche un objet que tu n'as encore jamais choisi.");
+  }
+  function stop() { run++; }
+  async function pick(b) {
+    if (!st || !st.input) return;
+    const my = run, c = b.dataset.c; st.input = false;
+    if (st.fresh.has(c)) {
+      st.chosen.push(c); st.count++; st.total++; st.score += 500; paint();
+      b.classList.add("free"); await sleep(280); if (my !== run) return;
+      if (wave()) return;
+      say("Tu as épuisé tous les objets !", "good");
+    } else {
+      b.classList.add("bad");
+      for (const x of grid.children) if (st.fresh.has(x.dataset.c)) x.classList.add("free");
+      say("Déjà choisi ! Les objets libres sont entourés.", "bad");
+    }
+    st.score += st.count * 100; st.best = Math.max(st.best, st.count); st.round++; paint();
+    await sleep(1800); if (my !== run) return;
+    if (st.round > ROUNDS) end(); else newRound();
+  }
+  function end() {
+    const prevBest = bestFor("unique");
+    $("u-final").textContent = st.score; grid.innerHTML = "";
+    $("u-end-detail").textContent = `${st.total} objets trouvés en ${ROUNDS} manches. Meilleure manche : ${st.best}.`;
+    $("u-end-record").hidden = !(st.score > prevBest && st.score > 0);
+    $("u-end").hidden = false; say("");
+    addScore({ game: "unique", score: st.score, correct: st.total, at: new Date().toISOString() });
+  }
+  grid.addEventListener("pointerdown", e => { const b = e.target.closest("button"); if (b) { e.preventDefault(); pick(b); } });
+  $("u-start").addEventListener("click", () => { $("u-start-wrap").hidden = true; newRound(); });
+  $("u-again").addEventListener("click", () => { reset(); $("u-start-wrap").hidden = true; newRound(); });
+  $("u-home").addEventListener("click", () => go("home"));
+  $("u-back").addEventListener("click", () => go("home"));
+  return { reset, stop };
+})();
+
+/* ---------- Plein à ras ---------- */
+const K = (() => {
+  const $ = id => document.getElementById(id);
+  const START = 90000, MAXL = 12, INGS = ["🍋", "🍓", "🌿", "🧊"];
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const room = $("k-room");
+  let st = null, run = 0, raf = 0;
+  const stationsFor = l => Math.min(6, 1 + Math.floor(l / 2));   // 1,2,2,3,3,4,4,5,5,6,6,6
+  const kindsFor = l => Math.min(4, 1 + Math.floor(l / 2));
+  const maxIngFor = l => l < 3 ? 1 : l < 8 ? 2 : 3;
+  const targetFor = l => 10 + l;
+  const key = a => [...a].sort().join("");
+  function ticket() {
+    const kinds = INGS.slice(0, kindsFor(st.level)), n = rnd(0, maxIngFor(st.level)), a = [];
+    while (a.length < Math.min(n, kinds.length)) { const k = kinds[rnd(0, kinds.length - 1)]; if (!a.includes(k)) a.push(k); }
+    return a;
+  }
+  function paintTickets() {
+    $("k-tickets").innerHTML = st.tickets.map(t => `<div class="ticket"><small>Commande</small>${t.length ? t.join("") : "nature"}</div>`).join("");
+  }
+  function say(t, c) { const e = $("k-status"); e.textContent = t; e.className = "status" + (c ? " " + c : ""); }
+  function paint() {
+    $("k-score").textContent = st.score; $("k-served").textContent = st.served + "/" + targetFor(st.level);
+    const sec = Math.ceil(Math.max(0, st.left) / 1000);
+    $("k-time").textContent = Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0");
+  }
+  const state = g => g.t0 == null ? "idle" : g.p >= 1 ? "over" : g.p >= 0.82 ? "ready" : "fill";
+  function build() {
+    const n = stationsFor(st.level), split = n > 3 ? Math.ceil(n / 2) : n;
+    st.glasses = Array.from({ length: n }, (_, i) => ({ i, room: i < split ? 0 : 1, ing: [], t0: null, p: 0, dur: 0 }));
+    st.room = 0; st.sel = 0;
+    room.innerHTML = st.glasses.map(g => `<div class="kst" data-i="${g.i}"><button type="button" class="kglass" aria-label="Verre ${g.i + 1}"><i></i><u></u><span></span></button><button type="button" class="kbtn">Verser</button></div>`).join("");
+    $("k-switch-wrap").hidden = n <= 3;
+    $("k-mini").innerHTML = "";
+    $("k-ings").innerHTML = INGS.slice(0, kindsFor(st.level)).map(k => `<button type="button" class="ing" data-k="${k}" aria-label="Ajouter ${k}">${k}</button>`).join("");
+    draw();
+  }
+  function draw() {
+    for (const g of st.glasses) {
+      const el = room.children[g.i], s = state(g), gl = el.firstChild, bt = el.lastChild;
+      el.hidden = g.room !== st.room;
+      gl.className = "kglass" + (g.i === st.sel ? " sel" : "") + (s === "over" ? " over" : "");
+      gl.firstChild.style.height = Math.min(100, g.p * 100) + "%";
+      const txt = g.ing.join(""); if (gl.lastChild.textContent !== txt) gl.lastChild.textContent = txt;
+      const label = { idle: "Verser", fill: "…", ready: "Servir", over: "Jeter" }[s];
+      if (bt.textContent !== label) bt.textContent = label;
+      bt.className = "kbtn" + (s === "ready" ? " go" : s === "over" ? " no" : "");
+    }
+    const others = st.glasses.filter(g => g.room !== st.room);
+    $("k-mini").innerHTML = others.map(g => { const s = state(g); return `<b class="${s === "ready" ? "go" : s === "over" ? "no" : ""}"><i style="height:${Math.min(100, g.p * 100)}%"></i></b>`; }).join("");
+  }
+  function reset() {
+    run++; cancelAnimationFrame(raf);
+    const last = scores.find(s => s.game === "plein" && s.next);
+    const level = last ? Math.max(1, Math.min(MAXL, last.next)) : 1;
+    st = { level, score: 0, served: 0, wasted: 0, left: START, playing: false, tickets: [] };
+    st.tickets = [ticket(), ticket(), ticket()];
+    build(); paintTickets(); paint();
+    $("k-start-wrap").hidden = false; $("k-end").hidden = true;
+    say(`Niveau ${level}. Prépare chaque verre commandé, lance le robinet, et sers-le au trait vert.`);
+  }
+  function stop() { run++; cancelAnimationFrame(raf); }
+  function start() {
+    const my = run; $("k-start-wrap").hidden = true; st.playing = true; say("Sers au trait vert, avant que ça déborde.");
+    let last = performance.now();
+    const loop = now => {
+      if (my !== run) return;
+      st.left -= now - last; last = now;
+      for (const g of st.glasses) if (g.t0 != null) g.p = Math.min(1.08, (now - g.t0) / g.dur);
+      draw(); paint();
+      if (st.left <= 0) return end();
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+  }
+  function empty(g) { g.ing = []; g.t0 = null; g.p = 0; }
+  function press(g) {
+    if (!st.playing) return;
+    st.sel = g.i;
+    const s = state(g);
+    if (s === "idle") { g.dur = rnd(2600, 5200) - st.level * 90; g.t0 = performance.now(); }
+    else if (s === "ready") {
+      const k = key(g.ing), j = st.tickets.findIndex(t => key(t) === k);
+      if (j >= 0) { st.tickets[j] = ticket(); st.served++; st.score += 100 * st.level; paintTickets(); say("Servi !", "good"); }
+      else { st.wasted++; say("Personne n'a commandé ce verre.", "bad"); }
+      empty(g);
+    } else if (s === "over") { st.wasted++; empty(g); say("Verre jeté.", "bad"); }
+    draw(); paint();
+  }
+  function end() {
+    cancelAnimationFrame(raf); st.playing = false; run++;
+    const prevBest = bestFor("plein"), ok = st.served >= targetFor(st.level);
+    const next = ok ? Math.min(MAXL, st.level + 1) : st.level;
+    $("k-final").textContent = st.score;
+    $("k-end-detail").textContent = `${st.served} verres servis au niveau ${st.level}, ${st.wasted} perdus. ` + (ok ? (next > st.level ? `Niveau ${next} débloqué !` : "Dernier niveau réussi !") : `Il en faut ${targetFor(st.level)} pour passer au niveau suivant.`);
+    $("k-end-record").hidden = !(st.score > prevBest && st.score > 0);
+    $("k-end").hidden = false; say("");
+    addScore({ game: "plein", score: st.score, correct: st.served, next, at: new Date().toISOString() });
+  }
+  room.addEventListener("pointerdown", e => {
+    const el = e.target.closest(".kst"); if (!el || !st) return; e.preventDefault();
+    const g = st.glasses[+el.dataset.i];
+    if (e.target.closest(".kbtn")) press(g); else { st.sel = g.i; draw(); }
+  });
+  $("k-ings").addEventListener("pointerdown", e => {
+    const b = e.target.closest(".ing"); if (!b || !st || !st.playing) return; e.preventDefault();
+    let g = st.glasses[st.sel];
+    if (g.room !== st.room) { g = st.glasses.find(x => x.room === st.room); st.sel = g.i; }
+    if (state(g) === "over" || g.ing.includes(b.dataset.k) || g.ing.length >= 3) return;
+    g.ing.push(b.dataset.k); draw();
+  });
+  $("k-switch").addEventListener("click", () => { if (!st) return; st.room = 1 - st.room; st.sel = st.glasses.find(g => g.room === st.room).i; draw(); });
+  $("k-start").addEventListener("click", start);
+  $("k-again").addEventListener("click", () => { reset(); start(); });
+  $("k-home").addEventListener("click", () => go("home"));
+  $("k-back").addEventListener("click", () => go("home"));
   return { reset, stop };
 })();
 
