@@ -1907,7 +1907,7 @@ const F = (() => {
     st = { score: 0, level, top: level, meter: 0.5, count: 0, left: START, playing: false, busy: false, pz: null };
     board.innerHTML = ""; board.style.height = "0px"; paint();
     $("f-start-wrap").hidden = false; $("f-end").hidden = true;
-    say("Les volets vont se replier sur le volet doré. Touche une case dorée qui restera libre.");
+    say(`Tu es au niveau ${st.level} sur ${MAXL}. Les volets vont se replier sur le volet doré : touche une case dorée qui restera libre. Réponds vite pour monter de niveau.`);
   }
   function stop() { run++; clearInterval(tick); }
   function start() {
@@ -1974,7 +1974,7 @@ const M = (() => {
   const $ = id => document.getElementById(id);
   const TRIALS = 12, MAXN = 18, grid = $("m-grid");
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  const dims = n => n <= 3 ? [3, 3] : n === 4 ? [3, 4] : n <= 6 ? [4, 4] : n === 7 ? [4, 5] : n <= 9 ? [5, 5] : n <= 12 ? [6, 6] : n <= 15 ? [6, 7] : [7, 7];
+  const dims = n => n <= 3 ? [3, 3] : n === 4 ? [3, 4] : n <= 6 ? [4, 4] : n === 7 ? [4, 5] : n === 8 ? [5, 5] : n === 9 ? [5, 6] : n <= 12 ? [6, 6] : n <= 15 ? [6, 7] : [7, 7];
   let st = null, run = 0;
   function paint() { $("m-score").textContent = st.score; $("m-n").textContent = st.n; $("m-trial").textContent = Math.min(st.trial, TRIALS) + "/" + TRIALS; }
   function say(t, c) { const e = $("m-status"); e.textContent = t; e.className = "status" + (c ? " " + c : ""); }
@@ -2076,7 +2076,7 @@ const U = (() => {
     });
   }
   function wave() {
-    const fresh = st.pool.splice(0, 3);
+    const fresh = shuffle(st.pool.filter(c => !st.chosen.includes(c))).slice(0, 3);
     if (!fresh.length) return false;
     st.fresh = new Set(fresh);
     layout(shuffle([...st.chosen, ...fresh]));
@@ -2091,11 +2091,13 @@ const U = (() => {
   }
   function newRound() {
     field.innerHTML = '<div class="wave"></div>';
-    st.pool = shuffle([...POOL]); st.chosen = []; st.count = 0; paint(); wave(); st.input = true;
+    const third = Math.floor(st.deck.length / ROUNDS);
+    st.pool = st.deck.slice((st.round - 1) * third, st.round * third); st.chosen = []; st.count = 0;
+    field.dataset.r = st.round; paint(); wave(); st.input = true;
     say("Touche un objet que tu n'as encore jamais choisi.");
   }
   function reset() {
-    run++; st = { score: 0, total: 0, best: 0, round: 1, count: 0, chosen: [], input: false };
+    run++; st = { score: 0, total: 0, best: 0, round: 1, count: 0, chosen: [], input: false, deck: shuffle([...POOL]) };
     field.innerHTML = ""; paint(); $("u-start-wrap").hidden = false; $("u-end").hidden = true;
     say("À chaque vague, touche un objet que tu n'as encore jamais choisi.");
   }
@@ -2114,10 +2116,10 @@ const U = (() => {
       say("Déjà choisi ! Les objets encore libres sont entourés.", "bad");
       await sleep(1900); if (my !== run) return;
     }
-    const bonus = st.count * 100; st.score += bonus; st.best = Math.max(st.best, st.count); st.round++; paint();
+    const per = 100 * st.round, bonus = st.count * per; st.score += bonus; st.best = Math.max(st.best, st.count); st.round++; paint();
     const last = st.round > ROUNDS;
     const sum = document.createElement("div"); sum.className = "sum";
-    sum.innerHTML = `<div class="slots">${st.chosen.slice(-12).join("") || "–"}</div><div>Objets : ${st.count}<br>Bonus : ${st.count} × 100</div><button class="btn secondary" type="button">${last ? "Voir le résultat" : "Manche suivante"}</button>`;
+    sum.innerHTML = `<div class="slots">${st.chosen.slice(-12).join("") || "–"}</div><div>Objets : ${st.count}<br>Bonus : ${st.count} × ${per}</div>${last ? "" : `<div class="small">Manche ${st.round} sur ${ROUNDS} : nouveaux objets, et tu peux de nouveau choisir ceux des manches précédentes.</div>`}<button class="btn secondary" type="button">${last ? "Terminer la partie" : "Manche suivante"}</button>`;
     field.appendChild(sum); say("");
     sum.querySelector("button").addEventListener("click", () => { if (my !== run) return; if (last) end(); else newRound(); });
   }
@@ -2144,12 +2146,12 @@ const K = (() => {
   const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
   const room = $("k-room");
   let st = null, run = 0, raf = 0;
-  const STATIONS = [0, 2, 3, 4, 4, 5, 6, 7, 7, 8, 8, 8, 8];
+  const STATIONS = [0, 2, 3, 4, 4, 5, 6, 7, 7, 8, 8, 8, 8];   // dès 5 machines : salle des commandes à gauche, machines à droite
   const kindsFor = l => l < 4 ? 2 : l < 7 ? 3 : 4;
-  const railsFor = l => l < 2 ? [2] : l < 3 ? [2, 1] : l < 6 ? [2, 2] : [2, 2, 2];   // places par rail : les commandes arrivent une à une
+  const railsFor = l => l < 2 ? [2] : l < 3 ? [2, 1] : l < 5 ? [2, 2] : l < 7 ? [5] : [3, 3, 1];   // places par rail : les commandes arrivent une à une
   const glassesFor = l => l < 2 ? 1 : l < 6 ? 2 : 3;
-  const dosesFor = l => l < 5 ? 2 : 3;
-  const TARGETS = [0, 6, 12, 16, 20, 23, 27, 30, 33, 36, 39, 42, 45], targetFor = l => TARGETS[l];
+  const dosesFor = l => l < 9 ? 2 : 3;
+  const TARGETS = [0, 6, 12, 16, 22, 24, 27, 30, 33, 36, 39, 42, 45], targetFor = l => TARGETS[l];
   const gapFor = l => Math.max(3000, 8000 - 450 * l);          // délai entre deux nouvelles commandes
   const fillFor = n => 6500 + 2500 * Math.max(1, n);          // plus le verre est grand, plus il est long à remplir
   const key = a => [...a].sort().join("");
@@ -2173,7 +2175,7 @@ const K = (() => {
   }
   const state = g => g.t0 == null ? "idle" : g.e < g.dur ? "fill" : g.e < g.dur + GREEN ? "ready" : "over";
   function build() {
-    const n = STATIONS[st.level], a = n <= 4 ? n : n % 2 ? 1 : 2;      // comptoir des commandes : 1 ou 2 verres, le reste à côté
+    const n = STATIONS[st.level], a = n <= 4 ? n : n <= 6 ? 0 : 1;      // comptoir des commandes : 1 ou 2 verres, le reste à côté
     st.glasses = Array.from({ length: n }, (_, i) => ({ i, room: i < a ? 0 : 1, ing: [], t0: null, e: 0, dur: 0 }));
     st.two = n > 4; st.room = 0; st.sel = 0;
     room.innerHTML = st.glasses.map(g => `<div class="kst" data-i="${g.i}"><button type="button" class="kglass" aria-label="Verre ${g.i + 1}"><i></i><u></u><span></span></button><button type="button" class="kbtn">Verser</button></div>`).join("");
@@ -2183,7 +2185,9 @@ const K = (() => {
   }
   function draw() {
     $("k-tickets").style.visibility = st.room === 0 ? "visible" : "hidden";
-    $("k-switch").textContent = st.room === 0 ? "Aller aux autres robinets →" : "← Retour aux commandes";
+    const here = st.glasses.some(g => g.room === st.room);
+    $("k-ings").style.visibility = here ? "visible" : "hidden"; room.style.display = here ? "" : "none";
+    $("k-switch").textContent = st.room === 0 ? "Aller aux machines →" : "← Retour aux commandes";
     for (const g of st.glasses) {
       const el = room.children[g.i], s = state(g), gl = el.firstChild, bt = el.lastChild;
       el.hidden = g.room !== st.room;
@@ -2209,7 +2213,7 @@ const K = (() => {
   }
   function stop() { run++; cancelAnimationFrame(raf); }
   function start() {
-    const my = run; $("k-start-wrap").hidden = true; st.playing = true; say("Ajoute les ingrédients, verse, puis sers au vert.");
+    const my = run; $("k-start-wrap").hidden = true; st.playing = true; say(st.two ? "Les commandes arrivent ici, les machines sont dans l'autre salle." : "Ajoute les ingrédients, verse, puis sers au vert.");
     let last = performance.now();
     const loop = now => {
       if (my !== run) return;
@@ -2266,7 +2270,7 @@ const K = (() => {
     if (g.room !== st.room || state(g) !== "idle" || g.ing.length >= 3) return;
     g.ing.push(b.dataset.k); g.ing.sort(); draw();
   });
-  $("k-switch").addEventListener("click", () => { if (!st) return; st.room = 1 - st.room; const g = st.glasses.find(g => g.room === st.room && state(g) === "idle") || st.glasses.find(g => g.room === st.room); st.sel = g.i; draw(); });
+  $("k-switch").addEventListener("click", () => { if (!st) return; st.room = 1 - st.room; const g = st.glasses.find(g => g.room === st.room && state(g) === "idle") || st.glasses.find(g => g.room === st.room); if (g) st.sel = g.i; if (st.playing) say(st.room ? "Prépare les verres, puis reviens voir les commandes." : "Voici les commandes en attente."); draw(); });
   $("k-start").addEventListener("click", start);
   $("k-again").addEventListener("click", () => { reset(); start(); });
   $("k-home").addEventListener("click", () => go("home"));
