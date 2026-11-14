@@ -211,7 +211,7 @@ button.game:active { transform: scale(0.985); }
 
 .fold-wrap { width: 100%; min-height: 250px; display: flex; align-items: center; justify-content: center; padding: 14px 0; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); touch-action: manipulation; }
 .fold { position: relative; }
-.fold-panel { position: absolute; display: grid; border-radius: 8px; overflow: hidden; background: var(--tile); outline: 2px solid var(--muted); outline-offset: -2px; }
+.fold-panel { transition: transform .38s ease-in-out, opacity .38s; position: absolute; display: grid; border-radius: 8px; overflow: hidden; background: var(--tile); outline: 2px solid var(--muted); outline-offset: -2px; }
 .fold-panel.target { background: var(--glow-soft); outline-color: var(--glow); }
 .fold-cell { display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); padding: 0; margin: 0; background: none; color: var(--fg); font: inherit; }
 .fold-panel.target .fold-cell { border-color: var(--glow); cursor: pointer; }
@@ -222,34 +222,46 @@ button.game:active { transform: scale(0.985); }
 .meter { height: 10px; border-radius: 5px; background: var(--tile); overflow: hidden; margin-top: 8px; }
 .meter i { display: block; height: 100%; width: 50%; background: var(--accent); transition: width .2s; }
 
-.mgrid { display: grid; gap: 8px; width: 100%; max-width: 420px; margin: 0 auto; touch-action: manipulation; }
-.mgrid button { aspect-ratio: 1; border: 0; border-radius: 10px; background: var(--tile); padding: 0; cursor: pointer; }
-.mgrid button.lit { background: var(--glow); }
-.mgrid button.hit { background: var(--accent); }
+.mgrid { box-sizing: border-box; position: relative; display: grid; gap: 6px; width: 100%; max-width: 420px; margin: 0 auto; padding: 10px; border-radius: 14px; background: var(--fg); touch-action: manipulation; }
+.mgrid button { min-width: 0; aspect-ratio: 1; border: 0; border-radius: 6px; background: var(--muted); padding: 0; cursor: pointer; color: var(--surface); font: inherit; font-weight: 800; font-size: 1.1rem; animation: mflip .28s both; }
+@keyframes mflip { from { transform: scaleY(0); opacity: 0; } to { transform: none; opacity: 1; } }
+.mgrid.out button { animation: mflop .22s both; }
+@keyframes mflop { to { transform: scaleY(0); opacity: 0; } }
+.mgrid button.lit, .mgrid button.hit { background: var(--glow); }
 .mgrid button.miss { background: var(--bad); }
-.mgrid button.missed { background: var(--glow-soft); outline: 2px dashed var(--glow); outline-offset: -2px; }
-.ugrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 10px; min-height: 240px; align-content: start; padding: 14px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); touch-action: manipulation; }
-.ugrid button { aspect-ratio: 1; border: 2px solid transparent; border-radius: 14px; background: var(--tile); font-size: 2rem; line-height: 1; padding: 0; cursor: pointer; }
-.ugrid button.bad { border-color: var(--bad); }
-.ugrid button.free { border-color: var(--good); background: var(--surface); }
-.kbar { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-.ticket { min-width: 72px; padding: 8px 10px; border-radius: 10px; background: var(--surface); border: 1px dashed var(--muted); text-align: center; font-size: 1.35rem; line-height: 1.2; }
-.ticket small { display: block; font-size: 0.7rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.mgrid button.missed { background: var(--glow-soft); }
+.mcount { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.mcount b { width: 72px; height: 72px; border-radius: 50%; background: var(--accent); color: var(--surface); display: flex; align-items: center; justify-content: center; font: 800 2rem var(--font-display); }
+.ufield { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 16px; background: var(--fg); overflow: hidden; touch-action: manipulation; }
+.ufield button[data-c] { position: absolute; transform: translate(-50%, -50%); border: 3px solid transparent; border-radius: 50%; background: none; line-height: 1; padding: 4px; cursor: pointer; }
+.ufield button[data-c].bad { border-color: var(--bad); }
+.ufield button[data-c].free { border-color: var(--surface); background: color-mix(in srgb, var(--surface) 25%, transparent); }
+.ufield .wave { position: absolute; inset: 0 -20%; background: var(--accent); border-radius: 0 0 50% 50% / 0 0 18% 18%; transform: translateY(-110%); pointer-events: none; }
+.ufield .wave.go { animation: uwave .9s ease-in-out; }
+@keyframes uwave { 0% { transform: translateY(-110%); } 45%, 55% { transform: translateY(0); } 100% { transform: translateY(-110%); } }
+.ufield .sum { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: var(--accent); color: var(--surface); text-align: center; font-weight: 700; }
+.ufield .sum .slots { font-size: 1.8rem; letter-spacing: 6px; max-width: 90%; }
+.kbar { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; min-height: 58px; }
+.ticket { display: flex; gap: 4px; padding: 6px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); border-top: 5px solid var(--muted); }
+.ticket span { min-width: 34px; padding: 4px 3px; border-radius: 6px; background: var(--tile); text-align: center; font-size: 1.05rem; line-height: 1.15; }
+.ticket span.done { opacity: .3; text-decoration: line-through; }
 .kbar .ing { font-size: 1.5rem; padding: 8px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; }
-.kroom { display: flex; gap: 10px; justify-content: center; align-items: flex-end; min-height: 230px; padding: 14px 8px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); touch-action: manipulation; }
-.kst { flex: 1 1 0; max-width: 110px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.kglass { position: relative; width: 100%; max-width: 78px; height: 120px; border: 3px solid var(--muted); border-top: 0; border-radius: 0 0 14px 14px; background: var(--bg); overflow: hidden; cursor: pointer; padding: 0; font: inherit; }
+.kroom { display: flex; gap: 6px; justify-content: center; align-items: flex-end; min-height: 250px; padding: 12px 6px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); touch-action: manipulation; }
+.kst { flex: 1 1 0; max-width: 96px; min-width: 0; display: flex; flex-direction: column-reverse; align-items: center; gap: 8px; }
+.kglass { position: relative; width: 100%; max-width: 70px; height: 78px; border: 3px solid var(--muted); border-top: 0; border-radius: 0 0 12px 12px; background: var(--bg); overflow: hidden; cursor: pointer; padding: 0; font: inherit; }
+.kglass.s2 { height: 112px; } .kglass.s3 { height: 146px; }
 .kglass.sel { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent); }
 .kglass i { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: var(--glow); }
 .kglass.over i { background: var(--bad); }
-.kglass u { position: absolute; left: 0; right: 0; top: 18%; border-top: 2px dashed var(--good); }
-.kglass span { position: absolute; inset: auto 0 6px 0; text-align: center; font-size: 1.05rem; line-height: 1.1; }
-.kst .kbtn { width: 100%; font: inherit; font-weight: 700; font-size: 0.85rem; border: 0; border-radius: 10px; padding: 10px 2px; background: var(--tile); color: var(--fg); cursor: pointer; }
-.kst .kbtn.go { background: var(--good); color: var(--surface); }
-.kst .kbtn.no { background: var(--bad); color: var(--surface); }
+.kglass u { position: absolute; left: 0; right: 0; top: 14%; border-top: 2px dashed var(--good); }
+.kglass span { position: absolute; inset: auto 0 4px 0; text-align: center; font-size: 1rem; line-height: 1.1; word-break: break-all; }
+.kst .kbtn { width: 100%; max-width: 70px; aspect-ratio: 1; font: inherit; font-weight: 700; font-size: 0.72rem; border: 3px solid var(--line); border-radius: 50%; padding: 0; background: var(--tile); color: var(--fg); cursor: pointer; }
+.kst .kbtn.arm { border-color: var(--accent); }
+.kst .kbtn.go { background: var(--good); color: var(--surface); border-color: var(--good); }
+.kst .kbtn.no { background: var(--bad); color: var(--surface); border-color: var(--bad); }
 .kswitch { display: flex; align-items: center; justify-content: center; gap: 10px; }
-.kmini { display: inline-flex; gap: 3px; align-items: flex-end; height: 22px; }
-.kmini b { width: 7px; height: 22px; background: var(--bg); border: 1px solid var(--muted); position: relative; overflow: hidden; border-radius: 2px; }
+.kmini { display: inline-flex; gap: 3px; align-items: flex-end; height: 26px; }
+.kmini b { width: 8px; height: 26px; background: var(--bg); border: 1px solid var(--muted); position: relative; overflow: hidden; border-radius: 2px; }
 .kmini b i { position: absolute; left: 0; right: 0; bottom: 0; background: var(--glow); }
 .kmini b.go i { background: var(--good); } .kmini b.no i { background: var(--bad); }
 .sync-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
@@ -518,7 +530,7 @@ button.game:active { transform: scale(0.985); }
       <span class="eyebrow">Mémoire · rappel spatial</span>
     </div>
     <h2>Motif éclair</h2>
-    <div class="stats"><div class="stat"><small>Score</small><b class="num" id="m-score">0</b></div><div class="stat"><small>Cases</small><b class="num" id="m-n">3</b></div><div class="stat"><small>Essai</small><b class="num" id="m-trial">1/12</b></div></div>
+    <div class="stats"><div class="stat"><small>Cases</small><b class="num" id="m-n">3</b></div><div class="stat"><small>Essai</small><b class="num" id="m-trial">1/12</b></div><div class="stat"><small>Score</small><b class="num" id="m-score">0</b></div></div>
     <p class="status" id="m-status" aria-live="polite">Des cases vont s'allumer un instant. Retrouve-les toutes.</p>
     <div class="mgrid" id="m-grid"></div>
     <div class="actions" id="m-start-wrap"><button class="btn" id="m-start" type="button">Commencer</button></div>
@@ -540,9 +552,9 @@ button.game:active { transform: scale(0.985); }
       <span class="eyebrow">Mémoire à court terme</span>
     </div>
     <h2>Jamais deux fois</h2>
-    <div class="stats"><div class="stat"><small>Score</small><b class="num" id="u-score">0</b></div><div class="stat"><small>Trouvés</small><b class="num" id="u-count">0</b></div><div class="stat"><small>Manche</small><b class="num" id="u-round">1/3</b></div></div>
+    <div class="stats"><div class="stat"><small>Manche</small><b class="num" id="u-round">1/3</b></div><div class="stat"><small>Trouvés</small><b class="num" id="u-count">0</b></div><div class="stat"><small>Score</small><b class="num" id="u-score">0</b></div></div>
     <p class="status" id="u-status" aria-live="polite">À chaque vague, touche un objet que tu n'as encore jamais choisi.</p>
-    <div class="ugrid" id="u-grid"></div>
+    <div class="ufield" id="u-grid"></div>
     <div class="actions" id="u-start-wrap"><button class="btn" id="u-start" type="button">Commencer</button></div>
     <div class="panel" id="u-end" hidden>
       <span class="eyebrow">Partie terminée</span>
@@ -562,10 +574,10 @@ button.game:active { transform: scale(0.985); }
       <span class="eyebrow">Attention partagée</span>
     </div>
     <h2>Plein à ras</h2>
-    <div class="stats"><div class="stat"><small>Score</small><b class="num" id="k-score">0</b></div><div class="stat"><small>Servis</small><b class="num" id="k-served">0/11</b></div><div class="stat"><small>Temps</small><b class="num" id="k-time">1:30</b></div></div>
+    <div class="stats"><div class="stat"><small>Temps</small><b class="num" id="k-time">2:00</b></div><div class="stat"><small>Servis</small><b class="num" id="k-served">0/9</b></div><div class="stat"><small>Score</small><b class="num" id="k-score">0</b></div></div>
     <div class="kbar" id="k-tickets"></div>
     <div class="kbar" id="k-ings"></div>
-    <p class="status" id="k-status" aria-live="polite">Prépare chaque verre commandé, lance le robinet, et sers-le au trait vert.</p>
+    <p class="status" id="k-status" aria-live="polite">Prépare chaque verre commandé, lance le robinet, et sers-le quand le bouton passe au vert.</p>
     <div class="kroom" id="k-room"></div>
     <div class="kswitch" id="k-switch-wrap" hidden><button class="btn secondary" id="k-switch" type="button">Autre comptoir</button><span class="kmini" id="k-mini"></span></div>
     <div class="actions" id="k-start-wrap"><button class="btn" id="k-start" type="button">Commencer</button></div>
@@ -1914,6 +1926,14 @@ const F = (() => {
     const hit = pz.items.find(t => t.tr === r && t.tc === c);
     const took = performance.now() - st.shown, fast = fastFor(st.level);
     st.busy = true;
+    // Les volets se replient sur le volet doré avant le verdict.
+    const tp = board.querySelector(".fold-panel.target");
+    board.querySelectorAll(".fold-panel:not(.target)").forEach((el, k) => {
+      const dx = tp.offsetLeft - el.offsetLeft, dy = tp.offsetTop - el.offsetTop;
+      const odd = (d, size) => Math.round(Math.abs(d) / (size + 8)) % 2 ? -1 : 1;
+      const m = pz.diag ? "matrix(0,-1,-1,0,0,0)" : `scale(${odd(dx, el.offsetWidth)},${odd(dy, el.offsetHeight)})`;
+      el.style.zIndex = 2 + k; el.style.opacity = 0.8; el.style.transform = `translate(${dx}px,${dy}px) ${m}`;
+    });
     if (!hit) {
       btn.classList.add("good");
       st.count++; st.score += 50 * st.level * (st.level + 1);
@@ -1929,7 +1949,7 @@ const F = (() => {
     else if (st.meter <= 0 && st.level > 1) { st.level--; st.meter = 0.6; if (!hit) msg = "Trop lent : niveau " + st.level + "."; }
     st.meter = Math.max(0, Math.min(1, st.meter));
     say(msg, cls); paint();
-    setTimeout(() => { if (my === run && st.playing) next(); }, hit ? 900 : 260);
+    setTimeout(() => { if (my === run && st.playing) next(); }, hit ? 1300 : 650);
   }
   function end() {
     clearInterval(tick); st.playing = false; run++;
@@ -1952,66 +1972,80 @@ const F = (() => {
 /* ---------- Motif éclair ---------- */
 const M = (() => {
   const $ = id => document.getElementById(id);
-  const TRIALS = 12, grid = $("m-grid");
+  const TRIALS = 12, MAXN = 18, grid = $("m-grid");
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  const dims = n => n <= 3 ? [3, 3] : n === 4 ? [3, 4] : n <= 6 ? [4, 4] : n === 7 ? [4, 5] : n <= 9 ? [5, 5] : n <= 11 ? [5, 6] : n <= 13 ? [6, 6] : [6, 7];
+  const dims = n => n <= 3 ? [3, 3] : n === 4 ? [3, 4] : n <= 6 ? [4, 4] : n === 7 ? [4, 5] : n <= 9 ? [5, 5] : n <= 12 ? [6, 6] : n <= 15 ? [6, 7] : [7, 7];
   let st = null, run = 0;
   function paint() { $("m-score").textContent = st.score; $("m-n").textContent = st.n; $("m-trial").textContent = Math.min(st.trial, TRIALS) + "/" + TRIALS; }
   function say(t, c) { const e = $("m-status"); e.textContent = t; e.className = "status" + (c ? " " + c : ""); }
   function build() {
     const [R, C] = dims(st.n);
+    grid.className = "mgrid";
     grid.style.gridTemplateColumns = `repeat(${C}, 1fr)`;
-    grid.innerHTML = Array.from({ length: R * C }, (_, i) => `<button type="button" data-i="${i}" aria-label="Case ${i + 1}"></button>`).join("");
+    grid.style.maxWidth = Math.min(420, C * 70) + "px";
+    grid.innerHTML = Array.from({ length: R * C }, (_, i) => `<button type="button" data-i="${i}" aria-label="Case ${i + 1}" style="animation-delay:${(Math.floor(i / C) + i % C) * 35}ms"></button>`).join("");
     const idx = Array.from({ length: R * C }, (_, i) => i);
     for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
-    st.set = new Set(idx.slice(0, st.n)); st.found = 0; st.input = false;
+    st.set = new Set(idx.slice(0, st.n)); st.found = 0; st.clicks = 0; st.errors = 0; st.input = false;
+    return (R + C) * 35 + 300;
   }
   function reset() {
     run++;
     const last = scores.find(s => s.game === "motif" && s.next);
-    const n = last ? Math.max(2, Math.min(16, last.next)) : 3;
+    const n = last ? Math.max(2, Math.min(MAXN, last.next)) : 3;
     st = { score: 0, n, top: 0, trial: 1, wins: 0, input: false };
     build(); paint(); $("m-start-wrap").hidden = false; $("m-end").hidden = true;
     say("Des cases vont s'allumer un instant. Retrouve-les toutes.");
   }
   function stop() { run++; }
-  async function trial() {
-    const my = run; build(); paint(); say("Regarde bien…");
-    await sleep(500); if (my !== run) return;
+  async function trial(first) {
+    const my = run, wait = build(); paint(); say("Mémorise le motif.");
+    if (first) {
+      const c = document.createElement("div"); c.className = "mcount"; c.innerHTML = "<b>3</b>"; grid.appendChild(c);
+      for (const k of [3, 2, 1]) { c.firstChild.textContent = k; await sleep(800); if (my !== run) return; }
+      c.remove();
+    } else { await sleep(wait); if (my !== run) return; }
     for (const i of st.set) grid.children[i].classList.add("lit");
-    await sleep(900 + st.n * 90); if (my !== run) return;
+    await sleep(1500); if (my !== run) return;
     for (const b of grid.children) b.classList.remove("lit");
     st.input = true; say("À toi : touche les " + st.n + " cases.");
   }
   async function pick(b) {
-    if (!st || !st.input || b.className) return;
+    if (!st || !st.input || b.classList.contains("hit") || b.classList.contains("miss")) return;
     const my = run, i = +b.dataset.i;
-    if (st.set.has(i)) {
-      b.classList.add("hit"); st.found++; st.score += 50 * st.n; paint();
-      if (st.found < st.n) return;
-      st.input = false; st.wins++; st.top = Math.max(st.top, st.n); st.score += 100 * st.n; say("Parfait !", "good");
-      st.n = Math.min(16, st.n + 1);
+    st.clicks++;
+    if (st.set.has(i)) { b.classList.add("hit"); st.found++; st.score += 250; }
+    else { b.classList.add("miss"); b.textContent = "✕"; st.errors++; }
+    paint();
+    const left = st.n - st.clicks;
+    if (left > 0) { if (st.errors) say(`Continue : il te reste ${left} case${left > 1 ? "s" : ""} à découvrir.`, "bad"); return; }
+    st.input = false;
+    if (!st.errors) {
+      st.wins++; st.top = Math.max(st.top, st.n); st.score += 100 * st.n;
+      say("Parfait ! Bonus + " + 100 * st.n, "good"); st.n = Math.min(MAXN, st.n + 1);
     } else {
-      st.input = false; b.classList.add("miss");
-      for (const j of st.set) if (!grid.children[j].className) grid.children[j].classList.add("missed");
-      say("Raté : voici celles qui manquaient.", "bad");
-      st.n = Math.max(2, st.n - 1);
+      for (const j of st.set) if (!grid.children[j].classList.contains("hit")) grid.children[j].classList.add("missed");
+      say(st.errors === 1 ? "Une erreur : même nombre de cases." : "Raté : une case de moins.", "bad");
+      if (st.errors > 1) st.n = Math.max(2, st.n - 1);
     }
     st.trial++; paint();
-    await sleep(1300); if (my !== run) return;
-    if (st.trial > TRIALS) end(); else trial();
+    await sleep(st.errors ? 1500 : 800); if (my !== run) return;
+    grid.classList.add("out");
+    await sleep(500); if (my !== run) return;
+    if (st.trial > TRIALS) end(); else trial(false);
   }
   function end() {
     const prevBest = bestFor("motif");
+    grid.innerHTML = "";
     $("m-final").textContent = st.score;
-    $("m-end-detail").textContent = `${st.wins} motifs retrouvés sur ${TRIALS}` + (st.top ? `, jusqu'à ${st.top} cases.` : ".") + ` Tu reprendras à ${st.n} cases.`;
+    $("m-end-detail").textContent = `${st.wins} motifs parfaits sur ${TRIALS}` + (st.top ? `, jusqu'à ${st.top} cases.` : ".") + ` Tu reprendras à ${st.n} cases.`;
     $("m-end-record").hidden = !(st.score > prevBest && st.score > 0);
     $("m-end").hidden = false; say("");
     addScore({ game: "motif", score: st.score, tiles: st.top, next: st.n, at: new Date().toISOString() });
   }
   grid.addEventListener("pointerdown", e => { const b = e.target.closest("button"); if (b) { e.preventDefault(); pick(b); } });
-  $("m-start").addEventListener("click", () => { $("m-start-wrap").hidden = true; trial(); });
-  $("m-again").addEventListener("click", () => { reset(); $("m-start-wrap").hidden = true; trial(); });
+  $("m-start").addEventListener("click", () => { $("m-start-wrap").hidden = true; trial(true); });
+  $("m-again").addEventListener("click", () => { reset(); $("m-start-wrap").hidden = true; trial(true); });
   $("m-home").addEventListener("click", () => go("home"));
   $("m-back").addEventListener("click", () => go("home"));
   return { reset, stop };
@@ -2020,24 +2054,49 @@ const M = (() => {
 /* ---------- Jamais deux fois ---------- */
 const U = (() => {
   const $ = id => document.getElementById(id);
-  const ROUNDS = 3, grid = $("u-grid");
-  const POOL = [..."🍎🍋🍇🍓🍒🥝🍍🥥🥕🌽🍄🥨🧀🍩🍪🎂🍭☕🚗🚲🚀⛵🚂🎈🎁🎲🎯🎸🎺🥁🎻⚽🏀🎾🏓🔑🔔💡📷📚🧲🧭⏰👓👑🎩👟🧦🧤🌵🌻🍀🌙⭐🔥🌈🐢🐸🐙🦋🐝🐞🦀🐟🐧🦉🦊🐘🦒🦔🏠🪁🧩🪑🧸🪣🧺🍉🥐🚁🎨🧁🐳🦜🌴🍔"].filter(c => c !== "️");
+  const ROUNDS = 3, field = $("u-grid");
+  const POOL = [..."🍎🍋🍇🍓🍒🥝🍍🥥🥕🌽🍄🥨🧀🍩🍪🎂🍭☕🚗🚲🚀⛵🚂🎈🎁🎲🎯🎸🎺🥁🎻⚽🏀🎾🏓🔑🔔💡📷📚🧲🧭⏰👓👑🎩👟🧦🧤🌵🌻🍀🌙⭐🔥🌈🐢🐸🐙🦋🐝🐞🦀🐟🐧🦉🦊🐘🦒🦔🏠🪁🧩🪑🧸🪣🧺🍉🥐🚁🎨🧁🐳🦜🌴🍔"];
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   let st = null, run = 0;
   function paint() { $("u-score").textContent = st.score; $("u-count").textContent = st.count; $("u-round").textContent = Math.min(st.round, ROUNDS) + "/" + ROUNDS; }
   function say(t, c) { const e = $("u-status"); e.textContent = t; e.className = "status" + (c ? " " + c : ""); }
+  function layout(items) {
+    // Positions éparpillées : une case de quadrillage par objet, avec un décalage aléatoire.
+    const n = items.length, cols = Math.ceil(Math.sqrt(n * 4 / 3)), rows = Math.ceil(n / cols);
+    const cells = shuffle(Array.from({ length: cols * rows }, (_, k) => k)).slice(0, n);
+    const size = Math.max(22, Math.min(46, Math.floor(field.clientWidth / cols * 0.55)));
+    field.querySelectorAll("button").forEach(b => b.remove());
+    items.forEach((c, k) => {
+      const cx = cells[k] % cols, cy = Math.floor(cells[k] / cols);
+      const x = (cx + 0.5 + (Math.random() - 0.5) * 0.4) / cols * 100, y = (cy + 0.5 + (Math.random() - 0.5) * 0.4) / rows * 100;
+      const b = document.createElement("button"); b.type = "button"; b.dataset.c = c; b.textContent = c;
+      b.style.cssText = `left:${x}%;top:${y}%;font-size:${size}px`;
+      field.appendChild(b);
+    });
+  }
   function wave() {
     const fresh = st.pool.splice(0, 3);
     if (!fresh.length) return false;
     st.fresh = new Set(fresh);
-    grid.innerHTML = shuffle([...st.chosen, ...fresh]).map(c => `<button type="button" data-c="${c}">${c}</button>`).join("");
-    st.input = true; return true;
+    layout(shuffle([...st.chosen, ...fresh]));
+    return true;
   }
-  function newRound() { st.pool = shuffle([...POOL]); st.chosen = []; st.count = 0; paint(); wave(); say("Touche un objet que tu n'as encore jamais choisi."); }
+  async function sweep(my, change) {
+    const w = field.querySelector(".wave"); w.classList.remove("go"); void w.offsetWidth; w.classList.add("go");
+    await sleep(430); if (my !== run) return false;
+    const ok = change();
+    await sleep(470); if (my !== run) return false;
+    return ok;
+  }
+  function newRound() {
+    field.innerHTML = '<div class="wave"></div>';
+    st.pool = shuffle([...POOL]); st.chosen = []; st.count = 0; paint(); wave(); st.input = true;
+    say("Touche un objet que tu n'as encore jamais choisi.");
+  }
   function reset() {
     run++; st = { score: 0, total: 0, best: 0, round: 1, count: 0, chosen: [], input: false };
-    grid.innerHTML = ""; paint(); $("u-start-wrap").hidden = false; $("u-end").hidden = true;
+    field.innerHTML = ""; paint(); $("u-start-wrap").hidden = false; $("u-end").hidden = true;
     say("À chaque vague, touche un objet que tu n'as encore jamais choisi.");
   }
   function stop() { run++; }
@@ -2046,27 +2105,31 @@ const U = (() => {
     const my = run, c = b.dataset.c; st.input = false;
     if (st.fresh.has(c)) {
       st.chosen.push(c); st.count++; st.total++; st.score += 500; paint();
-      b.classList.add("free"); await sleep(280); if (my !== run) return;
-      if (wave()) return;
+      const more = await sweep(my, wave); if (my !== run) return;
+      if (more) { st.input = true; return; }
       say("Tu as épuisé tous les objets !", "good");
     } else {
       b.classList.add("bad");
-      for (const x of grid.children) if (st.fresh.has(x.dataset.c)) x.classList.add("free");
-      say("Déjà choisi ! Les objets libres sont entourés.", "bad");
+      for (const x of field.querySelectorAll("button")) if (st.fresh.has(x.dataset.c)) x.classList.add("free");
+      say("Déjà choisi ! Les objets encore libres sont entourés.", "bad");
+      await sleep(1900); if (my !== run) return;
     }
-    st.score += st.count * 100; st.best = Math.max(st.best, st.count); st.round++; paint();
-    await sleep(1800); if (my !== run) return;
-    if (st.round > ROUNDS) end(); else newRound();
+    const bonus = st.count * 100; st.score += bonus; st.best = Math.max(st.best, st.count); st.round++; paint();
+    const last = st.round > ROUNDS;
+    const sum = document.createElement("div"); sum.className = "sum";
+    sum.innerHTML = `<div class="slots">${st.chosen.slice(-12).join("") || "–"}</div><div>Objets : ${st.count}<br>Bonus : ${st.count} × 100</div><button class="btn secondary" type="button">${last ? "Voir le résultat" : "Manche suivante"}</button>`;
+    field.appendChild(sum); say("");
+    sum.querySelector("button").addEventListener("click", () => { if (my !== run) return; if (last) end(); else newRound(); });
   }
   function end() {
     const prevBest = bestFor("unique");
-    $("u-final").textContent = st.score; grid.innerHTML = "";
+    $("u-final").textContent = st.score; field.innerHTML = "";
     $("u-end-detail").textContent = `${st.total} objets trouvés en ${ROUNDS} manches. Meilleure manche : ${st.best}.`;
     $("u-end-record").hidden = !(st.score > prevBest && st.score > 0);
     $("u-end").hidden = false; say("");
     addScore({ game: "unique", score: st.score, correct: st.total, at: new Date().toISOString() });
   }
-  grid.addEventListener("pointerdown", e => { const b = e.target.closest("button"); if (b) { e.preventDefault(); pick(b); } });
+  field.addEventListener("pointerdown", e => { const b = e.target.closest("button[data-c]"); if (b) { e.preventDefault(); pick(b); } });
   $("u-start").addEventListener("click", () => { $("u-start-wrap").hidden = true; newRound(); });
   $("u-again").addEventListener("click", () => { reset(); $("u-start-wrap").hidden = true; newRound(); });
   $("u-home").addEventListener("click", () => go("home"));
@@ -2077,22 +2140,25 @@ const U = (() => {
 /* ---------- Plein à ras ---------- */
 const K = (() => {
   const $ = id => document.getElementById(id);
-  const START = 90000, MAXL = 12, INGS = ["🍋", "🍓", "🌿", "🧊"];
+  const START = 120000, MAXL = 12, INGS = ["🍋", "🍓", "🌿", "🧊"], GREEN = 3500;
   const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
   const room = $("k-room");
   let st = null, run = 0, raf = 0;
-  const stationsFor = l => Math.min(6, 1 + Math.floor(l / 2));   // 1,2,2,3,3,4,4,5,5,6,6,6
-  const kindsFor = l => Math.min(4, 1 + Math.floor(l / 2));
-  const maxIngFor = l => l < 3 ? 1 : l < 8 ? 2 : 3;
-  const targetFor = l => 10 + l;
+  const STATIONS = [0, 2, 3, 4, 4, 5, 6, 7, 7, 8, 8, 8, 8];
+  const kindsFor = l => l < 2 ? 1 : l < 4 ? 2 : l < 7 ? 3 : 4;
+  const railsFor = l => l < 2 ? 1 : l < 6 ? 2 : 3;
+  const glassesFor = l => l < 3 ? 1 : l < 6 ? 2 : 3;
+  const dosesFor = l => l < 5 ? 2 : 3;
+  const targetFor = l => Math.round(5.5 + 3.5 * l);
+  const fillFor = n => 4500 + 2500 * Math.max(1, n);          // plus le verre est grand, plus il est long à remplir
   const key = a => [...a].sort().join("");
   function ticket() {
-    const kinds = INGS.slice(0, kindsFor(st.level)), n = rnd(0, maxIngFor(st.level)), a = [];
-    while (a.length < Math.min(n, kinds.length)) { const k = kinds[rnd(0, kinds.length - 1)]; if (!a.includes(k)) a.push(k); }
-    return a;
+    const kinds = INGS.slice(0, kindsFor(st.level));
+    return Array.from({ length: rnd(1, glassesFor(st.level)) }, () =>
+      ({ ing: Array.from({ length: rnd(1, dosesFor(st.level)) }, () => kinds[rnd(0, kinds.length - 1)]).sort(), done: false }));
   }
   function paintTickets() {
-    $("k-tickets").innerHTML = st.tickets.map(t => `<div class="ticket"><small>Commande</small>${t.length ? t.join("") : "nature"}</div>`).join("");
+    $("k-tickets").innerHTML = st.tickets.map(t => `<div class="ticket">${t.map(g => `<span class="${g.done ? "done" : ""}">${g.ing.join("")}</span>`).join("")}</div>`).join("");
   }
   function say(t, c) { const e = $("k-status"); e.textContent = t; e.className = "status" + (c ? " " + c : ""); }
   function paint() {
@@ -2100,67 +2166,74 @@ const K = (() => {
     const sec = Math.ceil(Math.max(0, st.left) / 1000);
     $("k-time").textContent = Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0");
   }
-  const state = g => g.t0 == null ? "idle" : g.p >= 1 ? "over" : g.p >= 0.82 ? "ready" : "fill";
+  const state = g => g.t0 == null ? "idle" : g.e < g.dur ? "fill" : g.e < g.dur + GREEN ? "ready" : "over";
   function build() {
-    const n = stationsFor(st.level), split = n > 3 ? Math.ceil(n / 2) : n;
-    st.glasses = Array.from({ length: n }, (_, i) => ({ i, room: i < split ? 0 : 1, ing: [], t0: null, p: 0, dur: 0 }));
-    st.room = 0; st.sel = 0;
+    const n = STATIONS[st.level], a = n <= 4 ? n : n % 2 ? 1 : 2;      // comptoir des commandes : 1 ou 2 verres, le reste à côté
+    st.glasses = Array.from({ length: n }, (_, i) => ({ i, room: i < a ? 0 : 1, ing: [], t0: null, e: 0, dur: 0 }));
+    st.two = n > 4; st.room = 0; st.sel = 0;
     room.innerHTML = st.glasses.map(g => `<div class="kst" data-i="${g.i}"><button type="button" class="kglass" aria-label="Verre ${g.i + 1}"><i></i><u></u><span></span></button><button type="button" class="kbtn">Verser</button></div>`).join("");
-    $("k-switch-wrap").hidden = n <= 3;
-    $("k-mini").innerHTML = "";
+    $("k-switch-wrap").hidden = !st.two;
     $("k-ings").innerHTML = INGS.slice(0, kindsFor(st.level)).map(k => `<button type="button" class="ing" data-k="${k}" aria-label="Ajouter ${k}">${k}</button>`).join("");
     draw();
   }
   function draw() {
+    $("k-tickets").style.visibility = st.room === 0 ? "visible" : "hidden";
+    $("k-switch").textContent = st.room === 0 ? "Aller aux autres robinets →" : "← Retour aux commandes";
     for (const g of st.glasses) {
       const el = room.children[g.i], s = state(g), gl = el.firstChild, bt = el.lastChild;
       el.hidden = g.room !== st.room;
-      gl.className = "kglass" + (g.i === st.sel ? " sel" : "") + (s === "over" ? " over" : "");
-      gl.firstChild.style.height = Math.min(100, g.p * 100) + "%";
+      gl.className = "kglass s" + Math.min(3, Math.max(1, g.ing.length)) + (g.i === st.sel ? " sel" : "") + (s === "over" ? " over" : "");
+      gl.firstChild.style.height = (s === "idle" ? 0 : s === "fill" ? g.e / g.dur * 86 : s === "ready" ? 86 + (g.e - g.dur) / GREEN * 14 : 100) + "%";
       const txt = g.ing.join(""); if (gl.lastChild.textContent !== txt) gl.lastChild.textContent = txt;
       const label = { idle: "Verser", fill: "…", ready: "Servir", over: "Jeter" }[s];
       if (bt.textContent !== label) bt.textContent = label;
-      bt.className = "kbtn" + (s === "ready" ? " go" : s === "over" ? " no" : "");
+      bt.className = "kbtn" + (s === "ready" ? " go" : s === "over" ? " no" : s === "idle" && g.ing.length ? " arm" : "");
     }
     const others = st.glasses.filter(g => g.room !== st.room);
-    $("k-mini").innerHTML = others.map(g => { const s = state(g); return `<b class="${s === "ready" ? "go" : s === "over" ? "no" : ""}"><i style="height:${Math.min(100, g.p * 100)}%"></i></b>`; }).join("");
+    $("k-mini").innerHTML = others.map(g => { const s = state(g); return `<b class="${s === "ready" ? "go" : s === "over" ? "no" : ""}"><i style="height:${s === "idle" ? 0 : Math.min(100, g.e / g.dur * 86)}%"></i></b>`; }).join("");
   }
   function reset() {
     run++; cancelAnimationFrame(raf);
     const last = scores.find(s => s.game === "plein" && s.next);
     const level = last ? Math.max(1, Math.min(MAXL, last.next)) : 1;
     st = { level, score: 0, served: 0, wasted: 0, left: START, playing: false, tickets: [] };
-    st.tickets = [ticket(), ticket(), ticket()];
+    st.tickets = Array.from({ length: railsFor(level) }, ticket);
     build(); paintTickets(); paint();
     $("k-start-wrap").hidden = false; $("k-end").hidden = true;
-    say(`Niveau ${level}. Prépare chaque verre commandé, lance le robinet, et sers-le au trait vert.`);
+    say(`Niveau ${level} : sers ${targetFor(level)} verres pour débloquer le suivant.`);
   }
   function stop() { run++; cancelAnimationFrame(raf); }
   function start() {
-    const my = run; $("k-start-wrap").hidden = true; st.playing = true; say("Sers au trait vert, avant que ça déborde.");
+    const my = run; $("k-start-wrap").hidden = true; st.playing = true; say("Ajoute les ingrédients, verse, puis sers au vert.");
     let last = performance.now();
     const loop = now => {
       if (my !== run) return;
-      st.left -= now - last; last = now;
-      for (const g of st.glasses) if (g.t0 != null) g.p = Math.min(1.08, (now - g.t0) / g.dur);
+      const dt = now - last; last = now; st.left -= dt;
+      for (const g of st.glasses) if (g.t0 != null) g.e += dt;
       draw(); paint();
       if (st.left <= 0) return end();
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
   }
-  function empty(g) { g.ing = []; g.t0 = null; g.p = 0; }
+  function empty(g) { g.ing = []; g.t0 = null; g.e = 0; }
+  function selectNext() {
+    const free = st.glasses.filter(g => g.room === st.room && state(g) === "idle" && !g.ing.length);
+    if (free.length) st.sel = free[free.length - 1].i;
+  }
   function press(g) {
     if (!st.playing) return;
-    st.sel = g.i;
     const s = state(g);
-    if (s === "idle") { g.dur = rnd(2600, 5200) - st.level * 90; g.t0 = performance.now(); }
-    else if (s === "ready") {
-      const k = key(g.ing), j = st.tickets.findIndex(t => key(t) === k);
-      if (j >= 0) { st.tickets[j] = ticket(); st.served++; st.score += 100 * st.level; paintTickets(); say("Servi !", "good"); }
+    if (s === "idle") {
+      if (!g.ing.length) { st.sel = g.i; say("Ajoute d'abord un ingrédient dans ce verre."); }
+      else { g.dur = fillFor(g.ing.length); g.t0 = 1; g.e = 0; selectNext(); }
+    } else if (s === "ready") {
+      const k = key(g.ing); let hit = null;
+      for (const t of st.tickets) { hit = t.find(x => !x.done && key(x.ing) === k); if (hit) { hit.done = true; if (t.every(x => x.done)) { st.score += 50 * st.level * t.length; st.tickets[st.tickets.indexOf(t)] = ticket(); } break; } }
+      if (hit) { st.served++; st.score += 100 * st.level; paintTickets(); say("Servi !", "good"); }
       else { st.wasted++; say("Personne n'a commandé ce verre.", "bad"); }
-      empty(g);
-    } else if (s === "over") { st.wasted++; empty(g); say("Verre jeté.", "bad"); }
+      empty(g); st.sel = g.i;
+    } else if (s === "over") { st.wasted++; empty(g); st.sel = g.i; say("Verre jeté.", "bad"); }
     draw(); paint();
   }
   function end() {
@@ -2168,7 +2241,7 @@ const K = (() => {
     const prevBest = bestFor("plein"), ok = st.served >= targetFor(st.level);
     const next = ok ? Math.min(MAXL, st.level + 1) : st.level;
     $("k-final").textContent = st.score;
-    $("k-end-detail").textContent = `${st.served} verres servis au niveau ${st.level}, ${st.wasted} perdus. ` + (ok ? (next > st.level ? `Niveau ${next} débloqué !` : "Dernier niveau réussi !") : `Il en faut ${targetFor(st.level)} pour passer au niveau suivant.`);
+    $("k-end-detail").textContent = `${st.served} verres servis au niveau ${st.level}, ${st.wasted} perdus. ` + (ok ? (next > st.level ? `Niveau ${next} débloqué !` : "Dernier niveau réussi !") : `Il en faut ${targetFor(st.level)} pour débloquer le niveau suivant.`);
     $("k-end-record").hidden = !(st.score > prevBest && st.score > 0);
     $("k-end").hidden = false; say("");
     addScore({ game: "plein", score: st.score, correct: st.served, next, at: new Date().toISOString() });
@@ -2176,16 +2249,16 @@ const K = (() => {
   room.addEventListener("pointerdown", e => {
     const el = e.target.closest(".kst"); if (!el || !st) return; e.preventDefault();
     const g = st.glasses[+el.dataset.i];
-    if (e.target.closest(".kbtn")) press(g); else { st.sel = g.i; draw(); }
+    if (e.target.closest(".kbtn")) press(g); else if (state(g) === "over") press(g); else { st.sel = g.i; draw(); }
   });
   $("k-ings").addEventListener("pointerdown", e => {
     const b = e.target.closest(".ing"); if (!b || !st || !st.playing) return; e.preventDefault();
     let g = st.glasses[st.sel];
-    if (g.room !== st.room) { g = st.glasses.find(x => x.room === st.room); st.sel = g.i; }
-    if (state(g) === "over" || g.ing.includes(b.dataset.k) || g.ing.length >= 3) return;
-    g.ing.push(b.dataset.k); draw();
+    if (g.room !== st.room || state(g) !== "idle") { selectNext(); g = st.glasses[st.sel]; }
+    if (g.room !== st.room || state(g) !== "idle" || g.ing.length >= 3) return;
+    g.ing.push(b.dataset.k); g.ing.sort(); draw();
   });
-  $("k-switch").addEventListener("click", () => { if (!st) return; st.room = 1 - st.room; st.sel = st.glasses.find(g => g.room === st.room).i; draw(); });
+  $("k-switch").addEventListener("click", () => { if (!st) return; st.room = 1 - st.room; const g = st.glasses.find(g => g.room === st.room && state(g) === "idle") || st.glasses.find(g => g.room === st.room); st.sel = g.i; draw(); });
   $("k-start").addEventListener("click", start);
   $("k-again").addEventListener("click", () => { reset(); start(); });
   $("k-home").addEventListener("click", () => go("home"));
