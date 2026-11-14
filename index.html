@@ -244,7 +244,7 @@ button.game:active { transform: scale(0.985); }
 .kbar { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; min-height: 58px; }
 .ticket { display: flex; gap: 4px; padding: 6px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); border-top: 5px solid var(--muted); }
 .ticket span { min-width: 34px; padding: 4px 3px; border-radius: 6px; background: var(--tile); text-align: center; font-size: 1.05rem; line-height: 1.15; }
-.ticket span.done { opacity: .3; text-decoration: line-through; }
+.ticket.empty { opacity: .45; min-height: 40px; }
 .kbar .ing { font-size: 1.5rem; padding: 8px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; }
 .kroom { display: flex; gap: 6px; justify-content: center; align-items: flex-end; min-height: 250px; padding: 12px 6px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); touch-action: manipulation; }
 .kst { flex: 1 1 0; max-width: 96px; min-width: 0; display: flex; flex-direction: column-reverse; align-items: center; gap: 8px; }
@@ -2145,23 +2145,25 @@ const K = (() => {
   const room = $("k-room");
   let st = null, run = 0, raf = 0;
   const STATIONS = [0, 2, 3, 4, 4, 5, 6, 7, 7, 8, 8, 8, 8];
-  const kindsFor = l => l < 2 ? 1 : l < 4 ? 2 : l < 7 ? 3 : 4;
-  const railsFor = l => l < 2 ? 1 : l < 6 ? 2 : 3;
+  const kindsFor = l => l < 4 ? 2 : l < 7 ? 3 : 4;
+  const railsFor = l => l < 2 ? [2] : l < 3 ? [2, 1] : l < 6 ? [2, 2] : [2, 2, 2];   // places par rail : les commandes arrivent une à une
   const glassesFor = l => l < 2 ? 1 : l < 6 ? 2 : 3;
   const dosesFor = l => l < 5 ? 2 : 3;
-  const targetFor = l => Math.round(5.5 + 3.5 * l);
+  const TARGETS = [0, 6, 12, 16, 20, 23, 27, 30, 33, 36, 39, 42, 45], targetFor = l => TARGETS[l];
+  const gapFor = l => Math.max(3000, 8000 - 450 * l);          // délai entre deux nouvelles commandes
   const fillFor = n => 6500 + 2500 * Math.max(1, n);          // plus le verre est grand, plus il est long à remplir
   const key = a => [...a].sort().join("");
-  function ticket() {
-    const kinds = INGS.slice(0, kindsFor(st.level));
-    return Array.from({ length: glassesFor(st.level) }, () => order(kinds));
+  function arrive() {
+    const free = st.tickets.map((t, i) => [i, st.caps[i] - t.length]).filter(x => x[1] > 0);
+    if (!free.length) return false;
+    st.tickets[free[rnd(0, free.length - 1)][0]].push(order()); paintTickets(); return true;
   }
   function order(kinds) {
     kinds = kinds || INGS.slice(0, kindsFor(st.level));
     return { ing: Array.from({ length: rnd(1, dosesFor(st.level)) }, () => kinds[rnd(0, kinds.length - 1)]).sort(), done: false };
   }
   function paintTickets() {
-    $("k-tickets").innerHTML = st.tickets.map(t => `<div class="ticket">${t.map(g => `<span class="${g.done ? "done" : ""}">${g.ing.join("")}</span>`).join("")}</div>`).join("");
+    $("k-tickets").innerHTML = st.tickets.map((t, i) => `<div class="ticket${t.length ? "" : " empty"}" style="min-width:${st.caps[i] * 40 + 12}px">${t.map(g => `<span>${g.ing.join("")}</span>`).join("")}</div>`).join("");
   }
   function say(t, c) { const e = $("k-status"); e.textContent = t; e.className = "status" + (c ? " " + c : ""); }
   function paint() {
@@ -2200,7 +2202,7 @@ const K = (() => {
     const last = scores.find(s => s.game === "plein" && s.next);
     const level = last ? Math.max(1, Math.min(MAXL, last.next)) : 1;
     st = { level, score: 0, served: 0, wasted: 0, left: START, playing: false, tickets: [] };
-    st.tickets = Array.from({ length: railsFor(level) }, ticket);
+    st.caps = railsFor(level); st.tickets = st.caps.map(() => []); st.nextAt = START - 3000;
     build(); paintTickets(); paint();
     $("k-start-wrap").hidden = false; $("k-end").hidden = true;
     say(`Niveau ${level} : sers ${targetFor(level)} verres pour débloquer le suivant.`);
@@ -2213,6 +2215,7 @@ const K = (() => {
       if (my !== run) return;
       const dt = now - last; last = now; st.left -= dt;
       for (const g of st.glasses) if (g.t0 != null) g.e += dt;
+      if (st.left <= st.nextAt) st.nextAt = arrive() ? st.left - gapFor(st.level) * (0.8 + Math.random() * 0.4) : st.left - 500;
       draw(); paint();
       if (st.left <= 0) return end();
       raf = requestAnimationFrame(loop);
@@ -2232,16 +2235,16 @@ const K = (() => {
       else { g.dur = fillFor(g.ing.length); g.t0 = 1; g.e = 0; selectNext(); }
     } else if (s === "ready") {
       const k = key(g.ing); let hit = null;
-      for (const t of st.tickets) { hit = t.find(x => key(x.ing) === k); if (hit) { t[t.indexOf(hit)] = order(); break; } }
+      for (const t of st.tickets) { hit = t.find(x => key(x.ing) === k); if (hit) { t.splice(t.indexOf(hit), 1); break; } }
       if (hit) { st.served++; st.score += 1000; paintTickets(); say("Servi ! +1000", "good"); if (st.served >= targetFor(st.level)) { draw(); paint(); return end(); } }
-      else { st.wasted++; say("Personne n'a commandé ce verre.", "bad"); }
+      else { say("Aucune commande pour ce verre pour l'instant.", "bad"); draw(); return; }
       empty(g); st.sel = g.i;
     } else if (s === "over") { st.wasted++; empty(g); st.sel = g.i; say("Verre jeté.", "bad"); }
     draw(); paint();
   }
   function end() {
     cancelAnimationFrame(raf); st.playing = false; run++;
-    const ok = st.served >= targetFor(st.level), bonus = ok ? 60 * Math.floor(Math.max(0, st.left) / 1000) : 0;
+    const ok = st.served >= targetFor(st.level), bonus = ok ? 20 * Math.floor(Math.max(0, st.left) / 1000) : 0;
     st.score += bonus; paint();
     const prevBest = bestFor("plein");
     const next = ok ? Math.min(MAXL, st.level + 1) : st.level;
