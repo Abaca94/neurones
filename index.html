@@ -219,6 +219,14 @@ button.game:active { transform: scale(0.985); }
 .fold-cell.good { background: var(--good); }
 .fold-cell.bad { background: var(--bad); }
 .fold-cell.clash { outline: 3px solid var(--bad); outline-offset: -3px; }
+.fold-cell.sp { position: relative; }
+.fold-cell.sp::before { content: ""; position: absolute; inset: 20%; background: var(--c); border-radius: 6px; }
+.fold-cell.spr::before { right: -1px; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.fold-cell.spl::before { left: -1px; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.fold-cell.spb::before { bottom: -1px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.fold-cell.spt::before { top: -1px; border-top-left-radius: 0; border-top-right-radius: 0; }
+.fold-own { position: absolute; display: flex; align-items: center; justify-content: center; pointer-events: none; transition: left .08s, top .08s; z-index: 1; }
+.fold-own svg { width: 80%; height: 80%; fill: var(--bad); stroke: var(--surface); stroke-width: 1.6; }
 .meter { height: 10px; border-radius: 5px; background: var(--tile); overflow: hidden; margin-top: 8px; }
 .meter i { display: block; height: 100%; width: 50%; background: var(--accent); transition: width .2s; }
 
@@ -1865,7 +1873,19 @@ const F = (() => {
       const [pr, pc] = map(owner, r, c);
       return { owner, r: pr, c: pc, tr: r, tc: c, shape: rnd(0, SHAPES.length - 1), tint: pick(TINTS) };
     });
-    return { R, C, pos, diag, target, items, free: cells.slice(0, free) };
+    // Dès le niveau 3, certains objets occupent deux cases voisines du même volet.
+    if (level >= 3) {
+      const used = new Set();
+      items.forEach((a, i) => {
+        if (used.has(i) || Math.random() < 0.45) return;
+        const j = items.findIndex((b, k) => k !== i && !used.has(k) && b.owner === a.owner && Math.abs(b.r - a.r) + Math.abs(b.c - a.c) === 1);
+        if (j < 0) return;
+        used.add(i); used.add(j); const b = items[j]; b.tint = a.tint;
+        if (a.r === b.r) { (a.c < b.c ? a : b).sp = "spr"; (a.c < b.c ? b : a).sp = "spl"; }
+        else { (a.r < b.r ? a : b).sp = "spb"; (a.r < b.r ? b : a).sp = "spt"; }
+      });
+    }
+    return { R, C, pos, diag, target, items, free: cells.slice(0, free), own: [rnd(0, R - 1), rnd(0, C - 1)] };
   }
 
   function draw(pz) {
@@ -1880,13 +1900,21 @@ const F = (() => {
       let h = "";
       for (let r = 0; r < pz.R; r++) for (let c = 0; c < pz.C; c++) {
         const it = pz.items.find(t => t.owner === i && t.r === r && t.c === c);
-        const inner = it ? `<svg viewBox="0 0 24 24" fill="currentColor" style="color:${it.tint}">${SHAPES[it.shape]}</svg>` : "";
+        const inner = it && !it.sp ? `<svg viewBox="0 0 24 24" fill="currentColor" style="color:${it.tint}">${SHAPES[it.shape]}</svg>` : "";
+        const sp = it && it.sp ? ` sp ${it.sp}" style="--c:${it.tint}` : "";
         h += i === pz.target
-          ? `<button type="button" class="fold-cell" data-r="${r}" data-c="${c}" aria-label="Case ${r + 1}, ${c + 1}">${inner}</button>`
-          : `<div class="fold-cell" data-p="${i}" data-r="${r}" data-c="${c}">${inner}</div>`;
+          ? `<button type="button" class="fold-cell${sp}" data-r="${r}" data-c="${c}" aria-label="Case ${r + 1}, ${c + 1}">${inner}</button>`
+          : `<div class="fold-cell${sp}" data-p="${i}" data-r="${r}" data-c="${c}">${inner}</div>`;
       }
+      if (i === pz.target) h += `<div class="fold-own" aria-hidden="true" style="width:${s}px;height:${s}px"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 5.7-8 11-8 11z"/></svg></div>`;
       return `<div class="fold-panel${i === pz.target ? " target" : ""}" style="left:${p[0] * (pw + gap)}px;top:${p[1] * (ph + gap)}px;width:${pw}px;height:${ph}px;grid-template-columns:repeat(${pz.C},1fr);grid-template-rows:repeat(${pz.R},1fr)">${h}</div>`;
     }).join("");
+    pz.s = s; moveOwn(pz, ...pz.own);
+  }
+  // Ton objet (le cœur) suit le pointeur dans le volet doré ; on le pose sur la case qui restera libre.
+  function moveOwn(pz, r, c) {
+    const el = board.querySelector(".fold-own"); if (!el) return;
+    pz.own = [r, c]; el.style.left = c * pz.s + "px"; el.style.top = r * pz.s + "px";
   }
 
   const fastFor = l => 2200 + 450 * l;
@@ -1907,7 +1935,7 @@ const F = (() => {
     st = { score: 0, level, top: level, meter: 0.5, count: 0, left: START, playing: false, busy: false, pz: null };
     board.innerHTML = ""; board.style.height = "0px"; paint();
     $("f-start-wrap").hidden = false; $("f-end").hidden = true;
-    say(`Tu es au niveau ${st.level} sur ${MAXL}. Les volets vont se replier sur le volet doré : touche une case dorée qui restera libre. Réponds vite pour monter de niveau.`);
+    say(`Tu es au niveau ${st.level} sur ${MAXL}. Les volets vont se replier sur le volet doré : pose ton cœur sur la case dorée qui restera libre. Réponds vite pour monter de niveau.`);
   }
   function stop() { run++; clearInterval(tick); }
   function start() {
@@ -1961,7 +1989,8 @@ const F = (() => {
     addScore({ game: "pli", score: st.score, correct: st.count, next: st.level, at: new Date().toISOString() });
   }
 
-  board.addEventListener("pointerdown", e => { const b = e.target.closest("button.fold-cell"); if (b) { e.preventDefault(); answer(b); } });
+  board.addEventListener("pointermove", e => { const b = e.target.closest("button.fold-cell"); if (b && st && st.pz && !st.busy) moveOwn(st.pz, +b.dataset.r, +b.dataset.c); });
+  board.addEventListener("pointerdown", e => { const b = e.target.closest("button.fold-cell"); if (b) { e.preventDefault(); if (st && st.pz && !st.busy) moveOwn(st.pz, +b.dataset.r, +b.dataset.c); answer(b); } });
   $("f-start").addEventListener("click", start);
   $("f-again").addEventListener("click", () => { reset(); start(); });
   $("f-home").addEventListener("click", () => go("home"));
