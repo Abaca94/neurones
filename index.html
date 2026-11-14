@@ -197,7 +197,11 @@ button.game:active { transform: scale(0.985); }
 /* Au tableau */
 .board2 { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 14px; display: flex; flex-direction: column; gap: 14px; touch-action: manipulation; }
 .board2 p { text-align: center; font-weight: 700; font-family: var(--font-display); font-size: 1.1rem; }
-.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cards { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bmark { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font: 800 2.6rem var(--font-display); pointer-events: none; opacity: 0; }
+.bmark.on { animation: bmark .5s both; }
+.bmark.good { color: var(--good); } .bmark.bad { color: var(--bad); }
+@keyframes bmark { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.5); } 25%, 70% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; } }
 .cardb {
   font-family: var(--font-display); font-weight: 700; font-size: clamp(1.2rem, 6vw, 2rem); color: var(--accent);
   background: var(--bg); border: 2px solid var(--line); border-radius: 12px; min-height: 110px; padding: 8px; cursor: pointer;
@@ -272,6 +276,59 @@ button.game:active { transform: scale(0.985); }
 .kmini b { width: 8px; height: 26px; background: var(--bg); border: 1px solid var(--muted); position: relative; overflow: hidden; border-radius: 2px; }
 .kmini b i { position: absolute; left: 0; right: 0; bottom: 0; background: var(--glow); }
 .kmini b.go i { background: var(--good); } .kmini b.no i { background: var(--bad); }
+/* Voisins d'accord */
+.wlevels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 420px; width: 100%; margin: 0 auto; }
+.wlevels button { font: inherit; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--fg); padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.wlevels button b { font: 800 1.3rem var(--font-display); }
+.wlevels button small { color: var(--muted); font-size: .7rem; }
+.wlevels button.cur { border: 2px solid var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+.wlevels button:disabled { opacity: .4; cursor: default; }
+.wplay { position: relative; display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.wside { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 150px; text-align: center; }
+.wside small { color: var(--muted); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+.wrule { font-size: .8rem; color: var(--muted); margin: 0; line-height: 1.4; }
+.wrule b { color: var(--fg); }
+.wnext { width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; }
+.wnext .wt { width: 100%; height: 100%; animation: wpop .25s both; }
+.wboard { display: grid; gap: 4px; padding: 10px; border-radius: 16px; background: var(--fg); width: min(100%, 400px); box-sizing: border-box; }
+.wcell { aspect-ratio: 1; border: 0; padding: 0; margin: 0; background: transparent; display: flex; align-items: center; justify-content: center; border-radius: 8px; min-width: 0; cursor: default; position: relative; }
+.wcell.slot { cursor: pointer; }
+.wcell.slot::after { content: ""; position: absolute; border: 2px dashed color-mix(in srgb, var(--surface) 55%, transparent); border-radius: 999px; }
+.wcell.slot.h::after { inset: 22% 4%; }
+.wcell.slot.v::after { inset: 4% 22%; }
+.wcell.slot:hover::after { border: 3px solid var(--surface); }
+.wt { position: relative; display: flex; align-items: center; justify-content: center; border-radius: 999px; box-shadow: inset 0 -3px 0 rgba(0,0,0,.18); }
+.wt.h { width: 92%; height: 56%; }
+.wt.v { width: 56%; height: 92%; }
+.wt svg { width: 46%; height: 46%; }
+.wt.h svg { width: auto; height: 70%; }
+.wt.v svg { width: 70%; height: auto; }
+.wt.lock { outline: 3px solid var(--surface); outline-offset: -5px; }
+.wt.lock::before { content: "🔒"; position: absolute; font-size: .7rem; top: 2px; right: 2px; }
+.wt.gone { animation: wgone .35s both; }
+.wcell.bad { animation: wshake .3s; }
+@keyframes wpop { from { transform: scale(.4); opacity: 0; } }
+@keyframes wgone { to { transform: scale(1.3); opacity: 0; } }
+@keyframes wshake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+/* Au fil de l'eau */
+.stream { position: relative; width: 100%; max-width: 440px; margin: 0 auto; aspect-ratio: 4 / 5; border-radius: 16px; overflow: hidden; background: linear-gradient(180deg, #5aa9cc, #3f8db4); touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.stream::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(170deg, transparent 0 38px, rgba(255,255,255,.07) 38px 41px); animation: rflow 3s linear infinite; }
+.stream .bank { position: absolute; top: 0; bottom: 0; width: 9%; background: radial-gradient(circle at 30% 20%, #6b8f5e 0 30%, transparent 31%) 0 0 / 100% 70px, linear-gradient(90deg, #4b6e47, #5f8458); }
+.stream .bank.l { left: 0; border-right: 4px solid #8fb7c9; }
+.stream .bank.r { right: 0; border-left: 4px solid #8fb7c9; transform: scaleX(-1); }
+.critter { position: absolute; width: 27%; aspect-ratio: 1; margin: -13.5% 0 0 -13.5%; border: 0; padding: 0; background: transparent; cursor: pointer; animation: rrise .7s ease-out both; }
+.critter svg { width: 100%; height: 100%; overflow: visible; animation: rswim 2.4s ease-in-out infinite alternate; filter: drop-shadow(0 6px 3px rgba(0,30,60,.3)); }
+.critter.ok svg { filter: drop-shadow(0 0 6px #fff); }
+.critter.bad::after, .critter.ok::after { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 800 2.4rem var(--font-display); color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,.4); }
+.critter.ok::after { content: "✓"; }
+.critter.bad::after { content: "✕"; color: #ffd0d0; }
+.critter.was { outline: 3px dashed #fff; outline-offset: 2px; border-radius: 50%; }
+.critter.out { animation: rdive .4s ease-in both; }
+@keyframes rrise { from { transform: scale(.15); opacity: .4; } }
+@keyframes rdive { to { transform: scale(.2); opacity: 0; } }
+@keyframes rswim { from { transform: rotate(calc(var(--rot, 0deg) - 6deg)) translateY(2px); } to { transform: rotate(calc(var(--rot, 0deg) + 6deg)) translateY(-2px); } }
+@keyframes rflow { to { background-position: 0 82px; } }
+@media (prefers-reduced-motion: reduce) { .stream::before, .critter svg { animation: none; } }
 .sync-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .sync-row input { flex: 1 1 200px; min-width: 0; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; }
 .sync-row .btn { flex: 0 0 auto; }
@@ -458,6 +515,7 @@ button.game:active { transform: scale(0.985); }
       <div class="cards">
         <button class="cardb" id="b-left" type="button" disabled>?</button>
         <button class="cardb" id="b-right" type="button" disabled>?</button>
+        <span class="bmark" id="b-mark" aria-hidden="true"></span>
       </div>
       <button class="equal" id="b-equal" type="button" disabled>Égal</button>
     </div>
@@ -602,6 +660,57 @@ button.game:active { transform: scale(0.985); }
   </section>
 
   <!-- Même symbole -->
+  <section id="voisins" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="topbar">
+      <button class="back" id="w-back" type="button">← Accueil</button>
+      <span class="eyebrow">Adaptabilité · changer de règle</span>
+    </div>
+    <h2>Voisins d'accord</h2>
+    <div class="stats"><div class="stat"><small>Niveau</small><b class="num" id="w-level">1</b></div><div class="stat"><small>Cases</small><b class="num" id="w-count">0/12</b></div><div class="stat"><small>Temps</small><b class="num" id="w-time">60</b></div></div>
+    <p class="status" id="w-status" aria-live="polite">Choisis un niveau.</p>
+    <div class="wlevels" id="w-levels"></div>
+    <div class="wplay" id="w-play" hidden>
+      <div class="wside">
+        <small>Tuile à poser</small>
+        <div class="wnext" id="w-next"></div>
+        <p class="wrule"><b>↕</b> dessus / dessous : même <b>couleur</b><br><b>↔</b> gauche / droite : même <b>symbole</b></p>
+      </div>
+      <div class="wboard" id="w-board"></div>
+    </div>
+    <div class="panel" id="w-end" hidden>
+      <span class="eyebrow">Temps écoulé</span>
+      <div class="big num" id="w-final">0</div>
+      <p id="w-end-detail"></p>
+      <p class="record" id="w-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="w-again" type="button">Choisir un niveau</button>
+        <button class="btn secondary" id="w-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="fil" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="topbar">
+      <button class="back" id="r-back" type="button">← Accueil</button>
+      <span class="eyebrow">Rapidité · mémoire de travail</span>
+    </div>
+    <h2>Au fil de l'eau</h2>
+    <div class="stats"><div class="stat"><small>Mètres</small><b class="num" id="r-m">0</b></div><div class="stat"><small>Temps</small><b class="num" id="r-time">90</b></div><div class="stat"><small>Score</small><b class="num" id="r-score">0</b></div></div>
+    <p class="status" id="r-status" aria-live="polite">Retiens les animaux et touche celui que tu as vu au tour d'avant.</p>
+    <div class="stream" id="r-stream"><div class="bank l"></div><div class="bank r"></div></div>
+    <div class="actions" id="r-start-wrap"><button class="btn" id="r-start" type="button">Commencer</button></div>
+    <div class="panel" id="r-end" hidden>
+      <span class="eyebrow">Temps écoulé</span>
+      <div class="big num" id="r-final">0</div>
+      <p id="r-end-detail"></p>
+      <p class="record" id="r-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="r-again" type="button">Rejouer</button>
+        <button class="btn secondary" id="r-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
   <section id="vapeur" hidden style="display:flex;flex-direction:column;gap:18px">
     <div class="topbar">
       <button class="back" id="v-back" type="button">← Accueil</button>
@@ -657,6 +766,10 @@ const GAMES = [
     icon: '<svg viewBox="0 0 26 26"><circle cx="8" cy="9" r="5" fill="var(--glow)"/><rect x="15" y="4" width="9" height="9" rx="2" fill="var(--accent)"/><path d="M13 15l5 9H8z" fill="var(--muted)" opacity=".5"/></svg>' },
   { id: "plein", name: "Plein à ras", skill: "Attention partagée", desc: "Remplis plusieurs verres à la fois et sers-les au bon moment.", ready: true,
     icon: '<svg viewBox="0 0 26 26"><path d="M4 5h7l-1 16H5z" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linejoin="round"/><path d="M5 12h5.5l-.5 9H5.5z" fill="var(--glow)"/><path d="M15 5h7l-1 16h-5z" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linejoin="round"/><path d="M15.3 8h6.4l-.7 13h-5z" fill="var(--accent)"/></svg>' },
+  { id: "voisins", name: "Voisins d'accord", skill: "Adaptabilité", desc: "Pose chaque tuile : même couleur dessus-dessous, même symbole à côté.", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><rect x="2" y="9" width="11" height="7" rx="3.5" fill="#e2604a"/><rect x="15.5" y="2" width="7" height="11" rx="3.5" fill="#169a93"/><rect x="15.5" y="14" width="7" height="11" rx="3.5" fill="#169a93"/><circle cx="7.5" cy="12.5" r="1.8" fill="#fff"/></svg>' },
+  { id: "fil", name: "Au fil de l'eau", skill: "Rapidité · mémoire", desc: "Touche l'animal de la rivière que tu as vu au tour d'avant.", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><rect x="1" y="1" width="24" height="24" rx="6" fill="#4f9fc4"/><path d="M13 19l-4 5h8z" fill="rgba(0,0,0,.25)"/><ellipse cx="13" cy="12" rx="4" ry="8" fill="#e2604a"/></svg>' },
   { id: "tableau", name: "Le plus grand", skill: "Maths", desc: "Deux calculs : lequel donne la plus grande valeur ?", ready: true,
     icon: '<svg viewBox="0 0 26 26"><text x="13" y="17" text-anchor="middle" font-size="10" font-weight="700" font-family="sans-serif" fill="var(--accent)">7×3</text></svg>' },
   { id: "vapeur", name: "Même symbole", skill: "Vitesse", desc: "Le symbole est-il le même que le précédent ? Réponds vite.", ready: true,
@@ -842,7 +955,7 @@ function renderTrend() {
 function go(view) { location.hash = view === "home" ? "" : view; show(); }
 function show() {
   const h = location.hash.slice(1);
-  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli", "motif", "unique", "plein"];
+  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli", "motif", "unique", "plein", "voisins", "fil"];
   const v = VIEWS.includes(h) ? h : "home";
   for (const id of ["home", ...VIEWS]) document.getElementById(id).hidden = id !== v;
   if (v === "courant") C.reset(); else C.stop();
@@ -853,6 +966,8 @@ function show() {
   if (v === "motif") M.reset(); else M.stop();
   if (v === "unique") U.reset(); else U.stop();
   if (v === "plein") K.reset(); else K.stop();
+  if (v === "voisins") W.reset(); else W.stop();
+  if (v === "fil") R.reset(); else R.stop();
   if (v === "trains") T.reset(); else T.stop();
   if (v === "grille") G.reset(); else G.stop();
   if (v === "vapeur") V.reset(); else V.stop();
@@ -1568,7 +1683,7 @@ const P = (() => {
 /* ---------- Au tableau ---------- */
 const B = (() => {
   const $ = id => document.getElementById(id);
-  const START = 45000, BONUS = 3000, DOTS = 5;
+  const START = 45000, DOTS = 5, bonusFor = m => Math.max(3, 10 - m) * 1000;
   const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
   const pick = a => a[Math.floor(Math.random() * a.length)];
   let st = null, run = 0, tick = null;
@@ -1578,18 +1693,34 @@ const B = (() => {
     add: v => { if (v < 2) return `${v}`; const a = rnd(1, v - 1); return `${a} + ${v - a}`; },
     sub: v => { const b = rnd(1, 12); return `${v + b} − ${b}`; },
     mul: v => { const f = []; for (let a = 2; a <= 12; a++) if (v % a === 0 && v / a >= 2 && v / a <= 12) f.push(a); if (!f.length) return MAKE.add(v); const a = pick(f); return `${a} × ${v / a}`; },
-    div: v => { const d = rnd(2, 9); return `${v * d} ÷ ${d}`; },
+    div: v => { const d = rnd(2, 5); return `${v * d} ÷ ${d}`; },
+    par: v => {
+      for (let t = 0; t < 30; t++) {
+        const f = rnd(0, 5);
+        if (f === 0 && v > 3) { const c = rnd(1, v - 2), r = v - c, a = rnd(1, r - 1); return `(${a} + ${r - a}) + ${c}`; }
+        if (f === 1 && v > 2) { const c = rnd(1, v - 1), b = rnd(1, 9); return `(${v - c + b} − ${b}) + ${c}`; }
+        if (f === 2) { const c = rnd(1, 9), r = v + c, a = rnd(1, r - 1); return `(${a} + ${r - a}) − ${c}`; }
+        if (f === 3 || f === 4) {
+          const c = f === 3 ? rnd(1, 10) : rnd(1, Math.max(1, v - 4)), r = f === 3 ? v + c : v - c;
+          const fs = []; for (let a = 2; a <= 12; a++) if (r % a === 0 && r / a >= 2 && r / a <= 15) fs.push(a);
+          if (fs.length) { const a = pick(fs); return f === 3 ? `(${r / a} × ${a}) − ${c}` : `(${r / a} × ${a}) + ${c}`; }
+        }
+        if (f === 5) { const c = rnd(2, 3), r = v * c; if (r <= 60) { const a = rnd(1, r - 1); return `(${a} + ${r - a}) ÷ ${c}`; } }
+      }
+      return MAKE.add(v);
+    },
     mix: v => { if (v < 6) return MAKE.add(v); const a = rnd(2, 9), b = rnd(2, Math.max(2, Math.floor((v - 1) / a))); return a * b >= v ? MAKE.sub(v) : `${a} × ${b} + ${v - a * b}`; },
   };
+  // D'après Au tableau : ×1 nombres seuls, ×2 à ×4 une opération, dès ×5 des parenthèses. Valeurs jusqu'à 30 environ.
   const LEVELS = [
-    [["num"], ["num"]], [["num"], ["add", "sub"]], [["add", "sub"], ["add", "sub"]],
-    [["mul", "num", "add"], ["mul", "sub"]], [["mul", "div"], ["mul", "div", "add"]], [["mix", "div", "mul"], ["mix", "mul", "sub"]],
+    [["num"], ["num"]], [["num"], ["add", "sub", "div"]], [["num", "add", "sub"], ["add", "sub", "mul", "div"]],
+    [["add", "sub", "mul", "div"], ["add", "sub", "mul", "div", "num"]], [["par"], ["num", "add", "sub", "mul", "div"]], [["par", "add", "mul"], ["par", "div", "sub"]],
   ];
   function problem() {
     const L = LEVELS[Math.min(st.level, LEVELS.length - 1)];
-    let v = st.level >= 3 ? rnd(2, 9) * rnd(2, 9) : rnd(6, 20 + st.level * 10);
+    let v = rnd(5, Math.min(30, 20 + st.level * 3));
     let w = v;
-    if (Math.random() > (st.level ? 0.22 : 0)) { do { w = v + pick([-4, -3, -2, -1, 1, 2, 3, 4]); } while (w < 2); }
+    if (Math.random() > 0.15) { do { w = v + pick([-4, -3, -2, -1, 1, 2, 3, 4]); } while (w < 2); }
     let a = MAKE[pick(L[0])](v), b = MAKE[pick(L[1])](w);
     if (Math.random() < 0.5) { [a, b] = [b, a]; [v, w] = [w, v]; }
     st.answer = v > w ? "left" : v < w ? "right" : "equal";
@@ -1625,10 +1756,11 @@ const B = (() => {
   function answer(a) {
     if (!st || !st.playing) return;
     unmark();
-    const ok = a === st.answer;
+    const ok = a === st.answer, mk = $("b-mark");
+    mk.textContent = ok ? "✓" : "✕"; mk.className = "bmark " + (ok ? "good" : "bad"); void mk.offsetWidth; mk.classList.add("on");
     if (ok) {
       st.count++; st.score += 100 * st.mult; st.dots++;
-      if (st.dots >= DOTS) { st.dots = 0; st.mult++; st.level++; st.left += BONUS; say("Bonus ×" + st.mult + " et 3 secondes de plus !"); }
+      if (st.dots >= DOTS) { st.dots = 0; st.mult++; st.level++; const s = bonusFor(st.mult); st.left += s; say("Bonus ×" + st.mult + " et " + s / 1000 + " secondes de plus !"); }
       else say("Quelle est la valeur la plus grande ?");
     } else {
       st.dots = 0;
@@ -2077,6 +2209,275 @@ const M = (() => {
   $("m-again").addEventListener("click", () => { reset(); $("m-start-wrap").hidden = true; trial(true); });
   $("m-home").addEventListener("click", () => go("home"));
   $("m-back").addEventListener("click", () => go("home"));
+  return { reset, stop };
+})();
+
+/* ---------- Voisins d'accord ---------- */
+const W = (() => {
+  const $ = id => document.getElementById(id);
+  const TARGETS = [12, 18, 25, 30, 36, 42, 48, 54, 60, 66, 72, 78], DUR = 60000;
+  const COLORS = ["#e2604a", "#169a93", "#e0ad1f"];
+  const SYMS = [
+    '<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="6.5" fill="none" stroke="#fff" stroke-width="3.2"/></svg>',
+    '<svg viewBox="0 0 20 20"><path d="M10 3v14M3 10h14" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/></svg>',
+    '<svg viewBox="0 0 20 20"><circle cx="10" cy="3.5" r="2.6" fill="#fff"/><circle cx="16.5" cy="10" r="2.6" fill="#fff"/><circle cx="10" cy="16.5" r="2.6" fill="#fff"/><circle cx="3.5" cy="10" r="2.6" fill="#fff"/></svg>',
+  ];
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const rnd = n => Math.floor(Math.random() * n);
+  const shapeOf = (r, c) => (r + c) % 2 ? "v" : "h";
+  const NB = [[-1, 0, "col"], [1, 0, "col"], [0, -1, "sym"], [0, 1, "sym"]];
+  let st = null, run = 0, tick = null;
+
+  const unlocked = () => Math.min(TARGETS.length, 1 + scores.filter(s => s.game === "voisins" && s.passed).reduce((m, s) => Math.max(m, s.level || 0), 0));
+  const tileHtml = (t, sh) => `<span class="wt ${sh}${t.lock ? " lock" : ""}" style="background:${COLORS[t.col]}">${SYMS[t.sym]}</span>`;
+  function say(t, c) { const e = $("w-status"); e.textContent = t; e.className = "status" + (c ? " " + c : ""); }
+  function paint() {
+    $("w-level").textContent = st.level;
+    $("w-count").textContent = st.cases + "/" + TARGETS[st.level - 1];
+    $("w-time").textContent = Math.ceil(Math.max(0, st.left) / 1000);
+  }
+  function levels() {
+    const top = unlocked(), box = $("w-levels");
+    box.innerHTML = TARGETS.map((t, i) => `<button type="button" data-l="${i + 1}" ${i + 1 > top ? "disabled" : ""} class="${i + 1 === top ? "cur" : ""}"><b>${i + 1 > top ? "🔒" : t}</b><small>niveau ${i + 1}</small></button>`).join("");
+    box.hidden = false;
+  }
+  function reset() {
+    run++; clearInterval(tick);
+    st = { level: unlocked(), cases: 0, left: DUR, playing: false, board: null, R: 0, C: 0, next: null, size: 0 };
+    paint(); levels();
+    $("w-play").hidden = true; $("w-end").hidden = true;
+    say(`Touche la case en surbrillance pour commencer. Fais correspondre ${TARGETS[st.level - 1]} cases pour débloquer le niveau suivant.`);
+  }
+  function stop() { run++; clearInterval(tick); }
+
+  const at = (r, c) => r >= 0 && c >= 0 && r < st.R && c < st.C ? st.board[r][c] : null;
+  function newBoard() {
+    const L = st.level, k = st.size++;
+    st.R = Math.min(6, 3 + Math.floor((L + k) / 3)); st.C = Math.min(6, 3 + Math.floor((L + k + 1) / 3));
+    const lockP = L >= 4 ? Math.min(.15, .04 + .015 * L) : 0;
+    st.board = Array.from({ length: st.R }, () => Array.from({ length: st.C }, () => ({ col: rnd(3), sym: rnd(3), lock: Math.random() < lockP })));
+    const cells = st.R * st.C, holes = Math.max(2, Math.round(cells * .22));
+    for (let n = 0; n < holes; n++) st.board[rnd(st.R)][rnd(st.C)] = null;
+  }
+  function constraints(r, c) {
+    let col = null, sym = null, ok = true, n = 0;
+    for (const [dr, dc, k] of NB) {
+      const t = at(r + dr, c + dc); if (!t) continue; n++;
+      if (k === "col") { if (col !== null && col !== t.col) ok = false; col = t.col; }
+      else { if (sym !== null && sym !== t.sym) ok = false; sym = t.sym; }
+    }
+    return { ok: ok && n > 0, col, sym };
+  }
+  function nextTile() {
+    for (let tries = 0; tries < 4; tries++) {
+      const cand = [];
+      for (let r = 0; r < st.R; r++) for (let c = 0; c < st.C; c++) if (!st.board[r][c]) { const k = constraints(r, c); if (k.ok) cand.push([r, c, k]); }
+      const filled = st.board.flat().filter(Boolean).length;
+      if (cand.length && filled > 2) {
+        const [r, c, k] = cand[rnd(cand.length)];
+        st.next = { col: k.col ?? rnd(3), sym: k.sym ?? rnd(3), sh: shapeOf(r, c) };
+        return;
+      }
+      newBoard();
+    }
+  }
+  function draw() {
+    const b = $("w-board");
+    b.style.gridTemplateColumns = `repeat(${st.C}, 1fr)`;
+    let h = "";
+    for (let r = 0; r < st.R; r++) for (let c = 0; c < st.C; c++) {
+      const t = st.board[r][c], sh = shapeOf(r, c);
+      const slot = !t && st.playing && st.next && sh === st.next.sh && [...NB].some(([dr, dc]) => at(r + dr, c + dc));
+      h += `<button type="button" class="wcell ${sh}${slot ? " slot" : ""}" data-r="${r}" data-c="${c}" aria-label="Case ${r + 1}-${c + 1}">${t ? tileHtml(t, sh) : ""}</button>`;
+    }
+    b.innerHTML = h;
+    $("w-next").innerHTML = st.next && st.playing ? tileHtml(st.next, st.next.sh) : "";
+  }
+  async function start(level) {
+    run++; const my = run;
+    st = { level, cases: 0, left: DUR, playing: false, size: 0, next: null };
+    $("w-levels").hidden = true; $("w-end").hidden = true; $("w-play").hidden = false;
+    newBoard(); nextTile(); paint(); draw();
+    say(`Objectif : ${TARGETS[level - 1]} cases en 60 secondes.`);
+    const c = document.createElement("div"); c.className = "mcount"; c.innerHTML = "<b>3</b>"; $("w-play").appendChild(c);
+    for (const k of [3, 2, 1]) { c.firstChild.textContent = k; await sleep(800); if (my !== run) { c.remove(); return; } }
+    c.remove();
+    st.playing = true; draw(); say("Pose la tuile dans une case de même forme.");
+    let last = performance.now();
+    tick = setInterval(() => {
+      if (my !== run) return clearInterval(tick);
+      const now = performance.now(); st.left -= now - last; last = now; paint();
+      if (st.left <= 0) end();
+    }, 100);
+  }
+  async function place(btn) {
+    if (!st || !st.playing || st.busy) return;
+    const r = +btn.dataset.r, c = +btn.dataset.c, t = st.next;
+    if (st.board[r][c]) return;
+    const bad = msg => { btn.classList.remove("bad"); void btn.offsetWidth; btn.classList.add("bad"); say(msg, "bad"); };
+    if (shapeOf(r, c) !== t.sh) return bad("Cette case n'a pas la même forme que la tuile.");
+    const near = NB.map(([dr, dc, k]) => [r + dr, c + dc, k]).filter(([y, x]) => at(y, x));
+    if (!near.length) return bad("Pose la tuile contre d'autres tuiles.");
+    const wrong = near.find(([y, x, k]) => at(y, x)[k] !== t[k]);
+    if (wrong) return bad(wrong[2] === "col" ? "Dessus et dessous : il faut la même couleur." : "À gauche et à droite : il faut le même symbole.");
+    const my = run; st.busy = true;
+    st.board[r][c] = { col: t.col, sym: t.sym }; st.next = null; draw();
+    const gone = [[r, c]];
+    for (const [y, x] of near) { const n = st.board[y][x]; if (n.lock) n.lock = false; else gone.push([y, x]); }
+    for (const [y, x] of gone) { const el = $("w-board").children[y * st.C + x].firstChild; if (el) el.classList.add("gone"); }
+    st.cases += gone.length; paint();
+    say(st.cases >= TARGETS[st.level - 1] ? "Objectif atteint ! Continue jusqu'à la fin." : "+" + gone.length * 1000, "good");
+    await sleep(320); if (my !== run) return;
+    for (const [y, x] of gone) st.board[y][x] = null;
+    nextTile(); st.busy = false; draw();
+  }
+  function end() {
+    clearInterval(tick); run++; st.playing = false;
+    const prevBest = bestFor("voisins"), score = st.cases * 1000, target = TARGETS[st.level - 1], passed = st.cases >= target;
+    $("w-play").hidden = true;
+    $("w-final").textContent = score;
+    $("w-end-detail").textContent = `Cases ${st.cases} au niveau ${st.level}. ` + (passed ? (st.level < TARGETS.length ? `Niveau ${st.level + 1} débloqué !` : "Dernier niveau réussi !") : `Il en fallait ${target} pour débloquer le niveau suivant.`);
+    $("w-end-record").hidden = !(score > prevBest && score > 0);
+    $("w-end").hidden = false; say("");
+    addScore({ game: "voisins", score, cases: st.cases, level: st.level, passed, at: new Date().toISOString() });
+  }
+  $("w-levels").addEventListener("click", e => { const b = e.target.closest("button"); if (b && !b.disabled) start(+b.dataset.l); });
+  $("w-board").addEventListener("pointerdown", e => { const b = e.target.closest(".wcell"); if (b) { e.preventDefault(); place(b); } });
+  $("w-again").addEventListener("click", reset);
+  $("w-home").addEventListener("click", () => go("home"));
+  $("w-back").addEventListener("click", () => go("home"));
+  return { reset, stop };
+})();
+
+/* ---------- Au fil de l'eau ---------- */
+const R = (() => {
+  const $ = id => document.getElementById(id);
+  const DUR = 90000, stream = $("r-stream");
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const rnd = n => Math.floor(Math.random() * n);
+  const E = '<circle cx="-3" cy="Y" r="1.3" fill="#1a1a1a"/><circle cx="3" cy="Y" r="1.3" fill="#1a1a1a"/>';
+  const eyes = y => E.replaceAll("Y", y);
+  const D = "rgba(0,0,0,.25)";
+  // Animaux vus du dessus, tête vers le haut. f = couleur principale.
+  const SPECIES = [
+    f => `<path d="M0 8L-7 17H7z" fill="${D}"/><ellipse cx="0" cy="-2" rx="6.5" ry="12" fill="${f}"/>${eyes(-9)}`,
+    f => `<ellipse cx="-11" cy="-6" rx="5" ry="2.6" fill="${D}" transform="rotate(-30 -11 -6)"/><ellipse cx="11" cy="-6" rx="5" ry="2.6" fill="${D}" transform="rotate(30 11 -6)"/><ellipse cx="-9" cy="9" rx="4" ry="2.2" fill="${D}" transform="rotate(30 -9 9)"/><ellipse cx="9" cy="9" rx="4" ry="2.2" fill="${D}" transform="rotate(-30 9 9)"/><circle cx="0" cy="-12" r="4" fill="${f}"/><circle cx="0" cy="1" r="10.5" fill="${f}"/><path d="M-6 1h12M0-6v14" stroke="${D}" stroke-width="1.4"/>${eyes(-13)}`,
+    f => `<path d="M-7 4q-8 4-9 12M7 4q8 4 9 12M-6-4q-6-2-8-8M6-4q6-2 8-8" stroke="${f}" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="0" cy="1" rx="9" ry="10" fill="${f}"/><circle cx="-5" cy="-8" r="3" fill="${f}"/><circle cx="5" cy="-8" r="3" fill="${f}"/>${eyes(-8.5)}`,
+    f => `<ellipse cx="0" cy="4" rx="8.5" ry="11" fill="${f}"/><path d="M-6 6q6 6 12 0" stroke="${D}" stroke-width="1.6" fill="none"/><ellipse cx="0" cy="-15" rx="2.6" ry="2" fill="#e8a33a"/><circle cx="0" cy="-9" r="5" fill="${f}"/>${eyes(-10)}`,
+    f => `<path d="M-3 12l-6 6M3 12l6 6" stroke="${D}" stroke-width="3.2" stroke-linecap="round"/><ellipse cx="-8" cy="1" rx="4" ry="2" fill="${D}" transform="rotate(35 -8 1)"/><ellipse cx="8" cy="1" rx="4" ry="2" fill="${D}" transform="rotate(-35 8 1)"/><ellipse cx="0" cy="0" rx="7" ry="13.5" fill="${f}"/>${eyes(-8)}`,
+    f => `<path d="M0 6q4 8-2 14" stroke="${f}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M-3-4l-6-3M3-4l6-3M-3 5l-6 3M3 5l6 3" stroke="${f}" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="0" cy="0" rx="3.8" ry="9" fill="${f}"/><ellipse cx="0" cy="-10" rx="4.5" ry="3.6" fill="${f}"/><path d="M0-5v11" stroke="${D}" stroke-width="1.2" stroke-dasharray="1.5 1.5"/>${eyes(-11)}`,
+    f => `<rect x="-5" y="9" width="10" height="11" rx="4" fill="${D}"/><ellipse cx="0" cy="1" rx="9.5" ry="11" fill="${f}"/><circle cx="0" cy="-10" r="4.6" fill="${f}"/><path d="M-10-14l20 3" stroke="#6b3d1f" stroke-width="1.8" stroke-linecap="round"/>${eyes(-11)}`,
+    f => `<path d="M0 6v14" stroke="${D}" stroke-width="1.8" stroke-linecap="round"/><path d="M0-12L16 0 0 8-16 0z" fill="${f}" stroke-linejoin="round"/><circle cx="-4" cy="2" r="1.3" fill="${D}"/><circle cx="4" cy="2" r="1.3" fill="${D}"/>${eyes(-6)}`,
+  ];
+  const OWN = ["#e2604a", "#3f9d5b", "#e0a52a", "#8a5bd1", "#6c7a89", "#e07a2e", "#9b6a3a", "#2d6fb0"];
+  const CORAL = "#e2604a", BROWN = "#8a5a3c";
+  let st = null, run = 0, tick = null;
+
+  const pts = m => Math.round((90 + m / 10) / 10) * 10;
+  function kinds(m) {
+    const n = Math.min(SPECIES.length, 4 + Math.floor(m / 300));
+    const k = [];
+    for (let s = 0; s < n; s++) {
+      if (m < 400) k.push({ s, f: OWN[s] });
+      else { k.push({ s, f: CORAL }); if (m >= 1000) k.push({ s, f: BROWN }); }
+    }
+    return k.map((x, i) => ({ ...x, id: i }));
+  }
+  const svg = k => `<svg viewBox="-20 -20 40 40" aria-hidden="true">${SPECIES[k.s](k.f)}</svg>`;
+  function paint() {
+    $("r-m").textContent = st.m;
+    $("r-time").textContent = Math.ceil(Math.max(0, st.left) / 1000);
+    $("r-score").textContent = st.score;
+  }
+  function say(t, c) { const e = $("r-status"); e.textContent = t; e.className = "status" + (c ? " " + c : ""); }
+  function clear() { for (const e of [...stream.querySelectorAll(".critter")]) e.remove(); }
+  function reset() {
+    run++; clearInterval(tick); clear();
+    const last = scores.find(s => s.game === "fil" && typeof s.next === "number");
+    st = { m: last ? last.next : 0, score: 0, left: DUR, playing: false, prev: [], target: null, chain: 0, ok: 0, top: 0 };
+    st.top = st.m; paint();
+    $("r-start-wrap").hidden = false; $("r-end").hidden = true;
+    say("Retiens les animaux et touche celui que tu as vu au tour d'avant.");
+  }
+  function stop() { run++; clearInterval(tick); }
+  function spots(n) {
+    const grid = [];
+    for (let y = 0; y < 3; y++) for (let x = 0; x < 3; x++) grid.push([24 + x * 26, 20 + y * 30]);
+    for (let i = grid.length - 1; i > 0; i--) { const j = rnd(i + 1); [grid[i], grid[j]] = [grid[j], grid[i]]; }
+    return grid.slice(0, n).map(([x, y]) => [x + rnd(9) - 4, y + rnd(9) - 4]);
+  }
+  function round() {
+    const K = kinds(st.m);
+    const prevIds = st.prev.map(k => k.id);
+    let show;
+    if (!st.chain || !st.prev.length) {
+      const k = K[rnd(K.length)]; show = [k]; st.target = k.id;
+      say("Retiens cet animal, puis touche-le.");
+    } else {
+      const old = st.prev[rnd(st.prev.length)];
+      const pool = K.filter(k => !prevIds.includes(k.id));
+      const nu = pool[rnd(pool.length)];
+      show = Math.random() < .5 ? [old, nu] : [nu, old]; st.target = old.id;
+      say("Touche l'animal vu au tour d'avant, et retiens l'autre.");
+    }
+    st.prev = show;
+    const pos = spots(show.length);
+    show.forEach((k, i) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "critter"; b.dataset.id = k.id; b.setAttribute("aria-label", "Animal " + (i + 1));
+      b.style.left = pos[i][0] + "%"; b.style.top = pos[i][1] + "%"; b.style.animationDelay = i * 120 + "ms";
+      b.style.setProperty("--rot", (rnd(31) - 15) + "deg");
+      b.innerHTML = svg(k);
+      stream.appendChild(b);
+    });
+    st.input = true;
+  }
+  function start() {
+    run++; const my = run;
+    $("r-start-wrap").hidden = true; $("r-end").hidden = true;
+    st.playing = true; st.chain = 0; st.prev = []; clear(); round(); paint();
+    let last = performance.now();
+    tick = setInterval(() => {
+      if (my !== run) return clearInterval(tick);
+      const now = performance.now(); st.left -= now - last; last = now; paint();
+      if (st.left <= 0) end();
+    }, 100);
+  }
+  async function pick(b) {
+    if (!st || !st.playing || !st.input) return;
+    st.input = false; const my = run;
+    const ok = +b.dataset.id === st.target;
+    if (ok) {
+      st.score += pts(st.m); st.m += 50; st.top = Math.max(st.top, st.m); st.ok++; st.chain++;
+      b.classList.add("ok"); say("+" + pts(st.m - 50), "good");
+    } else {
+      st.m = Math.max(0, st.m - 100); st.chain = 0;
+      b.classList.add("bad");
+      const right = [...stream.querySelectorAll(".critter")].find(e => +e.dataset.id === st.target);
+      if (right) right.classList.add("was");
+      say("Raté : c'était celui-ci. On repart d'un seul animal.", "bad");
+    }
+    paint();
+    await sleep(ok ? 350 : 1100); if (my !== run) return;
+    for (const e of stream.querySelectorAll(".critter")) e.classList.add("out");
+    await sleep(300); if (my !== run) return;
+    clear(); if (st.playing) round();
+  }
+  function end() {
+    clearInterval(tick); run++; st.playing = false; st.input = false; clear();
+    const prevBest = bestFor("fil");
+    const next = Math.max(0, Math.floor((st.m - 250) / 50) * 50);
+    $("r-final").textContent = st.score;
+    $("r-end-detail").textContent = `${st.ok} bonne${st.ok > 1 ? "s" : ""} réponse${st.ok > 1 ? "s" : ""}, jusqu'à ${st.top} m. Tu repartiras à ${next} m.`;
+    $("r-end-record").hidden = !(st.score > prevBest && st.score > 0);
+    $("r-end").hidden = false; say("");
+    addScore({ game: "fil", score: st.score, meters: st.m, next, at: new Date().toISOString() });
+  }
+  stream.addEventListener("pointerdown", e => { const b = e.target.closest(".critter"); if (b) { e.preventDefault(); pick(b); } });
+  $("r-start").addEventListener("click", start);
+  $("r-again").addEventListener("click", () => { reset(); start(); });
+  $("r-home").addEventListener("click", () => go("home"));
+  $("r-back").addEventListener("click", () => go("home"));
   return { reset, stop };
 })();
 
