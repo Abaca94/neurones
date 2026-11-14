@@ -2147,15 +2147,18 @@ const K = (() => {
   const STATIONS = [0, 2, 3, 4, 4, 5, 6, 7, 7, 8, 8, 8, 8];
   const kindsFor = l => l < 2 ? 1 : l < 4 ? 2 : l < 7 ? 3 : 4;
   const railsFor = l => l < 2 ? 1 : l < 6 ? 2 : 3;
-  const glassesFor = l => l < 3 ? 1 : l < 6 ? 2 : 3;
+  const glassesFor = l => l < 2 ? 1 : l < 6 ? 2 : 3;
   const dosesFor = l => l < 5 ? 2 : 3;
   const targetFor = l => Math.round(5.5 + 3.5 * l);
-  const fillFor = n => 4500 + 2500 * Math.max(1, n);          // plus le verre est grand, plus il est long à remplir
+  const fillFor = n => 6500 + 2500 * Math.max(1, n);          // plus le verre est grand, plus il est long à remplir
   const key = a => [...a].sort().join("");
   function ticket() {
     const kinds = INGS.slice(0, kindsFor(st.level));
-    return Array.from({ length: rnd(1, glassesFor(st.level)) }, () =>
-      ({ ing: Array.from({ length: rnd(1, dosesFor(st.level)) }, () => kinds[rnd(0, kinds.length - 1)]).sort(), done: false }));
+    return Array.from({ length: glassesFor(st.level) }, () => order(kinds));
+  }
+  function order(kinds) {
+    kinds = kinds || INGS.slice(0, kindsFor(st.level));
+    return { ing: Array.from({ length: rnd(1, dosesFor(st.level)) }, () => kinds[rnd(0, kinds.length - 1)]).sort(), done: false };
   }
   function paintTickets() {
     $("k-tickets").innerHTML = st.tickets.map(t => `<div class="ticket">${t.map(g => `<span class="${g.done ? "done" : ""}">${g.ing.join("")}</span>`).join("")}</div>`).join("");
@@ -2229,8 +2232,8 @@ const K = (() => {
       else { g.dur = fillFor(g.ing.length); g.t0 = 1; g.e = 0; selectNext(); }
     } else if (s === "ready") {
       const k = key(g.ing); let hit = null;
-      for (const t of st.tickets) { hit = t.find(x => !x.done && key(x.ing) === k); if (hit) { hit.done = true; if (t.every(x => x.done)) { st.score += 50 * st.level * t.length; st.tickets[st.tickets.indexOf(t)] = ticket(); } break; } }
-      if (hit) { st.served++; st.score += 100 * st.level; paintTickets(); say("Servi !", "good"); }
+      for (const t of st.tickets) { hit = t.find(x => key(x.ing) === k); if (hit) { t[t.indexOf(hit)] = order(); break; } }
+      if (hit) { st.served++; st.score += 1000; paintTickets(); say("Servi ! +1000", "good"); if (st.served >= targetFor(st.level)) { draw(); paint(); return end(); } }
       else { st.wasted++; say("Personne n'a commandé ce verre.", "bad"); }
       empty(g); st.sel = g.i;
     } else if (s === "over") { st.wasted++; empty(g); st.sel = g.i; say("Verre jeté.", "bad"); }
@@ -2238,10 +2241,12 @@ const K = (() => {
   }
   function end() {
     cancelAnimationFrame(raf); st.playing = false; run++;
-    const prevBest = bestFor("plein"), ok = st.served >= targetFor(st.level);
+    const ok = st.served >= targetFor(st.level), bonus = ok ? 60 * Math.floor(Math.max(0, st.left) / 1000) : 0;
+    st.score += bonus; paint();
+    const prevBest = bestFor("plein");
     const next = ok ? Math.min(MAXL, st.level + 1) : st.level;
     $("k-final").textContent = st.score;
-    $("k-end-detail").textContent = `${st.served} verres servis au niveau ${st.level}, ${st.wasted} perdus. ` + (ok ? (next > st.level ? `Niveau ${next} débloqué !` : "Dernier niveau réussi !") : `Il en faut ${targetFor(st.level)} pour débloquer le niveau suivant.`);
+    $("k-end-detail").textContent = `${st.served} verres servis au niveau ${st.level}, ${st.wasted} perdus. ` + (bonus ? `Prime de temps : ${bonus}. ` : "") + (ok ? (next > st.level ? `Niveau ${next} débloqué !` : "Dernier niveau réussi !") : `Il en faut ${targetFor(st.level)} pour débloquer le niveau suivant.`);
     $("k-end-record").hidden = !(st.score > prevBest && st.score > 0);
     $("k-end").hidden = false; say("");
     addScore({ game: "plein", score: st.score, correct: st.served, next, at: new Date().toISOString() });
