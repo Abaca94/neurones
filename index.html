@@ -374,7 +374,9 @@ button.game:active { transform: scale(0.985); }
 .atray { width: 100%; height: 74%; display: flex; align-items: flex-end; justify-content: center; border-bottom: 6px solid #2c3a40; position: relative; }
 .atray svg { width: 70%; height: 90%; overflow: visible; animation: ain .2s ease-out both; }
 .atray.go svg { animation: ago .25s ease-in both; }
-.atray.no::after { content: "⛔"; position: absolute; bottom: -34px; font-size: 1.2rem; }
+.atray.no::after { content: "⛔"; position: absolute; bottom: -34px; font-size: 1.2rem; animation: ain .15s both; }
+.aplat.shake .atray { animation: ashake .35s ease-out; }
+@keyframes ashake { 0%, 100% { transform: none; } 20% { transform: translate(-3px, 1px); } 40% { transform: translate(3px, -1px); } 60% { transform: translate(-2px, 1px); } 80% { transform: translate(2px, 0); } }
 .atray.bad svg { animation: wshake .3s; }
 @keyframes ain { from { transform: translateY(18px); opacity: 0; } }
 @keyframes ago { to { transform: translateY(-40px) scale(.6); opacity: 0; } }
@@ -3187,6 +3189,16 @@ const A = (() => {
     const [x, y, w, h] = BOX[p.slot];
     return `<svg viewBox="${x - 4} ${y - 4} ${w + 8} ${h + 8}">${partSvg(p.slot, p.style, p.colors)}</svg>`;
   }
+  let audio = null;
+  function buzz() {
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      const t = audio.currentTime, o = audio.createOscillator(), g = audio.createGain();
+      o.type = "square"; o.frequency.setValueAtTime(220, t); o.frequency.linearRampToValueAtTime(150, t + 0.18);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.08, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+      o.connect(g).connect(audio.destination); o.start(t); o.stop(t + 0.25);
+    } catch (e) {}
+  }
   function makePiece() {
     const b = st.bot, empty = b.slots.filter(s => !b.filled[s]);
     if (empty.length && Math.random() < 0.68) { const s = empty[rnd(0, empty.length - 1)]; return { slot: s, style: b.style[s], colors: b.colors, good: true }; }
@@ -3217,13 +3229,20 @@ const A = (() => {
       for (const i of used) {
         const p = makePiece(); p.t0 = t0; st.trays[i] = p; st.seen++;
         const tr = $("a-p" + i); tr.className = "atray"; tr.innerHTML = pieceSvg(p);
+        const pl = tr.parentElement; pl.classList.remove("shake"); void pl.offsetWidth; pl.classList.add("shake");
       }
-      await sleep(win); if (my !== run || !st.playing) return;
+      // Pièce inadéquate : l'icône apparaît avec un son peu après l'arrivée.
+      await sleep(380); if (my !== run || !st.playing) return;
+      let warned = false;
+      for (const i of used) { const p = st.trays[i]; if (p && !p.good) { $("a-p" + i).classList.add("no"); warned = true; } }
+      if (warned) buzz();
+      await sleep(win - 380); if (my !== run || !st.playing) return;
       for (const i of used) {
         const p = st.trays[i]; if (!p) continue;
         st.trays[i] = null;
         const tr = $("a-p" + i); tr.innerHTML = "";
-        if (!p.good) { st.avoided++; st.wrong++; tr.classList.add("no"); setTimeout(() => tr.classList.remove("no"), 500); }
+        if (!p.good) { st.avoided++; st.wrong++; }
+        tr.classList.remove("no");
       }
       await sleep(260);
     }
@@ -3263,6 +3282,7 @@ const A = (() => {
   function stop() { run++; clearInterval(tick); }
   async function start() {
     const my = run;
+    try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); } catch (e) {}
     $("a-start-wrap").hidden = true; say("");
     const c = document.createElement("div"); c.className = "mcount"; c.innerHTML = "<b>3</b>"; $("a-shop").appendChild(c);
     for (const k of [3, 2, 1]) { c.firstChild.textContent = k; await sleep(800); if (my !== run) { c.remove(); return; } }
