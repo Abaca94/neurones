@@ -344,6 +344,51 @@ button.game:active { transform: scale(0.985); }
 .emark.on { animation: emark .45s both; }
 @keyframes emark { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.5); } 25%, 70% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; } }
 .ebox .mcount { z-index: 2; }
+/* Averse de calculs */
+.rain { position: relative; width: 100%; aspect-ratio: 4 / 3.4; border-radius: 16px; overflow: hidden; background: linear-gradient(180deg, #8a93c9, #b9a7d6 55%, #e3b8c4); user-select: none; -webkit-user-select: none; transition: background 2s; }
+.rain.late { background: linear-gradient(180deg, #5e6aa8, #8e7fbf 55%, #c49ab5); }
+.rwater { position: absolute; left: -2%; right: -2%; bottom: 0; height: 14%; background: #33407a; border-radius: 40% 40% 0 0 / 14px 14px 0 0; transition: height .6s ease; z-index: 2; }
+.rans { position: absolute; left: 50%; top: 22%; transform: translateX(-50%); min-width: 76px; padding: 4px 12px; border-radius: 8px; background: rgba(0,0,0,.28); color: #fff; font: 800 1.5rem var(--font-display); text-align: center; min-height: 1.4em; }
+.rans.bad { animation: wshake .3s; color: #ffb4b4; }
+.rdrop { position: absolute; width: 17%; aspect-ratio: 4 / 5; transform: translate(-50%, -50%); z-index: 1; }
+.rdrop svg { width: 100%; height: 100%; overflow: visible; }
+.rdrop.pop { animation: rpop .35s ease-out both; }
+.rdrop.sink { animation: rsink .4s ease-in both; }
+@keyframes rpop { to { transform: translate(-50%, -50%) scale(1.6); opacity: 0; } }
+@keyframes rsink { to { transform: translate(-50%, -20%) scaleY(.3); opacity: 0; } }
+.rpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 320px; width: 100%; margin: 0 auto; touch-action: manipulation; }
+.rpad button { font: 700 1.3rem var(--font-display); padding: 12px 0; border: 0; border-radius: 12px; background: var(--tile); color: var(--fg); cursor: pointer; }
+.rpad button.ok { background: var(--accent); color: var(--surface); }
+.rpad button:disabled { opacity: .45; }
+.rain .mcount { z-index: 3; }
+/* Pièce par pièce */
+.shop { position: relative; width: 100%; aspect-ratio: 4 / 3.2; border-radius: 16px; overflow: hidden; background: #6b7f86; background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 2px, transparent 2px 46px); user-select: none; -webkit-user-select: none; }
+.abot { position: absolute; left: 50%; top: 4%; width: 36%; height: 64%; transform: translateX(-50%); }
+.abot svg { width: 100%; height: 100%; overflow: visible; }
+.abot .done { animation: aput .25s ease-out; }
+@keyframes aput { from { transform: scale(1.25); opacity: .3; } }
+.abot.bye { animation: abye .6s ease-in both; }
+@keyframes abye { to { transform: translate(-50%, -120%); } }
+.aplat { position: absolute; width: 27%; height: 30%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+.aplat.l { left: 3%; top: 30%; } .aplat.r { right: 3%; top: 30%; } .aplat.d { left: 36.5%; bottom: 2%; }
+.atray { width: 100%; height: 74%; display: flex; align-items: flex-end; justify-content: center; border-bottom: 6px solid #2c3a40; position: relative; }
+.atray svg { width: 70%; height: 90%; overflow: visible; animation: ain .2s ease-out both; }
+.atray.go svg { animation: ago .25s ease-in both; }
+.atray.no::after { content: "⛔"; position: absolute; bottom: -34px; font-size: 1.2rem; }
+.atray.bad svg { animation: wshake .3s; }
+@keyframes ain { from { transform: translateY(18px); opacity: 0; } }
+@keyframes ago { to { transform: translateY(-40px) scale(.6); opacity: 0; } }
+.atag { margin-top: 4px; font: 800 1rem var(--font-display); color: rgba(255,255,255,.7); }
+.apts { position: absolute; font: 700 .9rem var(--font-display); color: #fff; animation: apts .8s ease-out both; pointer-events: none; z-index: 3; }
+@keyframes apts { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-26px); opacity: 0; } }
+.apad { grid-template-rows: 56px; }
+.apad .left, .apad .down, .apad .right { grid-row: 1; }
+.apad .down { grid-column: 2; }
+.shop .mcount { z-index: 4; }
+.aparade { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: rgba(30,40,50,.82); color: #fff; z-index: 5; text-align: center; font-weight: 700; }
+.aparade .row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; max-width: 92%; }
+.aparade .row svg { width: 44px; height: 70px; animation: ain .3s both; }
+.aparade b { font: 800 2rem var(--font-display); }
 .sync-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .sync-row input { flex: 1 1 200px; min-width: 0; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; }
 .sync-row .btn { flex: 0 0 auto; }
@@ -798,6 +843,78 @@ button.game:active { transform: scale(0.985); }
     </div>
   </section>
 
+  <section id="pluie" hidden style="display:flex;flex-direction:column;gap:14px">
+    <div class="topbar">
+      <button class="back" id="q-back" type="button">← Accueil</button>
+      <span class="eyebrow">Maths · calcul mental</span>
+    </div>
+    <h2>Averse de calculs</h2>
+    <div class="stats">
+      <div class="stat"><small>Score</small><b class="num" id="q-score">0</b></div>
+      <div class="stat"><small>Gouttes</small><b class="num" id="q-count">0</b></div>
+      <div class="stat"><small>Ratées</small><div class="lives" id="q-lives"></div></div>
+    </div>
+    <div class="rain" id="q-sky">
+      <div class="rwater" id="q-water"><div class="rans" id="q-ans"></div></div>
+    </div>
+    <p class="status" id="q-status" aria-live="polite">Résous chaque calcul avant que sa goutte touche l'eau.</p>
+    <div class="rpad" id="q-pad">
+      <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
+      <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+      <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+      <button type="button" data-k="del" aria-label="Effacer">⌫</button><button type="button" data-k="0">0</button><button type="button" data-k="ok" class="ok">OK</button>
+    </div>
+    <p class="kbd">Au clavier : tape le résultat puis Entrée.</p>
+    <div class="actions" id="q-start-wrap"><button class="btn" id="q-start" type="button">Commencer</button></div>
+    <div class="panel" id="q-end" hidden>
+      <span class="eyebrow">L'eau a tout recouvert</span>
+      <div class="big num" id="q-final">0</div>
+      <p id="q-end-detail"></p>
+      <p class="record" id="q-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="q-again" type="button">Rejouer</button>
+        <button class="btn secondary" id="q-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="robot" hidden style="display:flex;flex-direction:column;gap:14px">
+    <div class="topbar">
+      <button class="back" id="a-back" type="button">← Accueil</button>
+      <span class="eyebrow">Adaptabilité · inhibition</span>
+    </div>
+    <h2>Pièce par pièce</h2>
+    <div class="stats">
+      <div class="stat"><small>Score</small><b class="num" id="a-score">0</b></div>
+      <div class="stat"><small>Robots</small><b class="num" id="a-robots">0</b></div>
+      <div class="stat"><small>Temps</small><b class="num" id="a-time">1:15</b></div>
+    </div>
+    <div class="shop" id="a-shop">
+      <div class="abot" id="a-bot"></div>
+      <div class="aplat l" data-p="0"><div class="atray" id="a-p0"></div><span class="atag">←</span></div>
+      <div class="aplat d" data-p="1"><div class="atray" id="a-p1"></div><span class="atag">↓</span></div>
+      <div class="aplat r" data-p="2"><div class="atray" id="a-p2"></div><span class="atag">→</span></div>
+    </div>
+    <p class="status" id="a-status" aria-live="polite">Prends seulement les pièces qui vont dans la silhouette.</p>
+    <div class="dpad apad" id="a-pad">
+      <button class="btn left" type="button" data-p="0" aria-label="Plateau de gauche" disabled>←</button>
+      <button class="btn down" type="button" data-p="1" aria-label="Plateau du bas" disabled>↓</button>
+      <button class="btn right" type="button" data-p="2" aria-label="Plateau de droite" disabled>→</button>
+    </div>
+    <p class="kbd">Au clavier : ←, ↓ et → pour prendre la pièce du plateau. Sinon, ne touche à rien.</p>
+    <div class="actions" id="a-start-wrap"><button class="btn" id="a-start" type="button">Commencer</button></div>
+    <div class="panel" id="a-end" hidden>
+      <span class="eyebrow">Fin de la journée</span>
+      <div class="big num" id="a-final">0</div>
+      <p id="a-end-detail"></p>
+      <p class="record" id="a-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="a-again" type="button">Rejouer</button>
+        <button class="btn secondary" id="a-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
   <section id="vapeur" hidden style="display:flex;flex-direction:column;gap:18px">
     <div class="topbar">
       <button class="back" id="v-back" type="button">← Accueil</button>
@@ -861,6 +978,10 @@ const GAMES = [
     icon: '<svg viewBox="0 0 26 26"><g fill="var(--muted)" opacity=".55"><path d="M3 5l4 2-4 2 1-2z"/><path d="M3 17l4 2-4 2 1-2z"/></g><path d="M9 13l8-4-2 4 2 4z" fill="var(--accent)"/><g fill="var(--muted)" opacity=".55"><path d="M19 5l4 2-4 2 1-2z"/><path d="M19 17l4 2-4 2 1-2z"/></g></svg>' },
   { id: "encre", name: "Sens ou encre", skill: "Adaptabilité · inhibition", desc: "Le mot de gauche nomme-t-il la couleur de l'encre à droite ?", ready: true,
     icon: '<svg viewBox="0 0 26 26"><rect x="1" y="7" width="11" height="12" rx="2.5" fill="var(--surface)" stroke="var(--muted)"/><rect x="14" y="7" width="11" height="12" rx="2.5" fill="var(--surface)" stroke="var(--muted)"/><rect x="3.5" y="12" width="6" height="2.4" rx="1.2" fill="var(--fg)"/><rect x="16.5" y="12" width="6" height="2.4" rx="1.2" fill="#e53935"/></svg>' },
+  { id: "pluie", name: "Averse de calculs", skill: "Maths · calcul mental", desc: "Résous les calculs des gouttes avant qu'elles touchent l'eau.", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><path d="M13 2c3 5 8 8 8 13a8 8 0 0 1-16 0c0-5 5-8 8-13z" fill="var(--accent)"/><path d="M10 15h6M13 12v6" stroke="var(--surface)" stroke-width="2" stroke-linecap="round"/></svg>' },
+  { id: "robot", name: "Pièce par pièce", skill: "Adaptabilité · inhibition", desc: "Monte le robot avec les bonnes pièces, laisse passer les autres.", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><rect x="8" y="2" width="10" height="7" rx="2" fill="var(--accent)"/><rect x="6" y="10" width="14" height="9" rx="2" fill="var(--muted)" opacity=".5"/><path d="M10 19v5M16 19v5" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round" opacity=".5"/><path d="M6 12l-4 4M20 12l4 4" stroke="var(--glow)" stroke-width="2.5" stroke-linecap="round"/></svg>' },
   { id: "tableau", name: "Le plus grand", skill: "Maths", desc: "Deux calculs : lequel donne la plus grande valeur ?", ready: true,
     icon: '<svg viewBox="0 0 26 26"><text x="13" y="17" text-anchor="middle" font-size="10" font-weight="700" font-family="sans-serif" fill="var(--accent)">7×3</text></svg>' },
   { id: "vapeur", name: "Même symbole", skill: "Vitesse", desc: "Le symbole est-il le même que le précédent ? Réponds vite.", ready: true,
@@ -1046,7 +1167,7 @@ function renderTrend() {
 function go(view) { location.hash = view === "home" ? "" : view; show(); }
 function show() {
   const h = location.hash.slice(1);
-  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli", "motif", "unique", "plein", "voisins", "fil", "vol", "encre"];
+  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli", "motif", "unique", "plein", "voisins", "fil", "vol", "encre", "pluie", "robot"];
   const v = VIEWS.includes(h) ? h : "home";
   for (const id of ["home", ...VIEWS]) document.getElementById(id).hidden = id !== v;
   if (v === "courant") C.reset(); else C.stop();
@@ -1061,6 +1182,8 @@ function show() {
   if (v === "fil") R.reset(); else R.stop();
   if (v === "vol") L.reset(); else L.stop();
   if (v === "encre") S.reset(); else S.stop();
+  if (v === "pluie") Q.reset(); else Q.stop();
+  if (v === "robot") A.reset(); else A.stop();
   if (v === "trains") T.reset(); else T.stop();
   if (v === "grille") G.reset(); else G.stop();
   if (v === "vapeur") V.reset(); else V.stop();
@@ -2864,6 +2987,330 @@ const S = (() => {
   $("e-again").addEventListener("click", () => { reset(); start(); });
   $("e-home").addEventListener("click", () => go("home"));
   $("e-back").addEventListener("click", () => go("home"));
+  return { reset, stop, _st: () => st };
+})();
+
+/* ---------- Averse de calculs ---------- */
+const Q = (() => {
+  const $ = id => document.getElementById(id);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const MISSES = 3, PTS = 500;
+  let st = null, run = 0, raf = 0;
+
+  function problem(n) {
+    const ops = n < 4 ? ["+", "−"] : ["+", "−", "×", "÷"];
+    const op = ops[rnd(0, ops.length - 1)], big = n >= 14 ? 20 : 10;
+    let a, b, v;
+    if (op === "+") { a = rnd(1, big); b = rnd(1, big - 2); v = a + b; }
+    else if (op === "−") { a = rnd(2, big + 5); b = rnd(1, a - 1); v = a - b; }
+    else if (op === "×") { a = rnd(1, n >= 14 ? 10 : 6); b = rnd(1, n >= 14 ? 10 : 5); v = a * b; }
+    else { b = rnd(1, n >= 14 ? 8 : 5); v = rnd(1, n >= 14 ? 9 : 5); a = b * v; }
+    return { op, a, b, v };
+  }
+  function dropSvg(d) {
+    const fg = "#fff";
+    const shape = d.sun
+      ? `<circle cx="40" cy="52" r="40" fill="#f6c13b" opacity=".35"/><circle cx="40" cy="52" r="31" fill="#f2a516" stroke="#fff" stroke-width="5"/>`
+      : `<path d="M40 2 C52 22 74 38 74 62 A34 34 0 0 1 6 62 C6 38 28 22 40 2Z" fill="#2c356b" stroke="#fff" stroke-width="5"/>`;
+    return `<svg viewBox="0 0 80 100">${shape}
+      <text x="27" y="70" text-anchor="middle" font-size="26" font-weight="800" font-family="sans-serif" fill="${fg}">${d.op}</text>
+      <text x="54" y="56" text-anchor="middle" font-size="19" font-weight="700" font-family="sans-serif" fill="${fg}">${d.a}</text>
+      <text x="54" y="80" text-anchor="middle" font-size="19" font-weight="700" font-family="sans-serif" fill="${fg}">${d.b}</text></svg>`;
+  }
+  function waterTop() { return 100 - (14 + st.miss * 20); }
+  function paint() {
+    $("q-score").textContent = st.score;
+    $("q-count").textContent = st.count;
+    $("q-lives").innerHTML = Array.from({ length: MISSES }, (_, i) => `<i class="${i < st.miss ? "lost" : ""}"></i>`).join("");
+    $("q-ans").textContent = st.buf;
+    $("q-water").style.height = (100 - waterTop()) + "%";
+    $("q-sky").classList.toggle("late", st.count >= 20);
+  }
+  function say(t, cls = "") { const s = $("q-status"); s.textContent = t; s.className = "status " + cls; }
+  function spawn(now) {
+    const p = problem(st.count + st.spawned * 0.3), d = { ...p, sun: st.spawned > 4 && st.spawned % 11 === 6, born: now };
+    st.spawned++;
+    let x;
+    for (let t = 0; t < 20; t++) { x = rnd(12, 88); if (st.drops.every(o => Math.abs(o.x - x) > 18 || o.y > 30)) break; }
+    d.x = x; d.y = -8; d.dur = Math.max(5200, 11000 - st.count * 160);
+    d.el = document.createElement("div"); d.el.className = "rdrop"; d.el.innerHTML = dropSvg(d);
+    d.el.style.left = x + "%"; d.el.style.top = d.y + "%";
+    $("q-sky").appendChild(d.el); st.drops.push(d);
+  }
+  function step(now) {
+    if (!st.playing) return;
+    const dt = Math.min(60, now - st.last); st.last = now;
+    if (now >= st.nextSpawn) { spawn(now); st.nextSpawn = now + Math.max(1200, 2600 - st.count * 60); }
+    const top = waterTop() - 6;
+    for (const d of [...st.drops]) {
+      d.y += (top + 8) * dt / d.dur; d.el.style.top = d.y + "%";
+      if (d.y >= top) miss(d);
+    }
+  }
+  function loop(my) { raf = requestAnimationFrame(now => { if (my !== run) return; step(now); if (st.playing) loop(my); }); }
+  function remove(d, cls) {
+    st.drops = st.drops.filter(o => o !== d);
+    d.el.classList.add(cls); setTimeout(() => d.el.remove(), 420);
+  }
+  function miss(d) {
+    remove(d, "sink"); st.miss++; paint();
+    if (st.miss >= MISSES) end(); else say("Une goutte est tombée : l'eau monte.", "bad");
+  }
+  function submit() {
+    if (!st || !st.playing || !st.buf) return;
+    const v = +st.buf; st.buf = "";
+    const hit = st.drops.filter(d => d.v === v).sort((a, b) => b.y - a.y)[0];
+    if (!hit) { const a = $("q-ans"); a.textContent = v; a.classList.remove("bad"); void a.offsetWidth; a.classList.add("bad"); setTimeout(() => { a.classList.remove("bad"); paint(); }, 300); return; }
+    const gone = hit.sun ? [...st.drops] : [hit];
+    for (const d of gone) { remove(d, "pop"); st.count++; st.score += PTS; }
+    say(hit.sun ? `Soleil ! ${gone.length} goutte${gone.length > 1 ? "s" : ""} d'un coup.` : "", hit.sun ? "good" : "");
+    paint();
+  }
+  function key(k) {
+    if (!st || !st.playing) return;
+    if (k === "ok") return submit();
+    if (k === "del") st.buf = st.buf.slice(0, -1);
+    else if (st.buf.length < 3) st.buf += k;
+    paint();
+  }
+  function lock(on) { for (const b of $("q-pad").children) b.disabled = on; }
+  function clear() { for (const el of $("q-sky").querySelectorAll(".rdrop, .mcount")) el.remove(); }
+  function reset() {
+    run++; cancelAnimationFrame(raf); clear();
+    st = { score: 0, count: 0, miss: 0, buf: "", drops: [], spawned: 0, playing: false };
+    paint(); lock(true);
+    $("q-start-wrap").hidden = false; $("q-end").hidden = true;
+    say("Résous chaque calcul avant que sa goutte touche l'eau.");
+  }
+  function stop() { run++; cancelAnimationFrame(raf); }
+  async function start() {
+    const my = run;
+    $("q-start-wrap").hidden = true; say(""); lock(false);
+    const c = document.createElement("div"); c.className = "mcount"; c.innerHTML = "<b>3</b>"; $("q-sky").appendChild(c);
+    for (const k of [3, 2, 1]) { c.firstChild.textContent = k; await sleep(800); if (my !== run) { c.remove(); return; } }
+    c.remove();
+    st.playing = true; st.last = performance.now(); st.nextSpawn = st.last; loop(my);
+  }
+  async function end() {
+    const my = run;
+    st.playing = false; lock(true); cancelAnimationFrame(raf);
+    for (const d of [...st.drops]) remove(d, "sink");
+    $("q-water").style.height = "100%";
+    say("L'eau a tout recouvert.", "bad");
+    await sleep(1100); if (my !== run) return;
+    const prevBest = bestFor("pluie");
+    $("q-final").textContent = st.score;
+    $("q-end-detail").textContent = `${st.count} goutte${st.count > 1 ? "s" : ""} résolue${st.count > 1 ? "s" : ""}.`;
+    $("q-end-record").hidden = !(st.score > prevBest && st.score > 0);
+    $("q-end").hidden = false;
+    addScore({ game: "pluie", score: st.score, correct: st.count, at: new Date().toISOString() });
+  }
+
+  for (const b of $("q-pad").children) b.addEventListener("pointerdown", e => { e.preventDefault(); key(b.dataset.k); });
+  document.addEventListener("keydown", e => {
+    if ($("pluie").hidden || !st || !st.playing) return;
+    if (/^[0-9]$/.test(e.key)) { e.preventDefault(); key(e.key); }
+    else if (e.key === "Backspace") { e.preventDefault(); key("del"); }
+    else if (e.key === "Enter") { e.preventDefault(); key("ok"); }
+  });
+  $("q-start").addEventListener("click", start);
+  $("q-again").addEventListener("click", () => { reset(); start(); });
+  $("q-home").addEventListener("click", () => go("home"));
+  $("q-back").addEventListener("click", () => go("home"));
+  return { reset, stop, _st: () => st };
+})();
+
+/* ---------- Pièce par pièce ---------- */
+const A = (() => {
+  const $ = id => document.getElementById(id);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const DURATION = 75000, BONUS_PART = 500, GHOST = "#cdbd9b";
+  const COLORS = [["#e2604a", "#f3e7d3"], ["#169a93", "#f3e7d3"], ["#3b47c4", "#e8eaf6"], ["#f2a516", "#2c3a40"], ["#7b4bb3", "#f1e6fa"]];
+  const BOX = { head: [22, 0, 56, 40], body: [20, 38, 60, 62], armL: [0, 40, 26, 56], armR: [74, 40, 26, 56], legL: [26, 98, 24, 62], legR: [50, 98, 24, 62] };
+  let st = null, run = 0, tick = 0;
+
+  // Dessins des pièces, en coordonnées du robot (100 × 160). f = couleur principale, g = détails.
+  const PARTS = {
+    head: [
+      (f, g) => `<rect x="30" y="8" width="40" height="30" rx="6" fill="${f}"/><circle cx="41" cy="22" r="4" fill="${g}"/><circle cx="59" cy="22" r="4" fill="${g}"/><path d="M50 8V2" stroke="${f}" stroke-width="3"/><circle cx="50" cy="2" r="3" fill="${f}"/>`,
+      (f, g) => `<path d="M28 38V22a22 22 0 0 1 44 0v16z" fill="${f}"/><rect x="36" y="20" width="28" height="8" rx="4" fill="${g}"/>`,
+      (f, g) => `<circle cx="50" cy="21" r="18" fill="${f}"/><circle cx="50" cy="20" r="7" fill="${g}"/><circle cx="50" cy="20" r="3" fill="${f}"/>`,
+      (f, g) => `<rect x="26" y="14" width="48" height="24" rx="3" fill="${f}"/><path d="M34 14L28 2M66 14L72 2" stroke="${f}" stroke-width="3"/><rect x="34" y="21" width="32" height="6" fill="${g}"/>`,
+    ],
+    body: [
+      (f, g) => `<rect x="26" y="40" width="48" height="56" rx="6" fill="${f}"/><rect x="36" y="52" width="28" height="14" rx="3" fill="${g}"/>`,
+      (f, g) => `<rect x="24" y="40" width="52" height="58" rx="26" fill="${f}"/><circle cx="50" cy="64" r="8" fill="${g}"/>`,
+      (f, g) => `<path d="M22 40h56l-8 58H30z" fill="${f}"/><path d="M36 54h28M38 64h24M40 74h20" stroke="${g}" stroke-width="4" stroke-linecap="round"/>`,
+      (f, g) => `<rect x="24" y="40" width="52" height="58" rx="10" fill="${f}"/><path d="M24 54h52M24 68h52M24 82h52" stroke="${g}" stroke-width="3"/>`,
+    ],
+    armL: [
+      (f, g) => `<path d="M24 48L10 60V88" stroke="${f}" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 92a6 6 0 0 0 12 0" stroke="${g}" stroke-width="4" fill="none"/>`,
+      (f, g) => `<path d="M24 48H8V80" stroke="${f}" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="86" r="5" fill="${g}"/>`,
+      (f, g) => `<path d="M24 50q-22 6-12 40" stroke="${f}" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="7 3"/><rect x="6" y="88" width="12" height="6" rx="2" fill="${g}"/>`,
+    ],
+    legL: [
+      (f, g) => `<rect x="34" y="98" width="10" height="44" rx="4" fill="${f}"/><rect x="28" y="140" width="20" height="10" rx="4" fill="${g}"/>`,
+      (f, g) => `<path d="M39 98l-6 8 12 8-12 8 12 8-6 8" stroke="${f}" stroke-width="5" fill="none" stroke-linejoin="round"/><path d="M28 152h22" stroke="${g}" stroke-width="8" stroke-linecap="round"/>`,
+      (f, g) => `<path d="M38 98v22l-4 22" stroke="${f}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M26 146a10 6 0 0 1 20 0z" fill="${g}"/>`,
+    ],
+  };
+  const mirror = s => `<g transform="translate(100 0) scale(-1 1)">${s}</g>`;
+  function partSvg(slot, style, colors) {
+    const [f, g] = colors;
+    if (slot === "armR") return mirror(PARTS.armL[style](f, g));
+    if (slot === "legR") return mirror(PARTS.legL[style](f, g));
+    return PARTS[slot][style](f, g);
+  }
+  const variants = slot => (slot === "armR" ? PARTS.armL : slot === "legR" ? PARTS.legL : PARTS[slot]).length;
+
+  function newRobot() {
+    const slots = ["legL", "legR", "body", "head"];
+    if (Math.random() < 0.6) slots.splice(2, 0, "armL", "armR");
+    const style = {}; for (const s of slots) style[s] = rnd(0, variants(s) - 1);
+    if (style.armL !== undefined) style.armR = style.armL;
+    style.legR = style.legL;
+    st.bot = { slots, style, filled: {}, colors: COLORS[rnd(0, COLORS.length - 1)] };
+    drawBot();
+  }
+  function drawBot(justSlot) {
+    const b = st.bot;
+    let h = "";
+    for (const s of b.slots) {
+      const done = b.filled[s];
+      h += `<g class="${s === justSlot ? "done" : ""}" style="transform-origin:${BOX[s][0] + BOX[s][2] / 2}px ${BOX[s][1] + BOX[s][3] / 2}px">${partSvg(s, b.style[s], done ? b.colors : [GHOST, "#bfae8b"])}</g>`;
+    }
+    $("a-bot").innerHTML = `<svg viewBox="0 0 100 160">${h}</svg>`;
+  }
+  function pieceSvg(p) {
+    const [x, y, w, h] = BOX[p.slot];
+    return `<svg viewBox="${x - 4} ${y - 4} ${w + 8} ${h + 8}">${partSvg(p.slot, p.style, p.colors)}</svg>`;
+  }
+  function makePiece() {
+    const b = st.bot, empty = b.slots.filter(s => !b.filled[s]);
+    if (empty.length && Math.random() < 0.68) { const s = empty[rnd(0, empty.length - 1)]; return { slot: s, style: b.style[s], colors: b.colors, good: true }; }
+    // pièce qui ne va pas : mauvais modèle, ou emplacement déjà pris
+    const s = b.slots[rnd(0, b.slots.length - 1)];
+    if (b.filled[s] && Math.random() < 0.4) return { slot: s, style: b.style[s], colors: b.colors, good: false };
+    let style; do style = rnd(0, variants(s) - 1); while (style === b.style[s] && variants(s) > 1);
+    if (style === b.style[s]) return { slot: s, style, colors: b.colors, good: !b.filled[s] };
+    return { slot: s, style, colors: Math.random() < 0.5 ? b.colors : COLORS[rnd(0, COLORS.length - 1)], good: false };
+  }
+  function paint() {
+    $("a-score").textContent = st.score;
+    $("a-robots").textContent = st.robots;
+    const s = Math.ceil(Math.max(0, st.left) / 1000);
+    $("a-time").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  }
+  function say(t, cls = "") { const s = $("a-status"); s.textContent = t; s.className = "status " + cls; }
+  function showPts(i, t) {
+    const pl = $("a-shop").querySelectorAll(".aplat")[i], e = document.createElement("span");
+    e.className = "apts"; e.textContent = t; e.style.left = pl.offsetLeft + pl.offsetWidth / 2 - 30 + "px"; e.style.top = pl.offsetTop + pl.offsetHeight + 4 + "px";
+    $("a-shop").appendChild(e); setTimeout(() => e.remove(), 800);
+  }
+  async function serve(my) {
+    while (my === run && st.playing) {
+      const n = st.robots >= 2 && Math.random() < 0.3 ? 2 : 1, used = [];
+      while (used.length < n) { const i = rnd(0, 2); if (!used.includes(i)) used.push(i); }
+      const win = Math.max(1100, 1900 - st.seen * 20), t0 = performance.now();
+      for (const i of used) {
+        const p = makePiece(); p.t0 = t0; st.trays[i] = p; st.seen++;
+        const tr = $("a-p" + i); tr.className = "atray"; tr.innerHTML = pieceSvg(p);
+      }
+      await sleep(win); if (my !== run || !st.playing) return;
+      for (const i of used) {
+        const p = st.trays[i]; if (!p) continue;
+        st.trays[i] = null;
+        const tr = $("a-p" + i); tr.innerHTML = "";
+        if (!p.good) { st.avoided++; st.wrong++; tr.classList.add("no"); setTimeout(() => tr.classList.remove("no"), 500); }
+      }
+      await sleep(260);
+    }
+  }
+  function take(i) {
+    if (!st || !st.playing) return;
+    const p = st.trays[i]; if (!p) return;
+    const tr = $("a-p" + i), b = st.bot;
+    if (p.good && !b.filled[p.slot]) {
+      st.trays[i] = null;
+      const rt = performance.now() - p.t0; st.rts.push(rt);
+      const pts = Math.min(750, Math.max(100, Math.round((1050 - rt) / 10) * 10));
+      st.score += pts; showPts(i, "+" + pts + " points");
+      tr.classList.add("go"); setTimeout(() => { if (!st.trays[i]) tr.innerHTML = ""; tr.classList.remove("go"); }, 250);
+      b.filled[p.slot] = true; drawBot(p.slot); say("");
+      if (b.slots.every(s => b.filled[s])) {
+        st.robots++; st.done.push({ ...b }); paint();
+        const el = $("a-bot"); setTimeout(() => { el.classList.add("bye"); setTimeout(() => { el.classList.remove("bye"); if (st.playing) newRobot(); }, 600); }, 300);
+      }
+    } else {
+      st.trays[i] = null; st.wrong++; st.taken++;
+      tr.classList.add("bad"); setTimeout(() => { tr.innerHTML = ""; tr.classList.remove("bad"); }, 300);
+      say("Cette pièce ne va pas dans la silhouette.", "bad");
+    }
+    paint();
+  }
+  function lock(on) { for (const b of $("a-pad").children) b.disabled = on; }
+  function reset() {
+    run++; clearInterval(tick);
+    for (const el of $("a-shop").querySelectorAll(".aparade, .mcount, .apts")) el.remove();
+    st = { score: 0, robots: 0, left: DURATION, playing: false, trays: [null, null, null], seen: 0, avoided: 0, wrong: 0, taken: 0, rts: [], done: [] };
+    for (let i = 0; i < 3; i++) { $("a-p" + i).innerHTML = ""; $("a-p" + i).className = "atray"; }
+    newRobot(); paint(); lock(true);
+    $("a-start-wrap").hidden = false; $("a-end").hidden = true;
+    say("Prends seulement les pièces qui vont dans la silhouette.");
+  }
+  function stop() { run++; clearInterval(tick); }
+  async function start() {
+    const my = run;
+    $("a-start-wrap").hidden = true; say("");
+    const c = document.createElement("div"); c.className = "mcount"; c.innerHTML = "<b>3</b>"; $("a-shop").appendChild(c);
+    for (const k of [3, 2, 1]) { c.firstChild.textContent = k; await sleep(800); if (my !== run) { c.remove(); return; } }
+    c.remove();
+    st.playing = true; lock(false);
+    let last = performance.now();
+    tick = setInterval(() => {
+      if (my !== run) return clearInterval(tick);
+      const now = performance.now(); st.left -= now - last; last = now; paint();
+      if (st.left <= 0) end();
+    }, 100);
+    serve(my);
+  }
+  async function end() {
+    const my = run;
+    clearInterval(tick); st.left = 0; st.playing = false; lock(true); paint();
+    for (let i = 0; i < 3; i++) $("a-p" + i).innerHTML = "";
+    const ov = document.createElement("div"); ov.className = "aparade";
+    ov.innerHTML = `<span>Robots terminés</span><div class="row" id="a-row"></div><b id="a-mult">×0</b><span id="a-bonus"></span>`;
+    $("a-shop").appendChild(ov);
+    let i = 0;
+    for (const r of st.done) {
+      await sleep(650); if (my !== run) return;
+      i++; const bonus = BONUS_PART * r.slots.length; st.score += bonus;
+      $("a-row").insertAdjacentHTML("beforeend", `<svg viewBox="0 0 100 160">${r.slots.map(s => partSvg(s, r.style[s], r.colors)).join("")}</svg>`);
+      $("a-mult").textContent = "×" + i; $("a-bonus").textContent = "+" + bonus; paint();
+    }
+    await sleep(st.done.length ? 1200 : 500); if (my !== run) return;
+    ov.remove();
+    const prevBest = bestFor("robot"), rt = st.rts.length ? Math.round(st.rts.reduce((a, b) => a + b, 0) / st.rts.length) : 0;
+    $("a-final").textContent = st.score;
+    $("a-end-detail").textContent = `${st.robots} robot${st.robots > 1 ? "s" : ""} terminé${st.robots > 1 ? "s" : ""} · mauvaises pièces évitées ${st.avoided}/${st.wrong}` + (rt ? ` · réaction moyenne ${rt} ms` : "") + ".";
+    $("a-end-record").hidden = !(st.score > prevBest && st.score > 0);
+    $("a-end").hidden = false; say("");
+    addScore({ game: "robot", score: st.score, robots: st.robots, at: new Date().toISOString() });
+  }
+
+  for (const b of $("a-pad").children) b.addEventListener("pointerdown", e => { e.preventDefault(); take(+b.dataset.p); });
+  for (const pl of $("a-shop").querySelectorAll(".aplat")) pl.addEventListener("pointerdown", e => { e.preventDefault(); take(+pl.dataset.p); });
+  document.addEventListener("keydown", e => {
+    if ($("robot").hidden || !st || !st.playing) return;
+    const i = { ArrowLeft: 0, ArrowDown: 1, ArrowRight: 2 }[e.key];
+    if (i !== undefined) { e.preventDefault(); if (!e.repeat) take(i); }
+  });
+  $("a-start").addEventListener("click", start);
+  $("a-again").addEventListener("click", () => { reset(); start(); });
+  $("a-home").addEventListener("click", () => go("home"));
+  $("a-back").addEventListener("click", () => go("home"));
   return { reset, stop, _st: () => st };
 })();
 
