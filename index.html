@@ -391,6 +391,41 @@ button.game:active { transform: scale(0.985); }
 .aparade .row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; max-width: 92%; }
 .aparade .row svg { width: 44px; height: 70px; animation: ain .3s both; }
 .aparade b { font: 800 2rem var(--font-display); }
+/* Marqueterie */
+.xstage { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; background: #7f9a8b; background-image: repeating-linear-gradient(115deg, rgba(255,255,255,.06) 0 3px, transparent 3px 22px); user-select: none; -webkit-user-select: none; touch-action: none; transition: box-shadow .3s; }
+.xstage.glow { box-shadow: inset 0 0 0 4px #f2c14e; }
+.xboard { position: absolute; inset: 0; }
+.xboard.out { animation: xout .42s ease-in both; }
+.xboard.in { animation: xin .42s ease-out both; }
+@keyframes xout { to { transform: translateX(-105%); } }
+@keyframes xin { from { transform: translateX(105%); } }
+.xbg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.xframe { fill: #3b4650; }
+.xinlay { fill: #e9e2d2; }
+.xgrid { stroke: #cfc5ae; stroke-width: .03; fill: none; }
+.xsil { fill: #4b3a30; stroke: #4b3a30; stroke-width: .03; stroke-linejoin: round; }
+.xhint { fill: none; stroke: #f2c14e; stroke-width: .09; stroke-dasharray: .16 .12; stroke-linejoin: round; animation: xdash 1s linear infinite; }
+@keyframes xdash { to { stroke-dashoffset: -.56; } }
+.xpiece { position: absolute; pointer-events: none; transition: transform .18s ease-out, left .15s, top .15s; z-index: 3; }
+.xpiece.drag { transition: transform .18s ease-out; }
+.xpiece svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.xpiece path { pointer-events: visiblePainted; cursor: grab; }
+.xpiece.drag path { cursor: grabbing; }
+.xedge { fill: #fff; stroke: #fff; stroke-width: .16; stroke-linejoin: round; }
+.xfill { fill: #e5786a; stroke: #e5786a; stroke-width: .03; stroke-linejoin: round; }
+.xpiece.sel .xfill { fill: #f2c14e; stroke: #f2c14e; }
+.xpiece.set .xfill { fill: #c86656; stroke: #c86656; }
+.xpiece.set .xedge { stroke-width: .06; fill: #f4ead8; stroke: #f4ead8; }
+.xpiece.set { animation: xset .35s ease-out; }
+.xpiece.set path { pointer-events: none; }
+@keyframes xset { 50% { filter: brightness(1.35); } }
+.xfloat { position: absolute; right: 4%; top: 3%; font: 800 1rem var(--font-display); color: #fff; pointer-events: none; animation: apts 1.1s ease-out both; z-index: 50; text-shadow: 0 1px 2px rgba(0,0,0,.35); }
+.xfloat.loss { color: #ffd0c8; }
+.xbar { display: flex; gap: 8px; align-items: center; justify-content: center; touch-action: manipulation; }
+.xbar .btn { padding: 10px 16px; font-size: 1.2rem; }
+.xbar #x-left, .xbar #x-right { width: 56px; padding: 10px 0; }
+.xrot { min-width: 70px; text-align: center; font: 800 1.15rem var(--font-display); color: var(--muted); }
+.xrot.over { color: var(--bad); }
 .sync-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .sync-row input { flex: 1 1 200px; min-width: 0; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; }
 .sync-row .btn { flex: 0 0 auto; }
@@ -917,6 +952,39 @@ button.game:active { transform: scale(0.985); }
     </div>
   </section>
 
+  <section id="marq" hidden style="display:flex;flex-direction:column;gap:14px">
+    <div class="topbar">
+      <button class="back" id="x-back" type="button">← Accueil</button>
+      <span class="eyebrow">Raisonnement spatial</span>
+    </div>
+    <h2>Marqueterie</h2>
+    <div class="stats">
+      <div class="stat"><small>Score</small><b class="num" id="x-score">0</b></div>
+      <div class="stat"><small>Puzzle</small><b class="num" id="x-puz">1/4</b></div>
+      <div class="stat"><small>Pièces</small><b class="num" id="x-level">4</b></div>
+    </div>
+    <div class="xstage" id="x-stage"><div class="xboard" id="x-board"></div></div>
+    <div class="xbar">
+      <span class="xrot" id="x-rot" title="Rotations faites / rotations nécessaires">0 / 0</span>
+      <button class="btn" id="x-left" type="button" aria-label="Pivoter à gauche" disabled>⟲</button>
+      <button class="btn" id="x-right" type="button" aria-label="Pivoter à droite" disabled>⟳</button>
+      <button class="btn secondary" id="x-hint" type="button" disabled>Conseil</button>
+    </div>
+    <p class="status" id="x-status" aria-live="polite"></p>
+    <p class="kbd">Fais glisser les pièces. Touche une pièce puis les boutons pour la pivoter (au clavier : ← et →, Tab pour changer de pièce).</p>
+    <div class="actions" id="x-start-wrap"><button class="btn" id="x-start" type="button">Commencer</button></div>
+    <div class="panel" id="x-end" hidden>
+      <span class="eyebrow">Quatre puzzles terminés</span>
+      <div class="big num" id="x-final">0</div>
+      <p id="x-end-detail"></p>
+      <p class="record" id="x-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="x-again" type="button">Rejouer</button>
+        <button class="btn secondary" id="x-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
   <section id="vapeur" hidden style="display:flex;flex-direction:column;gap:18px">
     <div class="topbar">
       <button class="back" id="v-back" type="button">← Accueil</button>
@@ -984,6 +1052,8 @@ const GAMES = [
     icon: '<svg viewBox="0 0 26 26"><path d="M13 2c3 5 8 8 8 13a8 8 0 0 1-16 0c0-5 5-8 8-13z" fill="var(--accent)"/><path d="M10 15h6M13 12v6" stroke="var(--surface)" stroke-width="2" stroke-linecap="round"/></svg>' },
   { id: "robot", name: "Pièce par pièce", skill: "Adaptabilité · inhibition", desc: "Monte le robot avec les bonnes pièces, laisse passer les autres.", ready: true,
     icon: '<svg viewBox="0 0 26 26"><rect x="8" y="2" width="10" height="7" rx="2" fill="var(--accent)"/><rect x="6" y="10" width="14" height="9" rx="2" fill="var(--muted)" opacity=".5"/><path d="M10 19v5M16 19v5" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round" opacity=".5"/><path d="M6 12l-4 4M20 12l4 4" stroke="var(--glow)" stroke-width="2.5" stroke-linecap="round"/></svg>' },
+  { id: "marq", name: "Marqueterie", skill: "Raisonnement spatial", desc: "Glisse et pivote les pièces pour remplir la silhouette.", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><path d="M3 23L13 3l10 20z" fill="var(--muted)" opacity=".35"/><path d="M13 3l5 10H8z" fill="var(--accent)"/><path d="M8 13h10l5 10z" fill="var(--glow)"/></svg>' },
   { id: "tableau", name: "Le plus grand", skill: "Maths", desc: "Deux calculs : lequel donne la plus grande valeur ?", ready: true,
     icon: '<svg viewBox="0 0 26 26"><text x="13" y="17" text-anchor="middle" font-size="10" font-weight="700" font-family="sans-serif" fill="var(--accent)">7×3</text></svg>' },
   { id: "vapeur", name: "Même symbole", skill: "Vitesse", desc: "Le symbole est-il le même que le précédent ? Réponds vite.", ready: true,
@@ -1169,7 +1239,7 @@ function renderTrend() {
 function go(view) { location.hash = view === "home" ? "" : view; show(); }
 function show() {
   const h = location.hash.slice(1);
-  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli", "motif", "unique", "plein", "voisins", "fil", "vol", "encre", "pluie", "robot"];
+  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli", "motif", "unique", "plein", "voisins", "fil", "vol", "encre", "pluie", "robot", "marq"];
   const v = VIEWS.includes(h) ? h : "home";
   for (const id of ["home", ...VIEWS]) document.getElementById(id).hidden = id !== v;
   if (v === "courant") C.reset(); else C.stop();
@@ -1186,6 +1256,7 @@ function show() {
   if (v === "encre") S.reset(); else S.stop();
   if (v === "pluie") Q.reset(); else Q.stop();
   if (v === "robot") A.reset(); else A.stop();
+  if (v === "marq") X.reset(); else X.stop();
   if (v === "trains") T.reset(); else T.stop();
   if (v === "grille") G.reset(); else G.stop();
   if (v === "vapeur") V.reset(); else V.stop();
@@ -3332,6 +3403,389 @@ const A = (() => {
   $("a-home").addEventListener("click", () => go("home"));
   $("a-back").addEventListener("click", () => go("home"));
   return { reset, stop, _st: () => st };
+})();
+
+/* ---------- Marqueterie ---------- */
+const X = (() => {
+  const $ = id => document.getElementById(id);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const SW = 10, SH = 7.5, PUZZLES = 4, OVER = 240, MINL = 3, MAXL = 8;
+  const NS = "http://www.w3.org/2000/svg";
+  let st = null, run = 0, ztop = 10;
+
+  /* Géométrie : chaque case est coupée en 4 quarts (0 haut, 1 droite, 2 bas, 3 gauche). */
+  const key = (x, y, q) => x + "," + y + "," + q;
+  const parse = k => k.split(",").map(Number);
+  function norm(qs) {
+    let mx = Infinity, my = Infinity;
+    for (const k of qs) { const [x, y] = parse(k); mx = Math.min(mx, x); my = Math.min(my, y); }
+    let w = 0, h = 0;
+    const out = qs.map(k => { const [x, y, q] = parse(k); w = Math.max(w, x - mx + 1); h = Math.max(h, y - my + 1); return key(x - mx, y - my, q); }).sort();
+    return { qs: out, id: out.join(" "), w, h, mx, my };
+  }
+  function rot(qs, k) {
+    k = ((k % 4) + 4) % 4;
+    let cur = qs;
+    for (let i = 0; i < k; i++) cur = cur.map(s => { const [x, y, q] = parse(s); return key(-y - 1, x, (q + 1) % 4); });
+    return norm(cur);
+  }
+  function tri(x, y, q) {
+    const c = [x + .5, y + .5], P = [[x, y], [x + 1, y], [x + 1, y + 1], [x, y + 1]];
+    return [P[q], P[(q + 1) % 4], c];
+  }
+  function pathOf(qs, dx = 0, dy = 0) {
+    return qs.map(s => { const [x, y, q] = parse(s); const t = tri(x + dx, y + dy, q); return "M" + t.map(p => p[0].toFixed(2) + " " + p[1].toFixed(2)).join("L") + "Z"; }).join("");
+  }
+  function outline(qs, dx, dy) {
+    const cnt = new Map();
+    for (const s of qs) {
+      const [x, y, q] = parse(s), t = tri(x + dx, y + dy, q);
+      for (let i = 0; i < 3; i++) {
+        const a = t[i], b = t[(i + 1) % 3], ka = a.join(" "), kb = b.join(" ");
+        const k = ka < kb ? ka + "|" + kb : kb + "|" + ka;
+        cnt.set(k, (cnt.get(k) || 0) + 1);
+      }
+    }
+    let d = "";
+    for (const [k, c] of cnt) if (c === 1) { const [a, b] = k.split("|"); d += "M" + a + "L" + b; }
+    return d;
+  }
+  function neighbours(x, y, q) {
+    const n = [key(x, y, (q + 1) % 4), key(x, y, (q + 3) % 4)];
+    const d = [[0, -1], [1, 0], [0, 1], [-1, 0]][q];
+    n.push(key(x + d[0], y + d[1], (q + 2) % 4));
+    return n;
+  }
+
+  /* Génère une silhouette et sa découpe en n pièces. */
+  function makePuzzle(n) {
+    for (let attempt = 0; attempt < 60; attempt++) {
+      const p = tryPuzzle(n);
+      if (p) return p;
+    }
+    return tryPuzzle(n, true);
+  }
+  function tryPuzzle(n, loose) {
+    const m = Math.round(n * 1.55) + 1, maxW = n >= 8 ? 6 : 5, maxH = 4;
+    const cells = new Map([["0,0", [0, 0]]]);
+    const D4 = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+    while (cells.size < m) {
+      const cand = new Map();
+      for (const [x, y] of cells.values()) for (const [dx, dy] of D4) {
+        const k = (x + dx) + "," + (y + dy);
+        if (cells.has(k)) continue;
+        const xs = [...cells.values()].map(c => c[0]).concat(x + dx), ys = [...cells.values()].map(c => c[1]).concat(y + dy);
+        if (Math.max(...xs) - Math.min(...xs) >= maxW || Math.max(...ys) - Math.min(...ys) >= maxH) continue;
+        const nb = D4.filter(([ex, ey]) => cells.has((x + dx + ex) + "," + (y + dy + ey))).length;
+        cand.set(k, { c: [x + dx, y + dy], w: nb * nb + (Math.random() < .25 ? 1 : 0) });
+      }
+      if (!cand.size) return null;
+      const list = [...cand.values()], tot = list.reduce((a, b) => a + b.w, 0);
+      let r = Math.random() * tot, pick = list[0];
+      for (const c of list) { r -= c.w; if (r <= 0) { pick = c; break; } }
+      cells.set(pick.c.join(","), pick.c);
+    }
+    const has = (x, y) => cells.has(x + "," + y);
+    const atoms = [];
+    for (const [x, y] of cells.values()) {
+      // Coins extérieurs coupés en biais pour des bords obliques.
+      const opts = [];
+      if (!has(x, y - 1) && !has(x + 1, y) && (has(x, y + 1) || has(x - 1, y))) opts.push([[0, 1], [2, 3]]);
+      if (!has(x, y + 1) && !has(x - 1, y) && (has(x, y - 1) || has(x + 1, y))) opts.push([[2, 3], [0, 1]]);
+      if (!has(x, y - 1) && !has(x - 1, y) && (has(x, y + 1) || has(x + 1, y))) opts.push([[3, 0], [1, 2]]);
+      if (!has(x, y + 1) && !has(x + 1, y) && (has(x, y - 1) || has(x - 1, y))) opts.push([[1, 2], [3, 0]]);
+      if (opts.length && Math.random() < .45) { const o = opts[rnd(0, opts.length - 1)]; atoms.push(o[1].map(q => key(x, y, q))); continue; }
+      if (Math.random() < .55) {
+        const halves = Math.random() < .5 ? [[0, 1], [2, 3]] : [[3, 0], [1, 2]];
+        for (const h of halves) atoms.push(h.map(q => key(x, y, q)));
+      } else atoms.push([0, 1, 2, 3].map(q => key(x, y, q)));
+    }
+    if (atoms.length < n) return null;
+    const owner = new Map();
+    atoms.forEach((a, i) => a.forEach(k => owner.set(k, i)));
+    const adj = atoms.map((a, i) => { const s = new Set(); for (const k of a) for (const nb of neighbours(...parse(k))) { const o = owner.get(nb); if (o !== undefined && o !== i) s.add(o); } return [...s]; });
+    // Croissance équilibrée à partir de n graines.
+    const piece = new Array(atoms.length).fill(-1), area = new Array(n).fill(0);
+    const seeds = shuffle(atoms.map((_, i) => i)).slice(0, n);
+    seeds.forEach((a, p) => { piece[a] = p; area[p] = atoms[a].length; });
+    const cap = loose ? 99 : 8;
+    let left = atoms.length - n;
+    while (left > 0) {
+      const order = [...Array(n).keys()].sort((a, b) => area[a] - area[b] || Math.random() - .5);
+      let grown = false;
+      for (const p of order) {
+        const front = [];
+        piece.forEach((pp, i) => { if (pp === p) for (const j of adj[i]) if (piece[j] === -1 && area[p] + atoms[j].length <= cap) front.push(j); });
+        if (!front.length) continue;
+        const j = front[rnd(0, front.length - 1)];
+        piece[j] = p; area[p] += atoms[j].length; left--; grown = true; break;
+      }
+      if (!grown) return null;
+    }
+    if (!loose && (Math.max(...area) > 8 || Math.min(...area) < 2)) return null;
+    const all = norm(atoms.flat());
+    const pieces = [];
+    for (let p = 0; p < n; p++) {
+      const qs = []; piece.forEach((pp, i) => { if (pp === p) qs.push(...atoms[i]); });
+      const sh = norm(qs);
+      // emplacement : coin haut-gauche relatif à la silhouette
+      pieces.push({ base: sh.qs, slot: { qs: sh.qs, id: sh.id, x: sh.mx - all.mx, y: sh.my - all.my, w: sh.w, h: sh.h } });
+    }
+    return { sil: all, pieces };
+  }
+
+  /* Rotations minimales pour retrouver l'orientation d'origine depuis k. */
+  function need(base, k) {
+    const id = norm(base).id;
+    let best = 4;
+    for (let t = 0; t < 4; t++) if (rot(base, t).id === id) {
+      const a = ((k - t) % 4 + 4) % 4, b = ((t - k) % 4 + 4) % 4;
+      best = Math.min(best, a, b);
+    }
+    return best;
+  }
+
+  const SPOTS = [[1.35, 1.3], [5, 1.0], [8.65, 1.3], [1.2, 3.75], [8.8, 3.75], [1.35, 6.2], [5, 6.5], [8.65, 6.2], [3.1, 6.6], [6.9, 0.95]];
+
+  function poolFor(n, par, idx) { return 3500 + 500 * n + 250 * par + 1000 * idx; }
+
+  function el(tag, attrs) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+  function float(txt, cls = "") {
+    const f = document.createElement("div"); f.className = "xfloat " + cls; f.textContent = txt;
+    $("x-stage").appendChild(f); setTimeout(() => f.remove(), 1100);
+  }
+  function say(t, cls = "") { const s = $("x-status"); s.textContent = t; s.className = "status " + cls; }
+  function paint() {
+    $("x-score").textContent = st.score;
+    $("x-puz").textContent = Math.min(st.idx + 1, PUZZLES) + "/" + PUZZLES;
+    $("x-level").textContent = st.level;
+    const p = st.puz;
+    $("x-rot").textContent = p ? p.rots + " / " + p.par : "0 / 0";
+    $("x-rot").classList.toggle("over", !!p && p.rots > p.par);
+    const sel = p && p.sel && !p.sel.locked;
+    $("x-left").disabled = $("x-right").disabled = !sel || !st.playing;
+    $("x-hint").disabled = !p || !st.playing || p.done;
+  }
+  function placeEl(pc) {
+    const e = pc.el;
+    e.style.left = ((pc.cx - pc.bw / 2) / SW * 100) + "%";
+    e.style.top = ((pc.cy - pc.bh / 2) / SH * 100) + "%";
+    e.style.transform = `rotate(${90 * pc.k}deg)`;
+  }
+  function cur(pc) { return rot(pc.base, pc.k); }
+  function clampPc(pc) {
+    const r = Math.max(pc.bw, pc.bh) / 2;
+    pc.cx = Math.min(SW - r + .3, Math.max(r - .3, pc.cx));
+    pc.cy = Math.min(SH - r + .3, Math.max(r - .3, pc.cy));
+  }
+
+  function build(idx) {
+    const n = Math.max(MINL, Math.min(9, st.level + [-1, 0, 0, 1][idx]));
+    const g = makePuzzle(n), board = $("x-board");
+    board.innerHTML = "";
+    const sil = g.sil, ox = Math.round(SW / 2 - sil.w / 2), oy = Math.round(SH / 2 - sil.h / 2);
+    const svg = el("svg", { viewBox: `0 0 ${SW} ${SH}`, class: "xbg" });
+    svg.appendChild(el("rect", { x: .35, y: .3, width: SW - .7, height: SH - .6, rx: .25, class: "xframe" }));
+    svg.appendChild(el("rect", { x: .65, y: .6, width: SW - 1.3, height: SH - 1.2, rx: .12, class: "xinlay" }));
+    let grid = "";
+    for (let x = 1; x < SW; x++) grid += `M${x} .6V${SH - .6}`;
+    for (let y = 1; y < SH - .6; y++) grid += `M.65 ${y}H${SW - .65}`;
+    for (let x = 1; x < SW - 1; x += 2) for (let y = 1; y < SH - 1.6; y += 2) grid += ((x + y) % 4 === 2) ? `M${x} ${y}l1 1` : `M${x + 1} ${y}l-1 1`;
+    svg.appendChild(el("path", { d: grid, class: "xgrid" }));
+    svg.appendChild(el("path", { d: pathOf(sil.qs, ox, oy), class: "xsil" }));
+    const hint = el("g", { id: "x-hintg" }); svg.appendChild(hint);
+    board.appendChild(svg);
+    const spots = shuffle(SPOTS.slice(0, Math.max(8, n)).map(s => s.slice()));
+    const pcs = g.pieces.map((p, i) => {
+      const sh = norm(p.base);
+      const pc = { i, base: sh.qs, bw: sh.w, bh: sh.h, k: 0, slot: { ...p.slot, cx: ox + p.slot.x + p.slot.w / 2, cy: oy + p.slot.y + p.slot.h / 2 }, locked: false };
+      pc.slot.ox = ox + p.slot.x; pc.slot.oy = oy + p.slot.y;
+      const s = spots[i % spots.length]; pc.cx = s[0] + (Math.random() - .5) * .4; pc.cy = s[1] + (Math.random() - .5) * .4;
+      return pc;
+    });
+    // orientations de départ : au moins la moitié des pièces à tourner
+    let par = 0;
+    for (let t = 0; t < 30; t++) {
+      for (const pc of pcs) pc.k = rnd(0, 3);
+      par = pcs.reduce((a, pc) => a + need(pc.base, pc.k), 0);
+      if (par >= Math.ceil(n / 2) + 1) break;
+    }
+    for (const pc of pcs) {
+      clampPc(pc);
+      const d = document.createElement("div"); d.className = "xpiece";
+      d.style.width = (pc.bw / SW * 100) + "%"; d.style.height = (pc.bh / SH * 100) + "%";
+      const ps = el("svg", { viewBox: `0 0 ${pc.bw} ${pc.bh}` });
+      const dp = pathOf(pc.base);
+      ps.appendChild(el("path", { d: dp, class: "xedge" }));
+      ps.appendChild(el("path", { d: dp, class: "xfill" }));
+      d.appendChild(ps); pc.el = d; board.appendChild(d);
+      d.style.transition = "none"; placeEl(pc); d.offsetWidth; d.style.transition = "";
+      bindDrag(pc);
+    }
+    st.puz = { n, par, rots: 0, pieces: pcs, placed: 0, sel: null, pool: poolFor(n, par, idx), hints: 0, hintPc: null, done: false };
+    st.score += st.puz.pool;
+    float("+" + st.puz.pool, "gain");
+    paint();
+  }
+
+  function select(pc) {
+    const p = st.puz; if (!p) return;
+    if (p.sel) p.sel.el.classList.remove("sel");
+    p.sel = pc && !pc.locked ? pc : null;
+    if (p.sel) { p.sel.el.classList.add("sel"); p.sel.el.style.zIndex = ++ztop; }
+    paint();
+  }
+  function trySnap(pc) {
+    const p = st.puz, c = cur(pc);
+    // une pièce identique peut prendre la place d'une autre
+    const free = p.pieces.filter(o => !o.slotTaken && o.slot.id === c.id);
+    for (const o of free) {
+      if (Math.hypot(pc.cx - o.slot.cx, pc.cy - o.slot.cy) < .6) {
+        o.slotTaken = true;
+        if (o !== pc) { const s = pc.slot; pc.slot = o.slot; o.slot = s; if (p.hintPc === o) p.hintPc = pc; }
+        pc.cx = pc.slot.cx; pc.cy = pc.slot.cy; pc.locked = true; placeEl(pc);
+        pc.el.classList.remove("sel"); pc.el.classList.add("set"); pc.el.style.zIndex = 2;
+        if (p.sel === pc) p.sel = null;
+        if (p.hintPc === pc) { $("x-hintg").innerHTML = ""; p.hintPc = null; }
+        p.placed++; paint();
+        if (p.placed === p.n) complete();
+        return true;
+      }
+    }
+    return false;
+  }
+  function rotate(dir) {
+    const p = st && st.puz;
+    if (!st || !st.playing || !p || !p.sel || p.sel.locked) return;
+    const pc = p.sel; pc.k += dir; placeEl(pc);
+    p.rots++; st.totalRots++;
+    if (p.rots > p.par) { st.score = Math.max(0, st.score - OVER); st.over++; float("−" + OVER, "loss"); }
+    paint();
+    setTimeout(() => { if (st.puz === p && !pc.locked) trySnap(pc); }, 190);
+  }
+  function hint() {
+    const p = st && st.puz;
+    if (!st || !st.playing || !p || p.done) return;
+    let pc = p.sel && !p.sel.locked ? p.sel : p.pieces.find(o => !o.locked);
+    if (!pc) return;
+    const cost = Math.round(p.pool * (p.hints ? .12 : .6) / 10) * 10;
+    p.hints++; st.hints++; st.score = Math.max(0, st.score - cost); float("−" + cost, "loss");
+    p.hintPc = pc; select(pc);
+    const g = $("x-hintg"); g.innerHTML = "";
+    g.appendChild(el("path", { d: outline(pc.slot.qs, pc.slot.ox, pc.slot.oy), class: "xhint" }));
+    say("Le contour pointillé montre où va la pièce choisie.");
+    paint();
+  }
+  function bindDrag(pc) {
+    const d = pc.el;
+    d.addEventListener("pointerdown", e => {
+      if (!st || !st.playing || pc.locked || st.puz.done) return;
+      e.preventDefault();
+      select(pc);
+      const r = $("x-stage").getBoundingClientRect(), u = r.width / SW;
+      const sx = e.clientX, sy = e.clientY, cx0 = pc.cx, cy0 = pc.cy;
+      let moved = false;
+      d.classList.add("drag");
+      try { d.setPointerCapture(e.pointerId); } catch (_) {}
+      const move = ev => {
+        const dx = (ev.clientX - sx) / u, dy = (ev.clientY - sy) / u;
+        if (Math.abs(dx) + Math.abs(dy) > .08) moved = true;
+        pc.cx = cx0 + dx; pc.cy = cy0 + dy; clampPc(pc); placeEl(pc);
+      };
+      const up = () => {
+        d.removeEventListener("pointermove", move); d.removeEventListener("pointerup", up); d.removeEventListener("pointercancel", up);
+        d.classList.remove("drag");
+        if (moved) trySnap(pc);
+      };
+      d.addEventListener("pointermove", move); d.addEventListener("pointerup", up); d.addEventListener("pointercancel", up);
+    });
+  }
+
+  async function complete() {
+    const my = run, p = st.puz;
+    p.done = true; paint();
+    const perfect = p.rots <= p.par && !p.hints;
+    if (perfect) st.perfect++;
+    say(perfect ? "Parfait : aucune rotation de trop !" : "Bravo !", "good");
+    $("x-stage").classList.add("glow");
+    await sleep(1000); if (my !== run) return;
+    $("x-stage").classList.remove("glow");
+    st.idx++;
+    if (st.idx >= PUZZLES) return end();
+    $("x-board").classList.add("out");
+    await sleep(420); if (my !== run) return;
+    $("x-board").classList.remove("out");
+    say("Glisse les pièces dans la silhouette.");
+    build(st.idx);
+    $("x-board").classList.add("in");
+    await sleep(420); if (my !== run) return;
+    $("x-board").classList.remove("in");
+  }
+
+  function startLevel() {
+    const last = scores.find(s => s.game === "marq" && s.next);
+    return last ? Math.max(MINL, Math.min(MAXL, last.next)) : 4;
+  }
+  function reset() {
+    run++;
+    st = { score: 0, idx: 0, level: startLevel(), playing: false, puz: null, hints: 0, over: 0, perfect: 0, totalRots: 0 };
+    $("x-board").innerHTML = ""; $("x-board").className = "xboard";
+    const svg = el("svg", { viewBox: `0 0 ${SW} ${SH}`, class: "xbg" });
+    svg.appendChild(el("rect", { x: .35, y: .3, width: SW - .7, height: SH - .6, rx: .25, class: "xframe" }));
+    svg.appendChild(el("rect", { x: .65, y: .6, width: SW - 1.3, height: SH - 1.2, rx: .12, class: "xinlay" }));
+    $("x-board").appendChild(svg);
+    $("x-start-wrap").hidden = false; $("x-end").hidden = true;
+    say("Glisse chaque pièce dans la silhouette. Moins tu fais de rotations, plus tu gardes de points.");
+    paint();
+  }
+  function stop() { run++; if (st) st.playing = false; }
+  async function start() {
+    const my = run;
+    $("x-start-wrap").hidden = true;
+    st.playing = true;
+    say("Glisse les pièces dans la silhouette.");
+    build(0);
+    $("x-board").classList.add("in");
+    await sleep(420); if (my !== run) return;
+    $("x-board").classList.remove("in");
+  }
+  function end() {
+    st.playing = false; paint();
+    let next = st.level;
+    if (!st.hints && st.over <= 4) next = st.level + 1;
+    else if (st.hints >= 2 || st.over > 12) next = st.level - 1;
+    next = Math.max(MINL, Math.min(MAXL, next));
+    const prevBest = bestFor("marq");
+    $("x-final").textContent = st.score;
+    $("x-end-detail").textContent = `Pièces ${st.level} · ${st.perfect} puzzle${st.perfect > 1 ? "s" : ""} parfait${st.perfect > 1 ? "s" : ""} sur ${PUZZLES}` +
+      (st.over ? ` · ${st.over} rotation${st.over > 1 ? "s" : ""} de trop` : "") + (st.hints ? ` · ${st.hints} conseil${st.hints > 1 ? "s" : ""}` : "") +
+      (next > st.level ? ". Prochaine partie : plus de pièces." : next < st.level ? ". Prochaine partie : moins de pièces." : ".");
+    $("x-end-record").hidden = !(st.score > prevBest && st.score > 0);
+    $("x-end").hidden = false; say("");
+    addScore({ game: "marq", score: st.score, next, pieces: st.level, at: new Date().toISOString() });
+  }
+
+  $("x-left").addEventListener("click", () => rotate(-1));
+  $("x-right").addEventListener("click", () => rotate(1));
+  $("x-hint").addEventListener("click", hint);
+  $("x-stage").addEventListener("pointerdown", e => { if (st && st.playing && !e.target.closest(".xpiece")) select(null); });
+  document.addEventListener("keydown", e => {
+    if ($("marq").hidden || !st || !st.playing) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); rotate(-1); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); rotate(1); }
+    else if (e.key === "Tab") {
+      const free = st.puz.pieces.filter(o => !o.locked); if (!free.length) return;
+      e.preventDefault();
+      const i = free.indexOf(st.puz.sel); select(free[(i + 1) % free.length]);
+    }
+  });
+  $("x-start").addEventListener("click", start);
+  $("x-again").addEventListener("click", () => { reset(); start(); });
+  $("x-home").addEventListener("click", () => go("home"));
+  $("x-back").addEventListener("click", () => go("home"));
+  return { reset, stop, _st: () => st, _rot: rot, _need: need, _make: makePuzzle };
 })();
 
 /* ---------- Jamais deux fois ---------- */
