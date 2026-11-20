@@ -426,6 +426,37 @@ button.game:active { transform: scale(0.985); }
 .xbar #x-left, .xbar #x-right { width: 56px; padding: 10px 0; }
 .xrot { min-width: 70px; text-align: center; font: 800 1.15rem var(--font-display); color: var(--muted); }
 .xrot.over { color: var(--bad); }
+/* Rang de semis */
+.jgarden { position: relative; border-radius: 16px; padding: 14px 12px 18px; background: linear-gradient(180deg, #e9dcc0, #dccaa4); display: flex; flex-direction: column; gap: 16px; user-select: none; -webkit-user-select: none; min-height: 300px; }
+.jtop { display: flex; gap: 10px; align-items: flex-start; }
+.jrules { flex: 1 1 58%; display: flex; flex-direction: column; gap: 8px; }
+.jrule { margin: 0; padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,.75); color: #3d3524; font-size: .9rem; font-weight: 600; line-height: 1.3; border-left: 5px solid transparent; }
+.jrule.broken { border-left-color: #e0703a; background: #fff3e8; }
+.jshelf { flex: 1 1 42%; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; align-content: flex-start; padding-bottom: 6px; border-bottom: 5px solid #a2875a; min-height: 70px; }
+.jpack { width: 52px; padding: 3px 3px 2px; border: 2px solid #fff; border-radius: 6px; background: var(--bg); box-shadow: 0 2px 4px rgba(0,0,0,.18); cursor: pointer; display: flex; flex-direction: column; align-items: center; transition: transform .15s; }
+.jpack svg { width: 38px; height: 42px; }
+.jpack small { font-size: .58rem; font-weight: 700; color: #3d3524; line-height: 1.1; }
+.jpack.sel { transform: translateY(-6px); border-color: #e0703a; box-shadow: 0 0 0 3px #f6b46e, 0 4px 8px rgba(0,0,0,.2); }
+.jpack.gone { visibility: hidden; width: 0; padding: 0; border: 0; margin-left: -6px; }
+.jbed { --k: 4; position: relative; display: grid; grid-template-columns: repeat(var(--k), minmax(0, 1fr)); gap: 10px; width: 100%; max-width: calc(var(--k) * 84px + 20px); margin: 0 auto; box-sizing: border-box; padding: 0 10px 22px; }
+.jbed::after { content: ""; position: absolute; left: 4%; right: 4%; bottom: 0; height: 26px; border-radius: 6px 6px 12px 12px; background: #6a4a2c; box-shadow: inset 0 6px 0 #57391f; z-index: 0; }
+.jslot { position: relative; z-index: 1; aspect-ratio: 5 / 6; min-width: 0; width: 100%; border: 3px dashed rgba(90,70,40,.55); border-radius: 8px; background: rgba(255,255,255,.25); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+.jslot b { font: 800 1.6rem var(--font-display); color: rgba(90,70,40,.7); }
+.jslot::after { content: ""; position: absolute; bottom: -22px; left: 50%; width: 10px; height: 20px; margin-left: -5px; background: #7a5434; border-radius: 2px; }
+.jslot.full, .jslot.fixed { border: 0; background: transparent; }
+.jpk { width: 100%; height: 100%; border: 3px solid #fff; border-radius: 6px; background: var(--bg); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,.2); animation: ain .18s ease-out; }
+.jslot.fixed .jpk { border-color: #5a3b22; border-width: 5px; animation: none; }
+.jpk svg { width: 78%; height: 78%; }
+.jbed.grow .jpk { animation: jgrow .9s ease-in-out both; }
+@keyframes jgrow { 40% { transform: scale(.4); opacity: 0; } 41% { background: transparent; border-color: transparent; box-shadow: none; } 100% { transform: none; opacity: 1; background: transparent; border-color: transparent; box-shadow: none; } }
+.jbed.grow .jpk svg { animation: jsprout .9s both; }
+@keyframes jsprout { 0%, 40% { opacity: 1; } 41% { opacity: 0; } 100% { opacity: 0; } }
+.jbed.grow .jslot::before { content: ""; position: absolute; bottom: 0; left: 50%; width: 44px; height: 46px; margin-left: -22px; z-index: 2; background: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 44'%3E%3Cpath d='M20 44V18' stroke='%2366b04a' stroke-width='4'/%3E%3Cpath d='M20 22C14 12 6 12 3 15c5 1 11 4 17 9M20 20c5-10 12-11 16-8-5 1-10 4-16 10' fill='%237cc35a'/%3E%3C/svg%3E"); animation: jsprt .9s ease-out both; }
+@keyframes jsprt { 0%, 40% { transform: scaleY(0); transform-origin: bottom; opacity: 0; } 100% { transform: none; opacity: 1; } }
+.jact .btn { min-width: 120px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .jgarden { background: linear-gradient(180deg, #4a4232, #3b3426); } :root:not([data-theme="light"]) .jslot b { color: rgba(240,225,190,.7); } :root:not([data-theme="light"]) .jslot { border-color: rgba(240,225,190,.45); } }
+:root[data-theme="dark"] .jgarden { background: linear-gradient(180deg, #4a4232, #3b3426); }
+:root[data-theme="dark"] .jslot b { color: rgba(240,225,190,.7); }
 .sync-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .sync-row input { flex: 1 1 200px; min-width: 0; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; }
 .sync-row .btn { flex: 0 0 auto; }
@@ -985,6 +1016,44 @@ button.game:active { transform: scale(0.985); }
     </div>
   </section>
 
+  <section id="semis" hidden style="display:flex;flex-direction:column;gap:14px">
+    <div class="topbar">
+      <button class="back" id="j-back" type="button">← Accueil</button>
+      <span class="eyebrow">Raisonnement logique</span>
+    </div>
+    <h2>Rang de semis</h2>
+    <div class="stats">
+      <div class="stat"><small>Niveau</small><b class="num" id="j-level">35</b></div>
+      <div class="stat"><small>Essai</small><b class="num" id="j-trial">1/7</b></div>
+      <div class="stat"><small>Score</small><b class="num" id="j-score">0</b></div>
+    </div>
+    <div class="jgarden">
+      <div class="jtop">
+        <div class="jrules" id="j-rules"></div>
+        <div class="jshelf" id="j-shelf"></div>
+      </div>
+      <div class="jbed" id="j-bed"></div>
+    </div>
+    <div class="actions jact">
+      <button class="btn secondary" id="j-imp" type="button" hidden>Impossible</button>
+      <button class="btn" id="j-submit" type="button" disabled>Planter</button>
+      <button class="btn" id="j-next" type="button" hidden>Continuer</button>
+    </div>
+    <p class="status" id="j-status" aria-live="polite"></p>
+    <p class="kbd">Touche un sachet, puis une case du rang. Touche une graine plantée pour la reprendre.</p>
+    <div class="actions" id="j-start-wrap"><button class="btn" id="j-start" type="button">Commencer</button></div>
+    <div class="panel" id="j-end" hidden>
+      <span class="eyebrow">Récolte terminée</span>
+      <div class="big num" id="j-final">0</div>
+      <p id="j-end-detail"></p>
+      <p class="record" id="j-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="j-again" type="button">Rejouer</button>
+        <button class="btn secondary" id="j-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
   <section id="vapeur" hidden style="display:flex;flex-direction:column;gap:18px">
     <div class="topbar">
       <button class="back" id="v-back" type="button">← Accueil</button>
@@ -1054,6 +1123,8 @@ const GAMES = [
     icon: '<svg viewBox="0 0 26 26"><rect x="8" y="2" width="10" height="7" rx="2" fill="var(--accent)"/><rect x="6" y="10" width="14" height="9" rx="2" fill="var(--muted)" opacity=".5"/><path d="M10 19v5M16 19v5" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round" opacity=".5"/><path d="M6 12l-4 4M20 12l4 4" stroke="var(--glow)" stroke-width="2.5" stroke-linecap="round"/></svg>' },
   { id: "marq", name: "Marqueterie", skill: "Raisonnement spatial", desc: "Glisse et pivote les pièces pour remplir la silhouette.", ready: true,
     icon: '<svg viewBox="0 0 26 26"><path d="M3 23L13 3l10 20z" fill="var(--muted)" opacity=".35"/><path d="M13 3l5 10H8z" fill="var(--accent)"/><path d="M8 13h10l5 10z" fill="var(--glow)"/></svg>' },
+  { id: "semis", name: "Rang de semis", skill: "Raisonnement logique", desc: "Plante les graines dans un ordre qui respecte toutes les règles.", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><rect x="2" y="19" width="22" height="5" rx="2" fill="var(--muted)" opacity=".5"/><path d="M7 19v-6M13 19v-9M19 19v-6" stroke="var(--good)" stroke-width="2"/><path d="M13 11c-3-4-6-4-8-3 3 1 5 2 8 4M13 11c3-4 6-4 8-3-3 1-5 2-8 4" fill="var(--good)"/><circle cx="7" cy="12" r="2" fill="var(--glow)"/><circle cx="19" cy="12" r="2" fill="var(--accent)"/></svg>' },
   { id: "tableau", name: "Le plus grand", skill: "Maths", desc: "Deux calculs : lequel donne la plus grande valeur ?", ready: true,
     icon: '<svg viewBox="0 0 26 26"><text x="13" y="17" text-anchor="middle" font-size="10" font-weight="700" font-family="sans-serif" fill="var(--accent)">7×3</text></svg>' },
   { id: "vapeur", name: "Même symbole", skill: "Vitesse", desc: "Le symbole est-il le même que le précédent ? Réponds vite.", ready: true,
@@ -1239,7 +1310,7 @@ function renderTrend() {
 function go(view) { location.hash = view === "home" ? "" : view; show(); }
 function show() {
   const h = location.hash.slice(1);
-  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli", "motif", "unique", "plein", "voisins", "fil", "vol", "encre", "pluie", "robot", "marq"];
+  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli", "motif", "unique", "plein", "voisins", "fil", "vol", "encre", "pluie", "robot", "marq", "semis"];
   const v = VIEWS.includes(h) ? h : "home";
   for (const id of ["home", ...VIEWS]) document.getElementById(id).hidden = id !== v;
   if (v === "courant") C.reset(); else C.stop();
@@ -1257,6 +1328,7 @@ function show() {
   if (v === "pluie") Q.reset(); else Q.stop();
   if (v === "robot") A.reset(); else A.stop();
   if (v === "marq") X.reset(); else X.stop();
+  if (v === "semis") J.reset(); else J.stop();
   if (v === "trains") T.reset(); else T.stop();
   if (v === "grille") G.reset(); else G.stop();
   if (v === "vapeur") V.reset(); else V.stop();
@@ -3786,6 +3858,251 @@ const X = (() => {
   $("x-home").addEventListener("click", () => go("home"));
   $("x-back").addEventListener("click", () => go("home"));
   return { reset, stop, _st: () => st, _rot: rot, _need: need, _make: makePuzzle };
+})();
+
+/* ---------- Rang de semis ---------- */
+const J = (() => {
+  const $ = id => document.getElementById(id);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const pick = a => a[rnd(0, a.length - 1)];
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const TRIALS = 7, START = 35, IMPOSSIBLE_FROM = 36;
+  // name: [nom, article défini, couleur fond, dessin]
+  const PLANTS = [
+    { n: "Radis", a: "les Radis", g: "m", bg: "#fbe1e6", svg: '<ellipse cx="20" cy="27" rx="9" ry="10" fill="#e0475f"/><path d="M20 37l-1 6" stroke="#e0475f" stroke-width="2"/><path d="M20 17c-4-6-9-7-11-5 3 1 6 3 9 6M20 17c3-7 9-8 11-6-3 1-6 3-9 6" fill="#4caf50"/><ellipse cx="17" cy="24" rx="2.5" ry="3.5" fill="#fff" opacity=".35"/>' },
+    { n: "Poireaux", a: "les Poireaux", g: "m", bg: "#e5f3dc", svg: '<rect x="16" y="22" width="8" height="20" rx="3" fill="#f3f0dc"/><path d="M17 23c-3-9-7-14-10-16 5 1 10 7 11 16M23 23c3-10 6-15 10-18-4 3-7 9-8 18M20 23c0-9 0-14 0-18" stroke="#3f9a4a" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M17 42h6" stroke="#c9b98f" stroke-width="2"/>' },
+    { n: "Potiron", a: "le Potiron", g: "m", bg: "#fde7cf", svg: '<ellipse cx="20" cy="29" rx="15" ry="11" fill="#f08a24"/><path d="M20 18v22M12 20c-3 6-3 12 0 18M28 20c3 6 3 12 0 18" stroke="#c96a12" stroke-width="1.6" fill="none"/><path d="M20 18c0-4 2-6 4-7" stroke="#4d7a2a" stroke-width="3" fill="none" stroke-linecap="round"/>' },
+    { n: "Fraises", a: "les Fraises", g: "f", bg: "#fde0dc", svg: '<path d="M20 42c-9-6-13-13-11-19 2-5 7-6 11-4 4-2 9-1 11 4 2 6-2 13-11 19z" fill="#e23b3b"/><path d="M12 19c3 2 5 2 8 0 3 2 5 2 8 0-2-3-5-4-8-5-3 1-6 2-8 5z" fill="#3f9a4a"/><g fill="#ffe08a"><circle cx="15" cy="26" r="1"/><circle cx="21" cy="25" r="1"/><circle cx="26" cy="27" r="1"/><circle cx="18" cy="31" r="1"/><circle cx="24" cy="32" r="1"/><circle cx="20" cy="37" r="1"/></g>' },
+    { n: "Aubergine", a: "l'Aubergine", g: "f", bg: "#ece0f3", svg: '<path d="M15 20c-6 6-7 16-1 21 6 4 14 0 15-8 1-6-2-11-6-13z" fill="#6b3a8c"/><path d="M14 20c2-4 6-6 10-4 3 1 4 4 1 5-3-1-7-2-11-1z" fill="#4d7a2a"/><path d="M22 15c1-3 3-5 5-6" stroke="#4d7a2a" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="16" cy="29" rx="2" ry="5" fill="#fff" opacity=".25"/>' },
+    { n: "Chou", a: "le Chou", g: "m", bg: "#dff1ea", svg: '<circle cx="20" cy="28" r="13" fill="#7cc48f"/><path d="M20 15c-6 4-7 16 0 26M20 15c6 4 7 16 0 26M9 24c5 2 9 6 11 17M31 24c-5 2-9 6-11 17" stroke="#4f9a68" stroke-width="1.6" fill="none"/>' },
+  ];
+  const art = p => `<svg viewBox="0 0 40 46">${p.svg}</svg>`;
+  const Cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const de = p => p.a.startsWith("le ") ? "du " + p.a.slice(3) : p.a.startsWith("les ") ? "des " + p.a.slice(4) : "de " + p.a;
+  const etre = p => p.a.startsWith("les ") ? "sont" : "est";
+  const doit = p => p.a.startsWith("les ") ? "doivent" : "doit";
+
+  /* Règles : chaque règle a test(pos) et texte. pos = Map plante -> index (0..k-1). */
+  function simpleRule(ids, k, level) {
+    const [A, B] = shuffle(ids.slice()).slice(0, 2), pa = PLANTS[A], pb = PLANTS[B];
+    const pair = [A, B].sort().join();
+    const types = ["right", "left", "adj"];
+    if (level >= 30) types.push("notadj");
+    if (level >= 40) types.push("pos", "notpos");
+    const t = pick(types), n = rnd(1, k);
+    switch (t) {
+      case "right": return { t, pair, txt: `${Cap(pa.a)} ${doit(pa)} être à droite ${de(pb)}.`, test: p => p[A] > p[B] };
+      case "left": return { t, pair, txt: `${Cap(pa.a)} ${doit(pa)} être à gauche ${de(pb)}.`, test: p => p[A] < p[B] };
+      case "adj": return { t, pair, txt: `${Cap(pa.a)} ${doit(pa)} être à côté ${de(pb)}.`, test: p => Math.abs(p[A] - p[B]) === 1 };
+      case "notadj": return { t, pair, txt: `${Cap(pa.a)} ne ${doit(pa)} PAS être à côté ${de(pb)}.`, test: p => Math.abs(p[A] - p[B]) !== 1 };
+      case "pos": return { t, pair, txt: `${Cap(pa.a)} ${doit(pa)} être en position ${n}.`, test: p => p[A] === n - 1 };
+      default: return { t, pair, txt: `${Cap(pa.a)} ne ${doit(pa)} PAS être en position ${n}.`, test: p => p[A] !== n - 1 };
+    }
+  }
+  function condRule(ids, k, level) {
+    const s = shuffle(ids.slice()), [A, B] = s, pa = PLANTS[A], pb = PLANTS[B];
+    const pair = [A, B].sort().join();
+    const neg = level >= 30 && Math.random() < .4;
+    const cond = neg ? (p => Math.abs(p[A] - p[B]) !== 1) : (p => Math.abs(p[A] - p[B]) === 1);
+    const ctxt = `Si ${pa.a} ${neg ? (etre(pa) === "est" ? "n'est" : "ne sont") + " PAS" : etre(pa)} à côté ${de(pb)}`;
+    const n = rnd(1, k);
+    const two = Math.random() < .55;
+    const C = pick(ids), D = pick(ids.filter(x => x !== C));
+    if (two) {
+      const pc = PLANTS[C], pd = PLANTS[D];
+      return { t: "cond", pair, txt: `${ctxt}, ${pc.a} ou ${pd.a} doivent être en position ${n}.`, test: p => !cond(p) || p[C] === n - 1 || p[D] === n - 1 };
+    }
+    const pc = PLANTS[C];
+    return { t: "cond", pair, txt: `${ctxt}, ${pc.a} ${doit(pc)} être en position ${n}.`, test: p => !cond(p) || p[C] === n - 1 };
+  }
+  function perms(a) {
+    if (a.length <= 1) return [a];
+    const out = [];
+    a.forEach((x, i) => { for (const r of perms(a.filter((_, j) => j !== i))) out.push([x, ...r]); });
+    return out;
+  }
+  function sizeFor(level) { return level < 12 ? 3 : level < 45 ? 4 : 5; }
+  function rulesFor(level) { return level < 6 ? 1 : level < 55 ? 2 : 3; }
+
+  /* Génère un essai : graines, cases fixes, règles, et solutions. */
+  function makeTrial(level, wantImpossible, relax) {
+    const k = sizeFor(level), nr = rulesFor(level);
+    for (let tries = 0; tries < 400; tries++) {
+      const ids = shuffle([...PLANTS.keys()]).slice(0, k);
+      const nfix = level < 20 ? 0 : Math.random() < .55 ? (k >= 5 && Math.random() < .4 ? 2 : 1) : 0;
+      const fixed = new Map(); // plante -> case
+      const slots = shuffle([...Array(k).keys()]);
+      ids.slice(0, nfix).forEach((id, i) => fixed.set(id, slots[i]));
+      const rules = [];
+      for (let r = 0; r < nr; r++) rules.push(level >= 15 && r === nr - 1 ? condRule(ids, k, level) : simpleRule(ids, k, level));
+      if (new Set(rules.map(r => r.pair)).size < rules.length) continue;
+      const all = perms([...Array(k).keys()]).map(order => { const p = {}; ids.forEach((id, i) => p[id] = order[i]); return p; })
+        .filter(p => [...fixed].every(([id, s]) => p[id] === s));
+      const sols = all.filter(p => rules.every(r => r.test(p)));
+      // chaque règle doit compter : seule, elle élimine des possibilités ; et chaque règle seule reste possible
+      if (!rules.every(r => { const n = all.filter(r.test).length; return n > 0 && n < all.length; })) continue;
+      if (wantImpossible) { if (sols.length) continue; }
+      else {
+        if (!sols.length) continue;
+        if (!relax && sols.length > Math.max(2, Math.floor(all.length / 6))) continue;
+        // la règle conditionnelle doit pouvoir s'appliquer dans au moins une solution ou en écarter une
+        if (!relax && rules.some(r => r.t === "cond") && all.filter(p => rules.filter(r => r.t !== "cond").every(r => r.test(p))).length === sols.length) continue;
+      }
+      return { k, ids, fixed, rules, sols, impossible: !sols.length };
+    }
+    if (wantImpossible) return makeTrial(level, false);
+    return makeTrial(level, false, true);
+  }
+
+  let st = null, run = 0;
+  function say(t, cls = "") { const s = $("j-status"); s.textContent = t; s.className = "status " + cls; }
+  function paint() {
+    $("j-level").textContent = st.level;
+    $("j-trial").textContent = Math.min(st.n + 1, TRIALS) + "/" + TRIALS;
+    $("j-score").textContent = st.score;
+  }
+  function pts(level) { return 15 * level + 5; }
+
+  function draw() {
+    const t = st.trial;
+    $("j-rules").innerHTML = t.rules.map((r, i) => `<p class="jrule" data-i="${i}">${r.txt}</p>`).join("");
+    const shelf = $("j-shelf"); shelf.innerHTML = "";
+    const free = t.ids.filter(id => !t.fixed.has(id) && !st.place.has(id));
+    for (const id of t.ids) {
+      if (t.fixed.has(id)) continue;
+      const b = document.createElement("button"); b.type = "button"; b.className = "jpack";
+      b.dataset.id = id; b.style.setProperty("--bg", PLANTS[id].bg);
+      b.innerHTML = art(PLANTS[id]) + `<small>${PLANTS[id].n}</small>`;
+      b.setAttribute("aria-label", PLANTS[id].n);
+      if (st.place.has(id)) b.classList.add("gone");
+      if (st.sel === id) b.classList.add("sel");
+      shelf.appendChild(b);
+    }
+    const bed = $("j-bed"); bed.innerHTML = "";
+    for (let s = 0; s < t.k; s++) {
+      const c = document.createElement("button"); c.type = "button"; c.className = "jslot"; c.dataset.s = s;
+      const fid = [...t.fixed].find(([, v]) => v === s);
+      const pid = [...st.place].find(([, v]) => v === s);
+      if (fid) { c.classList.add("fixed"); c.innerHTML = `<span class="jpk" style="--bg:${PLANTS[fid[0]].bg}">${art(PLANTS[fid[0]])}</span>`; c.disabled = true; c.setAttribute("aria-label", "Case " + (s + 1) + " : " + PLANTS[fid[0]].n + " (déjà planté)"); }
+      else if (pid) { c.classList.add("full"); c.innerHTML = `<span class="jpk" style="--bg:${PLANTS[pid[0]].bg}">${art(PLANTS[pid[0]])}</span>`; c.setAttribute("aria-label", "Case " + (s + 1) + " : " + PLANTS[pid[0]].n); }
+      else { c.innerHTML = `<b>${s + 1}</b>`; c.setAttribute("aria-label", "Case " + (s + 1) + " vide"); }
+      bed.appendChild(c);
+    }
+    $("j-bed").style.setProperty("--k", t.k);
+    $("j-imp").hidden = st.level < IMPOSSIBLE_FROM && !st.impShown;
+    $("j-submit").disabled = !st.playing || st.busy || free.length > 0;
+    $("j-imp").disabled = !st.playing || st.busy;
+  }
+  function tapPack(id) {
+    if (!st.playing || st.busy) return;
+    st.sel = st.sel === id ? null : id;
+    if (st.sel !== null) {
+      // pose directe dans la première case libre si une seule reste
+      const t = st.trial, used = new Set([...t.fixed.values(), ...st.place.values()]);
+      const empty = [...Array(t.k).keys()].filter(s => !used.has(s));
+      if (empty.length === 1) { st.place.set(id, empty[0]); st.sel = null; }
+    }
+    draw();
+  }
+  function tapSlot(s) {
+    if (!st.playing || st.busy) return;
+    const t = st.trial;
+    const pid = [...st.place].find(([, v]) => v === s);
+    if (st.sel !== null) {
+      if (pid) st.place.delete(pid[0]);
+      st.place.set(st.sel, s); st.sel = null;
+    } else if (pid) { st.place.delete(pid[0]); st.sel = pid[0]; }
+    draw();
+  }
+  async function answer(impossible) {
+    if (!st.playing || st.busy) return;
+    const my = run, t = st.trial;
+    st.busy = true; st.sel = null; draw();
+    const p = {}; for (const [id, s] of t.fixed) p[id] = s; for (const [id, s] of st.place) p[id] = s;
+    const ok = impossible ? t.impossible : (!t.impossible && t.rules.every(r => r.test(p)));
+    if (ok) {
+      const g = pts(st.level); st.score += g; st.ok++; st.streak++;
+      $("j-bed").classList.add("grow");
+      say(impossible ? "Exact, c'était impossible ! +" + g : "Bien planté ! +" + g, "good");
+      if (st.streak >= 6) { st.level++; st.streak = 0; }
+      paint();
+      await sleep(1300); if (my !== run) return;
+      $("j-bed").classList.remove("grow");
+    } else {
+      st.streak = 0; st.wrong++;
+      const bad = new Set();
+      if (impossible) {
+        const s = t.sols[0]; st.place = new Map(); t.ids.forEach(id => { if (!t.fixed.has(id)) st.place.set(id, s[id]); });
+        draw(); say("Ce n'était pas impossible : voici une solution.", "bad");
+      } else if (t.impossible) {
+        say("Aucune solution ne respectait toutes les règles : il fallait répondre Impossible.", "bad");
+        t.rules.forEach((r, i) => { if (!r.test(p)) bad.add(i); });
+      } else {
+        t.rules.forEach((r, i) => { if (!r.test(p)) bad.add(i); });
+        say("Une règle n'est pas respectée.", "bad");
+      }
+      for (const el of $("j-rules").children) el.classList.toggle("broken", bad.has(+el.dataset.i));
+      st.level = Math.max(1, st.level - 3);
+      $("j-submit").hidden = true; $("j-imp").disabled = true; $("j-next").hidden = false; $("j-next").focus();
+      paint();
+      await new Promise(r => { st.resume = r; }); if (my !== run) return;
+      $("j-next").hidden = true; $("j-submit").hidden = false;
+    }
+    st.n++; st.busy = false;
+    if (st.n >= TRIALS) return end();
+    next();
+  }
+  function next() {
+    const imp = st.level >= IMPOSSIBLE_FROM && st.n > 0 && Math.random() < .22;
+    if (st.level >= IMPOSSIBLE_FROM && !st.impShown) st.impShown = true;
+    st.trial = makeTrial(st.level, imp);
+    st.place = new Map(); st.sel = null;
+    say("Plante chaque graine en respectant les règles.");
+    paint(); draw();
+  }
+  function startLevel() {
+    const last = scores.find(s => s.game === "semis" && s.next);
+    return last ? Math.max(1, last.next) : START;
+  }
+  function reset() {
+    run++;
+    st = { level: startLevel(), n: 0, score: 0, ok: 0, wrong: 0, streak: 0, playing: false, busy: false, place: new Map(), sel: null, trial: null, impShown: false };
+    st.impShown = st.level >= IMPOSSIBLE_FROM;
+    $("j-rules").innerHTML = ""; $("j-shelf").innerHTML = ""; $("j-bed").innerHTML = "";
+    $("j-next").hidden = true; $("j-submit").hidden = false; $("j-imp").hidden = true;
+    $("j-submit").disabled = true;
+    $("j-start-wrap").hidden = false; $("j-end").hidden = true;
+    say("Place les graines dans le rang en respectant toutes les règles.");
+    paint();
+  }
+  function stop() { run++; if (st) st.playing = false; }
+  function start() {
+    $("j-start-wrap").hidden = true;
+    st.playing = true; next();
+  }
+  function end() {
+    st.playing = false; paint();
+    $("j-trial").textContent = TRIALS + "/" + TRIALS;
+    const prevBest = bestFor("semis");
+    $("j-final").textContent = st.score;
+    $("j-end-detail").textContent = `${st.ok} essai${st.ok > 1 ? "s" : ""} réussi${st.ok > 1 ? "s" : ""} sur ${TRIALS} · niveau ${st.level}.`;
+    $("j-end-record").hidden = !(st.score > prevBest && st.score > 0);
+    $("j-end").hidden = false; say("");
+    $("j-submit").disabled = true; $("j-imp").disabled = true;
+    addScore({ game: "semis", score: st.score, next: st.level, correct: st.ok, at: new Date().toISOString() });
+  }
+
+  $("j-shelf").addEventListener("click", e => { const b = e.target.closest(".jpack"); if (b && !b.classList.contains("gone")) tapPack(+b.dataset.id); });
+  $("j-bed").addEventListener("click", e => { const c = e.target.closest(".jslot"); if (c && !c.disabled) tapSlot(+c.dataset.s); });
+  $("j-submit").addEventListener("click", () => answer(false));
+  $("j-imp").addEventListener("click", () => answer(true));
+  $("j-next").addEventListener("click", () => { if (st && st.resume) { const r = st.resume; st.resume = null; r(); } });
+  $("j-start").addEventListener("click", start);
+  $("j-again").addEventListener("click", () => { reset(); start(); });
+  $("j-home").addEventListener("click", () => go("home"));
+  $("j-back").addEventListener("click", () => go("home"));
+  return { reset, stop, _st: () => st, _make: makeTrial };
 })();
 
 /* ---------- Jamais deux fois ---------- */
