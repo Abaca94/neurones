@@ -468,6 +468,73 @@ button.game:active { transform: scale(0.985); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .jgarden { background: linear-gradient(180deg, #4a4232, #3b3426); } :root:not([data-theme="light"]) .jslot b { color: rgba(240,225,190,.7); } :root:not([data-theme="light"]) .jslot { border-color: rgba(240,225,190,.45); } }
 :root[data-theme="dark"] .jgarden { background: linear-gradient(180deg, #4a4232, #3b3426); }
 :root[data-theme="dark"] .jslot b { color: rgba(240,225,190,.7); }
+.ybox { position: relative; border-radius: 16px; background: var(--tile); border: 1px solid var(--line); padding: 18px 14px 18px; display: flex; flex-direction: column; gap: 16px; user-select: none; -webkit-user-select: none; overflow: hidden; }
+.ytrack { position: relative; height: 0; padding-bottom: 33%; }
+.ycard { position: absolute; top: 0; width: 31%; aspect-ratio: 1; left: calc(var(--i) * 34.5%); transition: left .28s ease, opacity .28s ease; perspective: 600px; }
+.ycard.out { opacity: 0; }
+.ycard .yin { position: absolute; inset: 0; transition: transform .25s ease; transform-style: preserve-3d; }
+.ycard.down .yin { transform: rotateY(180deg); }
+.ycard .yface, .ycard .yback { position: absolute; inset: 0; border-radius: 14px; backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: 0 2px 6px rgba(0,0,0,.18); }
+.ycard .yface { background: #fff; display: grid; place-items: center; }
+.ycard .yface svg { width: 62%; height: 62%; }
+.ycard .yback { transform: rotateY(180deg); background: var(--accent); background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,.28) 18%, transparent 19%), radial-gradient(circle at 0 0, rgba(255,255,255,.18) 18%, transparent 19%); background-size: 18px 18px; border: 5px solid rgba(255,255,255,.35); }
+.ycheck { position: absolute; top: -2px; left: 15.5%; transform: translate(-50%, -100%); font: 800 1.6rem var(--font-display); pointer-events: none; opacity: 0; }
+.ycheck.good { color: var(--good); } .ycheck.bad { color: var(--bad); }
+.ycheck.on { animation: ycheck .5s both; }
+@keyframes ycheck { 0% { opacity: 0; transform: translate(-50%, -60%); } 30% { opacity: 1; transform: translate(-50%, -100%); } 100% { opacity: 0; transform: translate(-50%, -110%); } }
+.ytrack { margin-top: 26px; }
+.ybox .mcount { z-index: 2; }
+.hscene { position: relative; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; background: #3d4a5c; user-select: none; -webkit-user-select: none; }
+.hfloors { position: absolute; inset: -50% 0 0; background: repeating-linear-gradient(180deg, transparent 0 calc(25% - 10px), #2c3646 calc(25% - 10px) 25%); background-size: 100% 50%; }
+.hfloors.move { animation: hmove .55s ease-in-out; }
+@keyframes hmove { from { transform: translateY(0); } to { transform: translateY(33.33%); } }
+.hshaft { position: absolute; top: 0; bottom: 0; left: 37%; width: 26%; background: #1f2530; box-shadow: inset 4px 0 0 #2a3240, inset -4px 0 0 #2a3240; }
+.hlift { position: absolute; left: 39.5%; width: 21%; top: 26%; height: 44%; border-radius: 10px 10px 4px 4px; background: #f6e7c8; overflow: hidden; box-shadow: 0 0 0 4px #8a6a3f; }
+.hdoor { position: absolute; top: 0; bottom: 0; width: 50%; background: #b58a52; transition: transform .3s ease; box-shadow: inset 0 0 0 3px #9b7443; }
+.hdoor.l { left: 0; } .hdoor.r { right: 0; }
+.hlift.open .hdoor.l { transform: translateX(-100%); } .hlift.open .hdoor.r { transform: translateX(100%); }
+.hinside { position: absolute; inset: 8% 6%; display: flex; flex-wrap: wrap-reverse; align-content: flex-start; justify-content: center; gap: 3px; opacity: .9; }
+.hinside svg { width: 42%; }
+.hleft { position: absolute; left: 3%; width: 31%; top: 40%; height: 30%; }
+.hshelf { position: absolute; left: 0; right: 0; bottom: 0; height: 8%; background: #8a6a3f; border-radius: 3px; }
+.hitems { position: absolute; left: 4%; right: 4%; bottom: 8%; display: flex; gap: 4%; align-items: flex-end; }
+.hitems svg, .hbench svg, .hbubble svg { width: 30%; flex: none; }
+.hitems svg { animation: hpop .25s both; transition: transform .45s ease-in, opacity .45s ease-in; }
+.hitems.go svg { transform: translateX(150%) scale(.6); opacity: 0; }
+@keyframes hpop { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.hright { position: absolute; left: 65%; right: 2%; top: 8%; bottom: 30%; }
+.hgate { position: absolute; right: 4%; bottom: 0; width: 30%; height: 52%; background: #c8b08a; border: 4px solid #6e5432; border-bottom: 0; border-radius: 6px 6px 0 0; }
+.hbench { position: absolute; left: 0; right: 36%; bottom: 0; display: flex; gap: 3%; align-items: flex-end; }
+.hbench svg { width: 31%; animation: hpop .25s both; }
+.hbubble { position: absolute; left: 0; right: 0; top: 0; min-height: 34%; background: #fff; border-radius: 12px; padding: 6px; display: flex; gap: 4%; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,.25); animation: hpop .25s both; font: 700 .85rem var(--font-body, inherit); color: #222; text-align: center; }
+.hbubble::after { content: ""; position: absolute; right: 18%; bottom: -8px; border: 8px solid transparent; border-top-color: #fff; border-bottom: 0; }
+.hbubble .ok { color: var(--good); font-size: 1.4rem; } .hbubble .ko { color: var(--bad); font-size: 1.1rem; }
+.hmsg { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); min-width: 60%; max-width: 92%; padding: 8px 14px; border-radius: 999px; background: rgba(15,20,28,.85); color: #fff; font-size: .85rem; text-align: center; }
+.hmsg:empty { display: none; }
+.hscene .mcount { z-index: 3; }
+.nstage { position: relative; border-radius: 16px; padding: 14px 12px 12px; background: radial-gradient(ellipse at 50% 0, #2f6f73, #173b40 70%); color: #fff; display: flex; flex-direction: column; gap: 8px; user-select: none; -webkit-user-select: none; }
+.nask { margin: 0; text-align: center; font-size: .85rem; opacity: .85; }
+.nrule { margin: 0; text-align: center; font: 700 1.1rem var(--font-display); line-height: 1.3; min-height: 2.6em; }
+.nnote { margin: 0; text-align: center; font-size: .85rem; min-height: 1.2em; color: #ffd98a; }
+.ntable { position: relative; height: 190px; border-radius: 12px; background: #1f5a5f; box-shadow: inset 0 0 0 4px #2b7177, inset 0 0 0 9px #1f5a5f, inset 0 0 0 11px #2b7177; overflow: hidden; }
+.ncard { position: absolute; width: 38px; height: 52px; border-radius: 6px; background: #fff; display: grid; place-items: center; box-shadow: 0 2px 4px rgba(0,0,0,.35); transform: rotate(var(--r, 0deg)); animation: ncard .25s both; }
+.ncard svg { width: 70%; height: 70%; }
+.ncard.fixed::after { content: ""; position: absolute; top: 0; right: 0; border: 7px solid transparent; border-top-color: #8b3a62; border-right-color: #8b3a62; border-top-right-radius: 6px; }
+.ncard.flip { background: #8b2840; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.15) 0 4px, transparent 4px 9px); }
+.ncard.flip svg { visibility: hidden; }
+@keyframes ncard { from { transform: translateY(40px) scale(.6); opacity: 0; } to { transform: rotate(var(--r, 0deg)); opacity: 1; } }
+.ntable.win .ncard { animation: nwin .6s ease both; }
+@keyframes nwin { 50% { transform: translateY(-10px) rotate(var(--r, 0deg)); box-shadow: 0 0 14px #ffe58a; } }
+.ntray { display: flex; justify-content: center; gap: 10px; padding: 8px; border-radius: 12px; background: #154045; min-height: 74px; }
+.ntray button { width: 46px; height: 62px; border-radius: 7px; border: 0; background: #fff; display: grid; place-items: center; box-shadow: 0 2px 4px rgba(0,0,0,.35); cursor: pointer; touch-action: manipulation; }
+.ntray button svg { width: 72%; height: 72%; }
+.ntray button:active { transform: scale(1.1); }
+.ntray button:disabled { opacity: .5; cursor: default; }
+.ntray button.nback { background: #8b2840; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.15) 0 4px, transparent 4px 9px); opacity: 1; }
+.ntray button.nback svg { visibility: hidden; }
+.nhelp { position: absolute; right: 10px; bottom: 15px; width: 44px; height: 44px; border-radius: 50%; border: 3px solid #fff; background: #26b5d6; color: #fff; font: 800 1.3rem var(--font-display); cursor: pointer; }
+.nbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.nstage .mcount { z-index: 2; }
 .sync-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .sync-row input { flex: 1 1 200px; min-width: 0; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; }
 .sync-row .btn { flex: 0 0 auto; }
@@ -1067,6 +1134,123 @@ button.game:active { transform: scale(0.985); }
     </div>
   </section>
 
+  <section id="echo" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="topbar">
+      <button class="back" id="y-back" type="button">← Accueil</button>
+      <span class="eyebrow">Mémoire de travail</span>
+    </div>
+    <h2>Écho des cartes</h2>
+    <div class="stats">
+      <div class="stat"><small>Score</small><b class="num" id="y-score">0</b></div>
+      <div class="stat"><small>Bonus</small><div class="dots" id="y-dots"></div></div>
+      <div class="stat"><small>Temps</small><b class="num" id="y-time">60</b></div>
+    </div>
+    <div class="ybox" id="y-box">
+      <p class="eq">La carte de droite est-elle la même que celle sortie <b>deux cartes avant</b> ?</p>
+      <div class="ytrack" id="y-track"></div>
+    </div>
+    <p class="status" id="y-status" aria-live="polite">Retiens chaque carte : la carte de droite est-elle la même que celle d'il y a deux cartes ?</p>
+    <div class="answers" id="y-pad">
+      <button class="btn no" type="button" data-a="0" disabled>← NON</button>
+      <button class="btn" type="button" data-a="1" disabled>OUI →</button>
+    </div>
+    <p class="kbd">Au clavier : ← pour NON, → pour OUI.</p>
+    <div class="actions" id="y-start-wrap"><button class="btn" id="y-start" type="button">Commencer</button></div>
+    <div class="panel" id="y-end" hidden>
+      <span class="eyebrow">Temps écoulé</span>
+      <div class="big num" id="y-final">0</div>
+      <p id="y-end-detail"></p>
+      <p class="record" id="y-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="y-again" type="button">Rejouer</button>
+        <button class="btn secondary" id="y-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="monte" hidden style="display:flex;flex-direction:column;gap:14px">
+    <div class="topbar">
+      <button class="back" id="h-back" type="button">← Accueil</button>
+      <span class="eyebrow">Mémoire de travail</span>
+    </div>
+    <h2>Monte-charge</h2>
+    <div class="stats">
+      <div class="stat"><small>Niveau</small><b class="num" id="h-level">1</b></div>
+      <div class="stat"><small>Score</small><b class="num" id="h-score">0</b></div>
+      <div class="stat"><small>Temps</small><b class="num" id="h-time">100</b></div>
+    </div>
+    <div class="hscene" id="h-scene">
+      <div class="hfloors" id="h-floors"></div>
+      <div class="hshaft"></div>
+      <div class="hleft"><div class="hshelf"></div><div class="hitems" id="h-pick"></div></div>
+      <div class="hlift" id="h-lift">
+        <div class="hinside" id="h-inside"></div>
+        <div class="hdoor l"></div><div class="hdoor r"></div>
+      </div>
+      <div class="hright" id="h-right" hidden>
+        <div class="hbubble" id="h-bubble"></div>
+        <div class="hgate"></div>
+        <div class="hbench" id="h-bench"></div>
+      </div>
+      <div class="hmsg" id="h-msg"></div>
+    </div>
+    <div class="actions"><button class="btn" id="h-act" type="button" disabled>Livrer</button></div>
+    <p class="kbd">Au clavier : ESPACE pour livrer. Livre seulement si tu as AU MOINS les caisses demandées.</p>
+    <div class="actions" id="h-start-wrap"><button class="btn" id="h-start" type="button">Commencer</button></div>
+    <div class="panel" id="h-end" hidden>
+      <span class="eyebrow">Fin de la tournée</span>
+      <div class="big num" id="h-final">0</div>
+      <p id="h-end-detail"></p>
+      <p class="record" id="h-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="h-again" type="button">Rejouer</button>
+        <button class="btn secondary" id="h-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="chance" hidden style="display:flex;flex-direction:column;gap:14px">
+    <div class="topbar">
+      <button class="back" id="n-back" type="button">← Accueil</button>
+      <span class="eyebrow">Maths · probabilités</span>
+    </div>
+    <h2>Tour de chance</h2>
+    <div class="stats">
+      <div class="stat"><small>Essai</small><b class="num" id="n-trial">1/5</b></div>
+      <div class="stat"><small>Niveau</small><b class="num" id="n-level">1</b></div>
+      <div class="stat"><small>Score</small><b class="num" id="n-score">0</b></div>
+    </div>
+    <div class="nstage" id="n-stage">
+      <p class="nask">Prépare un tour avec ces chances :</p>
+      <p class="nrule" id="n-rule"></p>
+      <p class="nnote" id="n-note"></p>
+      <div class="ntable" id="n-table"></div>
+      <div class="ntray" id="n-tray"></div>
+      <button class="nhelp" id="n-help" type="button" hidden aria-label="Aide">?</button>
+    </div>
+    <div class="nbtns" id="n-btns" hidden>
+      <button class="btn secondary" id="n-undo" type="button">Annuler</button>
+      <button class="btn" id="n-submit" type="button">Valider</button>
+    </div>
+    <p class="kbd">Touche une carte du plateau pour l'ajouter à la table. « Annuler » retire la dernière.</p>
+    <div class="actions" id="n-start-wrap"><button class="btn" id="n-start" type="button">Commencer</button></div>
+    <div class="panel" id="n-helpbox" hidden>
+      <span class="eyebrow" id="n-help-title"></span>
+      <p id="n-help-text"></p>
+      <div class="actions"><button class="btn" id="n-help-close" type="button">Compris</button></div>
+    </div>
+    <div class="panel" id="n-end" hidden>
+      <span class="eyebrow">Spectacle terminé</span>
+      <div class="big num" id="n-final">0</div>
+      <p id="n-end-detail"></p>
+      <p class="record" id="n-end-record" hidden>Nouveau record !</p>
+      <div class="actions">
+        <button class="btn" id="n-again" type="button">Rejouer</button>
+        <button class="btn secondary" id="n-home" type="button">Accueil</button>
+      </div>
+    </div>
+  </section>
+
   <section id="vapeur" hidden style="display:flex;flex-direction:column;gap:18px">
     <div class="topbar">
       <button class="back" id="v-back" type="button">← Accueil</button>
@@ -1118,6 +1302,10 @@ const GAMES = [
     icon: '<svg viewBox="0 0 26 26"><rect x="2" y="6" width="10" height="14" rx="2" fill="var(--glow)"/><rect x="14" y="6" width="10" height="14" rx="2" fill="var(--muted)" opacity=".35"/><circle cx="19" cy="10" r="2.2" fill="var(--accent)"/><path d="M13 3v20" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="2 2"/></svg>' },
   { id: "motif", name: "Motif éclair", skill: "Mémoire · rappel spatial", desc: "Des cases s'allument un instant : retrouve-les toutes.", ready: true,
     icon: '<svg viewBox="0 0 26 26"><rect x="2" y="2" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/><rect x="10" y="2" width="6" height="6" rx="1.5" fill="var(--glow)"/><rect x="18" y="2" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/><rect x="2" y="10" width="6" height="6" rx="1.5" fill="var(--glow)"/><rect x="10" y="10" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/><rect x="18" y="10" width="6" height="6" rx="1.5" fill="var(--glow)"/><rect x="2" y="18" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/><rect x="10" y="18" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/><rect x="18" y="18" width="6" height="6" rx="1.5" fill="var(--muted)" opacity=".35"/></svg>' },
+  { id: "echo", name: "Écho des cartes", skill: "Mémoire de travail", desc: "La carte de droite est-elle la même que celle d'il y a deux cartes ?", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><rect x="1" y="7" width="7" height="10" rx="1.5" fill="var(--accent)"/><rect x="9.5" y="7" width="7" height="10" rx="1.5" fill="var(--accent)" opacity=".6"/><rect x="18" y="7" width="7" height="10" rx="1.5" fill="var(--surface)" stroke="var(--muted)"/><circle cx="21.5" cy="12" r="2.3" fill="#2a9d8f"/><path d="M4.5 21q8.5 4 17 0" fill="none" stroke="var(--glow)" stroke-width="1.6"/></svg>' },
+  { id: "monte", name: "Monte-charge", skill: "Mémoire de travail", desc: "Retiens les caisses chargées et livre seulement les commandes que tu peux servir.", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><rect x="8" y="1" width="10" height="24" fill="var(--muted)" opacity=".35"/><rect x="9" y="7" width="8" height="11" rx="1.5" fill="#b58a52"/><rect x="1" y="13" width="6" height="5" rx="1" fill="#3b82c4"/><rect x="19" y="12" width="6" height="6" rx="1" fill="#f08c2e"/><path d="M13 2v5" stroke="var(--fg)" stroke-width="1.2"/></svg>' },
   { id: "unique", name: "Jamais deux fois", skill: "Mémoire à court terme", desc: "À chaque vague, choisis un objet que tu n'as encore jamais pris.", ready: true,
     icon: '<svg viewBox="0 0 26 26"><circle cx="8" cy="9" r="5" fill="var(--glow)"/><rect x="15" y="4" width="9" height="9" rx="2" fill="var(--accent)"/><path d="M13 15l5 9H8z" fill="var(--muted)" opacity=".5"/></svg>' },
   { id: "plein", name: "Plein à ras", skill: "Attention partagée", desc: "Remplis plusieurs verres à la fois et sers-les au bon moment.", ready: true,
@@ -1130,6 +1318,8 @@ const GAMES = [
     icon: '<svg viewBox="0 0 26 26"><g fill="var(--muted)" opacity=".55"><path d="M3 5l4 2-4 2 1-2z"/><path d="M3 17l4 2-4 2 1-2z"/></g><path d="M9 13l8-4-2 4 2 4z" fill="var(--accent)"/><g fill="var(--muted)" opacity=".55"><path d="M19 5l4 2-4 2 1-2z"/><path d="M19 17l4 2-4 2 1-2z"/></g></svg>' },
   { id: "encre", name: "Sens ou encre", skill: "Adaptabilité · inhibition", desc: "Le mot de gauche nomme-t-il la couleur de l'encre à droite ?", ready: true,
     icon: '<svg viewBox="0 0 26 26"><rect x="1" y="7" width="11" height="12" rx="2.5" fill="var(--surface)" stroke="var(--muted)"/><rect x="14" y="7" width="11" height="12" rx="2.5" fill="var(--surface)" stroke="var(--muted)"/><rect x="3.5" y="12" width="6" height="2.4" rx="1.2" fill="var(--fg)"/><rect x="16.5" y="12" width="6" height="2.4" rx="1.2" fill="#e53935"/></svg>' },
+  { id: "chance", name: "Tour de chance", skill: "Maths · probabilités", desc: "Ajoute des cartes sur la table pour obtenir exactement les chances demandées.", ready: true,
+    icon: '<svg viewBox="0 0 26 26"><rect x="2" y="6" width="9" height="13" rx="1.5" fill="var(--surface)" stroke="var(--muted)" transform="rotate(-10 6 12)"/><rect x="14" y="6" width="9" height="13" rx="1.5" fill="var(--surface)" stroke="var(--muted)" transform="rotate(10 18 12)"/><path d="M6.5 15 3.8 12.2a1.6 1.6 0 0 1 2.7-1.6 1.6 1.6 0 0 1 2.7 1.6Z" fill="#e0405a"/><path d="M20 9a3.2 3.2 0 1 0 1.8 5A2.6 2.6 0 0 1 20 9Z" fill="#6b2d73"/><path d="M11 23l2-4 2 4" stroke="var(--glow)" stroke-width="1.5" fill="none"/></svg>' },
   { id: "pluie", name: "Averse de calculs", skill: "Maths · calcul mental", desc: "Résous les calculs des gouttes avant qu'elles touchent l'eau.", ready: true,
     icon: '<svg viewBox="0 0 26 26"><path d="M13 2c3 5 8 8 8 13a8 8 0 0 1-16 0c0-5 5-8 8-13z" fill="var(--accent)"/><path d="M10 15h6M13 12v6" stroke="var(--surface)" stroke-width="2" stroke-linecap="round"/></svg>' },
   { id: "robot", name: "Pièce par pièce", skill: "Adaptabilité · inhibition", desc: "Monte le robot avec les bonnes pièces, laisse passer les autres.", ready: true,
@@ -1335,7 +1525,7 @@ function renderTrend() {
 function go(view) { location.hash = view === "home" ? "" : view; show(); }
 function show() {
   const h = location.hash.slice(1);
-  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli", "motif", "unique", "plein", "voisins", "fil", "vol", "encre", "pluie", "robot", "marq", "semis"];
+  const VIEWS = ["grille", "vapeur", "trains", "courant", "pierre", "tableau", "tournee", "pli", "motif", "unique", "plein", "voisins", "fil", "vol", "encre", "pluie", "robot", "marq", "semis", "echo", "monte", "chance"];
   const v = VIEWS.includes(h) ? h : "home";
   for (const id of ["home", ...VIEWS]) document.getElementById(id).hidden = id !== v;
   if (v === "courant") C.reset(); else C.stop();
@@ -1354,6 +1544,9 @@ function show() {
   if (v === "robot") A.reset(); else A.stop();
   if (v === "marq") X.reset(); else X.stop();
   if (v === "semis") J.reset(); else J.stop();
+  if (v === "echo") Y.reset(); else Y.stop();
+  if (v === "monte") H.reset(); else H.stop();
+  if (v === "chance") N.reset(); else N.stop();
   if (v === "trains") T.reset(); else T.stop();
   if (v === "grille") G.reset(); else G.stop();
   if (v === "vapeur") V.reset(); else V.stop();
@@ -4128,6 +4321,544 @@ const J = (() => {
   $("j-home").addEventListener("click", () => go("home"));
   $("j-back").addEventListener("click", () => go("home"));
   return { reset, stop, _st: () => st, _make: makeTrial };
+})();
+
+/* ---------- Écho des cartes ---------- */
+const Y = (() => {
+  const $ = id => document.getElementById(id);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const DURATION = 60000, DOTS = 4, MULTS = [1, 2, 4, 6, 8, 10];
+  const SHAPES = [
+    '<circle cx="50" cy="50" r="40" fill="#2a9d8f"/>',
+    '<rect x="12" y="12" width="76" height="76" rx="6" fill="#d1495b"/>',
+    '<path d="M50 8 94 88H6Z" fill="#f2b705"/>',
+    '<path d="M50 4C55 38 62 45 96 50 62 55 55 62 50 96 45 62 38 55 4 50 38 45 45 38 50 4Z" fill="#7b5ea7"/>',
+    '<g fill="#6a994e"><circle cx="50" cy="26" r="20"/><circle cx="74" cy="44" r="20"/><circle cx="65" cy="72" r="20"/><circle cx="35" cy="72" r="20"/><circle cx="26" cy="44" r="20"/><circle cx="50" cy="52" r="20"/></g>',
+    '<path d="M50 4 94 50 50 96 6 50Z" fill="#1e88e5"/>'
+  ];
+  let st = null, run = 0, tick = 0;
+  const rnd = n => Math.floor(Math.random() * n);
+  const mult = () => MULTS[st.lvl];
+
+  function paint() {
+    $("y-score").textContent = st.score;
+    $("y-dots").innerHTML = st.lvl === MULTS.length - 1 ? '<b>MAX ×' + mult() + '</b>' : dotsHtml(st.dots, DOTS, mult());
+    $("y-time").textContent = Math.ceil(Math.max(0, st.left) / 1000);
+  }
+  function say(t, cls = "") { const s = $("y-status"); s.textContent = t; s.className = "status " + cls; }
+  function lock(on) { for (const b of $("y-pad").children) b.disabled = on; }
+  function nextShape() {
+    const n = st.seq.length;
+    if (n >= 2 && Math.random() < 0.35) return st.seq[n - 2];
+    let s; do s = rnd(SHAPES.length); while (n >= 2 && s === st.seq[n - 2]);
+    return s;
+  }
+  function makeCard(shape, slot, down) {
+    const c = document.createElement("div");
+    c.className = "ycard" + (down ? " down" : "");
+    c.style.setProperty("--i", slot);
+    c.innerHTML = `<div class="yin"><div class="yface"><svg viewBox="0 0 100 100" aria-hidden="true">${SHAPES[shape]}</svg></div><div class="yback"></div></div>`;
+    $("y-track").appendChild(c);
+    return c;
+  }
+  function setSlot(c, i) { c.style.setProperty("--i", i); }
+  async function advance(my) {
+    // la carte de gauche sort, les autres glissent, une nouvelle arrive face visible
+    const [a, b, c] = st.cards;
+    setSlot(a, -1); a.classList.add("out");
+    setSlot(b, 0); setSlot(c, 1); c.classList.add("down");
+    const s = nextShape(); st.seq.push(s);
+    const n = makeCard(s, 3, false); void n.offsetWidth; setSlot(n, 2);
+    st.cards = [b, c, n];
+    setTimeout(() => a.remove(), 320);
+    await sleep(300); if (my !== run || !st.playing) return;
+    st.ready = true;
+  }
+  function reset() {
+    run++; clearInterval(tick);
+    st = { score: 0, lvl: 0, dots: 0, count: 0, best: 0, left: DURATION, playing: false, ready: false, seq: [], cards: [] };
+    $("y-track").innerHTML = "";
+    paint(); lock(true);
+    $("y-start-wrap").hidden = false; $("y-end").hidden = true;
+    say("Retiens chaque carte : la carte de droite est-elle la même que celle d'il y a deux cartes ?");
+  }
+  function stop() { run++; clearInterval(tick); }
+  async function start() {
+    const my = run;
+    $("y-start-wrap").hidden = true; say("");
+    const s0 = nextShape(); st.seq.push(s0);
+    const s1 = nextShape(); st.seq.push(s1);
+    st.cards = [null, makeCard(s0, 1, false), makeCard(s1, 2, false)];
+    const c = document.createElement("div"); c.className = "mcount"; c.innerHTML = "<b>3</b>"; $("y-box").appendChild(c);
+    for (const k of [3, 2, 1]) { c.firstChild.textContent = k; await sleep(800); if (my !== run) { c.remove(); return; } }
+    c.remove();
+    st.playing = true; lock(false);
+    // premier glissement : les deux cartes se retournent, la troisième arrive
+    const [, b, d] = st.cards;
+    b.classList.add("down"); setSlot(b, 0); setSlot(d, 1); d.classList.add("down");
+    const s = nextShape(); st.seq.push(s);
+    const n = makeCard(s, 3, false); void n.offsetWidth; setSlot(n, 2);
+    st.cards = [b, d, n];
+    let last = performance.now();
+    tick = setInterval(() => {
+      if (my !== run) return clearInterval(tick);
+      const now = performance.now(); st.left -= now - last; last = now; paint();
+      if (st.left <= 0) end();
+    }, 100);
+    await sleep(300); if (my !== run) return;
+    st.ready = true;
+  }
+  async function answer(yes) {
+    if (!st || !st.playing || !st.ready) return;
+    const my = run, n = st.seq.length, match = st.seq[n - 1] === st.seq[n - 3], ok = yes === match;
+    st.ready = false;
+    const mk = document.createElement("span"); mk.className = "ycheck " + (ok ? "good" : "bad"); mk.textContent = ok ? "✓" : "✕";
+    $("y-track").appendChild(mk); void mk.offsetWidth; mk.classList.add("on"); setTimeout(() => mk.remove(), 600);
+    if (ok) {
+      st.count++; st.score += 50 * mult(); st.dots++;
+      if (st.dots >= DOTS && st.lvl < MULTS.length - 1) { st.dots = 0; st.lvl++; }
+      else if (st.dots >= DOTS) st.dots = DOTS;
+      st.best = Math.max(st.best, st.lvl);
+      say(""); paint();
+    } else {
+      st.dots = 0; st.lvl = Math.max(0, st.lvl - 1); paint();
+      say(match ? "C'était OUI : la même carte était sortie deux cartes avant." : "C'était NON : les deux cartes sont différentes.", "bad");
+      for (const c of st.cards) c.classList.remove("down");
+      await sleep(1100); if (my !== run || !st.playing) return;
+      st.cards[0].classList.add("down"); st.cards[1].classList.add("down");
+      await sleep(200); if (my !== run || !st.playing) return;
+    }
+    await advance(my);
+  }
+  async function end() {
+    const my = run;
+    clearInterval(tick); st.left = 0; st.playing = false; st.ready = false; lock(true); paint();
+    for (const c of st.cards) c.classList.add("out");
+    const m = mult(), bonus = 250 * m;
+    say(`Bonus de fin : ×${m}`); await sleep(1100); if (my !== run) return;
+    st.score += bonus; paint(); say(`Bonus de fin : +${bonus}`); await sleep(1100); if (my !== run) return;
+    const prevBest = bestFor("echo");
+    $("y-final").textContent = st.score;
+    $("y-end-detail").textContent = `${st.count} carte${st.count > 1 ? "s" : ""} juste${st.count > 1 ? "s" : ""}, multiplicateur ×${m} (bonus ${bonus}).`;
+    $("y-end-record").hidden = !(st.score > prevBest && st.score > 0);
+    $("y-end").hidden = false; say("");
+    addScore({ game: "echo", score: st.score, correct: st.count, at: new Date().toISOString() });
+  }
+
+  for (const b of $("y-pad").children) b.addEventListener("pointerdown", e => { e.preventDefault(); answer(b.dataset.a === "1"); });
+  document.addEventListener("keydown", e => {
+    if ($("echo").hidden || !st || !st.playing) return;
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); if (!e.repeat) answer(e.key === "ArrowRight"); }
+  });
+  $("y-start").addEventListener("click", start);
+  $("y-again").addEventListener("click", () => { reset(); start(); });
+  $("y-home").addEventListener("click", () => go("home"));
+  $("y-back").addEventListener("click", () => go("home"));
+  return { reset, stop, _st: () => st };
+})();
+
+/* ---------- Monte-charge ---------- */
+const H = (() => {
+  const $ = id => document.getElementById(id);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const DURATION = 100000, MAX_LEVEL = 40;
+  const ITEMS = [
+    ["caisse bleue", "caisses bleues", '<svg viewBox="0 0 40 40"><rect x="4" y="9" width="32" height="27" rx="3" fill="#3b82c4" stroke="#fff" stroke-width="2"/><path d="M4 18h32M14 9v27M26 9v27" stroke="#2a5f92" stroke-width="2"/></svg>'],
+    ["tonneau orange", "tonneaux orange", '<svg viewBox="0 0 40 40"><path d="M9 6h22q5 14 0 30H9Q4 20 9 6Z" fill="#f08c2e" stroke="#fff" stroke-width="2"/><path d="M7 14h26M7 28h26" stroke="#b5601a" stroke-width="2.4"/></svg>'],
+    ["sac vert", "sacs verts", '<svg viewBox="0 0 40 40"><path d="M14 8q6-6 12 0l-2 5q9 6 8 16-1 8-12 8T8 29q-1-10 8-16Z" fill="#4caf50" stroke="#fff" stroke-width="2"/><path d="M15 13h10" stroke="#2e7d32" stroke-width="2.4"/></svg>']
+  ];
+  let st = null, run = 0, tick = 0, waiter = null;
+  const rnd = n => Math.floor(Math.random() * n);
+  const startLevel = () => {
+    const last = scores.find(s => s.game === "monte" && s.next);
+    return Math.min(MAX_LEVEL, Math.max(1, (last && last.next) || 1));
+  };
+  const types = L => L < 10 ? 2 : 3;
+  const maxPick = L => L < 5 ? 2 : 3;
+  const windowMs = L => Math.max(1300, 2700 - 35 * L);
+  const ptsFor = () => Math.round((150 + 8 * st.level) * (1 + 0.15 * Math.min(st.streak, 10)) / 10) * 10;
+
+  function paint() {
+    $("h-level").textContent = st.level;
+    $("h-score").textContent = st.score;
+    $("h-time").textContent = Math.ceil(Math.max(0, st.left) / 1000);
+  }
+  function msg(t) { $("h-msg").textContent = t; }
+  function act(label, on) { const b = $("h-act"); b.textContent = label; b.disabled = !on; }
+  // attend un appui (ESPACE ou bouton) ; résout true si appui, false si délai écoulé ou fin
+  function press(ms) {
+    return new Promise(res => {
+      const my = run; let t = 0;
+      const done = v => { if (waiter !== f) return; waiter = null; clearTimeout(t); res(v); };
+      const f = () => done(true);
+      waiter = f;
+      if (ms) t = setTimeout(() => done(false), ms);
+      const chk = setInterval(() => { if (my !== run || !st.playing) { clearInterval(chk); done(false); } else if (!waiter) clearInterval(chk); }, 100);
+    });
+  }
+  function hit() { if (waiter) waiter(); }
+  const icons = (t, n) => ITEMS[t][2].repeat(n);
+  function showInside(on) {
+    const box = $("h-inside");
+    box.innerHTML = on ? st.inv.map((n, t) => icons(t, n)).join("") : "";
+    $("h-lift").classList.toggle("open", on);
+  }
+  async function travel(my) {
+    const f = $("h-floors"); f.classList.remove("move"); void f.offsetWidth; f.classList.add("move");
+    await sleep(560); return my === run && st.playing;
+  }
+  function nextEvent() {
+    const total = st.inv.reduce((a, b) => a + b, 0);
+    if (st.events < 2 || total === 0) return "pick";
+    if (total >= 7) return "give";
+    return Math.random() < 0.42 ? "pick" : "give";
+  }
+  async function pickup(my) {
+    const T = types(st.level), k = 1 + rnd(maxPick(st.level));
+    const got = Array.from({ length: k }, () => rnd(T));
+    const p = $("h-pick"); p.classList.remove("go");
+    p.innerHTML = got.map(t => ITEMS[t][2]).join("");
+    msg("Chargement des caisses…");
+    $("h-lift").classList.add("open");
+    await sleep(700 + 380 * k - 8 * st.level); if (my !== run || !st.playing) return;
+    p.classList.add("go");
+    for (const t of got) st.inv[t]++;
+    await sleep(480); p.innerHTML = ""; p.classList.remove("go");
+    $("h-lift").classList.remove("open"); msg("");
+    await sleep(300);
+  }
+  function makeOrder() {
+    const T = types(st.level);
+    const have = [...Array(T).keys()].filter(t => st.inv[t] > 0);
+    const canFail = [...Array(T).keys()].filter(t => st.inv[t] < 3);
+    if (have.length && (Math.random() < 0.55 || !canFail.length)) {
+      const t = have[rnd(have.length)];
+      return { t, n: 1 + rnd(Math.min(3, st.inv[t])) };
+    }
+    const t = canFail[rnd(canFail.length)];
+    return { t, n: st.inv[t] + 1 + rnd(3 - st.inv[t]) };
+  }
+  async function deliver(my) {
+    const o = makeOrder(), ok = st.inv[o.t] >= o.n;
+    $("h-right").hidden = false; $("h-bench").innerHTML = "";
+    const bub = $("h-bubble"); bub.innerHTML = icons(o.t, o.n);
+    msg(""); act("Livrer", true);
+    const pressed = await press(windowMs(st.level));
+    act("Livrer", false);
+    if (my !== run || !st.playing) return;
+    st.answers++;
+    if (pressed === ok) {
+      st.correct++; st.streak++;
+      st.score += ptsFor(); paint();
+      if (ok) { st.inv[o.t] -= o.n; st.delivered++; $("h-bench").innerHTML = icons(o.t, o.n); bub.innerHTML = '<span class="ok">✓</span>&nbsp;Merci !'; }
+      else bub.innerHTML = '<span class="ok">✓</span>';
+      await sleep(650);
+    } else {
+      st.errors++; st.streak = 0;
+      bub.innerHTML = ok ? '<span class="ko">✕</span>&nbsp;Tu as oublié ma commande.' : '<span class="ko">✕</span>&nbsp;Il en manque !';
+      if (ok) { st.inv[o.t] -= o.n; } // le client récupère quand même sa commande
+      msg("ESPACE pour voir ta cargaison"); act("Voir la cargaison", true);
+      await press(0); if (my !== run || !st.playing) return;
+      showInside(true); msg("ESPACE pour repartir"); act("Repartir", true);
+      await press(0); if (my !== run || !st.playing) return;
+      showInside(false); msg(""); act("Livrer", false);
+      await sleep(250);
+    }
+    $("h-right").hidden = true;
+  }
+  async function loop(my) {
+    while (my === run && st.playing) {
+      if (!(await travel(my))) return;
+      const ev = nextEvent(); st.events++;
+      if (ev === "pick") await pickup(my); else await deliver(my);
+    }
+  }
+  function reset() {
+    run++; clearInterval(tick); waiter = null;
+    const L = startLevel();
+    st = { level: L, score: 0, left: DURATION, playing: false, inv: [0, 0, 0], events: 0, answers: 0, correct: 0, errors: 0, delivered: 0, streak: 0 };
+    paint(); msg(""); act("Livrer", false);
+    $("h-pick").innerHTML = ""; $("h-right").hidden = true; showInside(false);
+    $("h-start-wrap").hidden = false; $("h-end").hidden = true;
+  }
+  function stop() { run++; clearInterval(tick); waiter = null; }
+  async function start() {
+    const my = run;
+    $("h-start-wrap").hidden = true;
+    msg("Retiens les caisses que tu charges !");
+    const c = document.createElement("div"); c.className = "mcount"; c.innerHTML = "<b>3</b>"; $("h-scene").appendChild(c);
+    for (const k of [3, 2, 1]) { c.firstChild.textContent = k; await sleep(800); if (my !== run) { c.remove(); return; } }
+    c.remove(); msg("");
+    st.playing = true;
+    let last = performance.now();
+    tick = setInterval(() => {
+      if (my !== run) return clearInterval(tick);
+      const now = performance.now(); st.left -= now - last; last = now; paint();
+      if (st.left <= 0) end();
+    }, 100);
+    loop(my);
+  }
+  async function end() {
+    const my = run;
+    clearInterval(tick); st.left = 0; st.playing = false; waiter = null; paint();
+    act("Livrer", false); $("h-right").hidden = true; $("h-pick").innerHTML = "";
+    showInside(true); msg("Ta cargaison restante");
+    await sleep(1400); if (my !== run) return;
+    const bonus = 200 * st.correct;
+    st.score += bonus; paint(); msg(`Bonus de fin : +${bonus}`);
+    await sleep(1200); if (my !== run) return;
+    showInside(false); msg("");
+    const L = st.level, next = Math.min(MAX_LEVEL, Math.max(1, st.errors === 0 ? L + 2 : st.errors === 1 ? L : L - 2 * (st.errors - 1)));
+    const prevBest = bestFor("monte");
+    $("h-final").textContent = st.score;
+    $("h-end-detail").textContent = `${st.correct} bonne${st.correct > 1 ? "s" : ""} réponse${st.correct > 1 ? "s" : ""} sur ${st.answers}, ${st.delivered} livraison${st.delivered > 1 ? "s" : ""}, bonus ${bonus}. ` +
+      (next > L ? `Niveau ${next} débloqué !` : next < L ? `Prochaine partie au niveau ${next}.` : `Tu restes au niveau ${L}.`);
+    $("h-end-record").hidden = !(st.score > prevBest && st.score > 0);
+    $("h-end").hidden = false;
+    addScore({ game: "monte", score: st.score, correct: st.correct, level: L, next, at: new Date().toISOString() });
+  }
+
+  $("h-act").addEventListener("pointerdown", e => { e.preventDefault(); hit(); });
+  document.addEventListener("keydown", e => {
+    if ($("monte").hidden || !st || !st.playing) return;
+    if (e.key === " " || e.code === "Space") { e.preventDefault(); if (!e.repeat) hit(); }
+  });
+  $("h-start").addEventListener("click", start);
+  $("h-again").addEventListener("click", () => { reset(); start(); });
+  $("h-home").addEventListener("click", () => go("home"));
+  $("h-back").addEventListener("click", () => go("home"));
+  return { reset, stop, _st: () => st, _hit: hit };
+})();
+
+/* ---------- Tour de chance ---------- */
+const N = (() => {
+  const $ = id => document.getElementById(id);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const TRIALS = 5, MAX_LEVEL = 100, MAX_CARDS = 20;
+  const SYM = [["cœur", "de cœur", "M20 34 6 20a8 8 0 0 1 14-10 8 8 0 0 1 14 10Z"],
+               ["lune", "de lune", "M26 5a15 15 0 1 0 9 24A12 12 0 0 1 26 5Z"],
+               ["étoile", "d'étoile", "M20 4l4.7 10.5 11.3 1-8.6 7.6 2.6 11.2L20 28.4 10 34.3l2.6-11.2L4 15.5l11.3-1Z"],
+               ["couronne", "de couronne", "M6 31 4 12l9 8 7-12 7 12 9-8-2 19Z"]];
+  const COL = [["violet", "de violet", "#6b2d73"], ["rouge", "de rouge", "#e0405a"], ["jaune", "de jaune", "#f2b705"], ["vert", "de vert", "#4caf50"]];
+  let st = null, run = 0;
+  const rnd = n => Math.floor(Math.random() * n);
+  const pick = a => a[rnd(a.length)];
+  const startLevel = () => {
+    const last = scores.find(s => s.game === "chance" && s.next);
+    return Math.min(MAX_LEVEL, Math.max(1, (last && last.next) || 10));
+  };
+  const svg = c => `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="${SYM[c.s][2]}" fill="${COL[c.c][2]}"/></svg>`;
+  const key = c => c.s * 4 + c.c;
+  // un groupe = liste d'attributs reliés par « ou » ; {k:"s"|"c", v}
+  const fits = (card, g) => g.some(a => (a.k === "s" ? card.s : card.c) === a.v);
+  const count = (cards, g) => cards.reduce((n, c) => n + (fits(c, g) ? 1 : 0), 0);
+  const name = a => (a.k === "s" ? SYM : COL)[a.v][0];
+  const gText = g => g.length === 1 ? "chances " + (a => (a.k === "s" ? SYM : COL)[a.v][1])(g[0]) : `chances de (${g.map(name).join(" ou ")})`;
+  const fText = ([n, d]) => d === 1 ? (n === 1 ? "" : n + " × ") : n + "/" + d + " × ";
+  const ok = (cards, r) => { const L = count(cards, r.L), R = count(cards, r.R); return R > 0 && L * r.f[1] === R * r.f[0]; };
+
+  function factors(L) {
+    const f = [[2, 1], [3, 1], [4, 1]];
+    if (L >= 25) f.push([1, 2], [1, 3], [1, 1]);
+    if (L >= 55) f.push([3, 4], [2, 3], [3, 2], [1, 4]);
+    return f;
+  }
+  function attrOf(card, k) { return { k, v: k === "s" ? card.s : card.c }; }
+  function makeRule(L) {
+    for (let tries = 0; tries < 400; tries++) {
+      const uni = L >= 40 && Math.random() < (L >= 55 ? 0.6 : 0.4);
+      const group = () => [{ k: pick(["s", "c"]), v: rnd(4) }];
+      const gl = group(), gr = group();
+      if (uni) { const g = Math.random() < 0.5 ? gl : gr; g.push({ k: pick(["s", "c"]), v: rnd(4) }); }
+      const all = [...gl, ...gr];
+      const same = (a, b) => a.k === b.k && a.v === b.v;
+      if (all.some((a, i) => all.some((b, j) => i < j && same(a, b)))) continue;
+      const r = { L: gl, R: gr, f: pick(factors(L)) };
+      // plateau : une carte pour chaque attribut, parfois une carte « dans les deux »
+      const tray = new Map();
+      const add = c => tray.set(key(c), c);
+      for (const a of all) { const c = a.k === "s" ? { s: a.v, c: rnd(4) } : { s: rnd(4), c: a.v }; add(c); }
+      if (L >= 30 && Math.random() < 0.4) add({ s: rnd(4), c: rnd(4) });
+      const types = [...tray.values()].slice(0, 4);
+      if (types.length < 2) continue;
+      const fixed = [];
+      const nf = 1 + rnd(L >= 50 ? 3 : 2);
+      for (let i = 0; i < nf; i++) fixed.push(Math.random() < 0.7 ? { ...pick(types) } : { s: rnd(4), c: rnd(4) });
+      if (ok(fixed, r)) continue;
+      const sol = solve(r, types, fixed);
+      if (!sol || sol.length + fixed.length > MAX_CARDS) continue;
+      return { rule: r, types, fixed, sol };
+    }
+    return null;
+  }
+  function solve(r, types, fixed) {
+    let best = null;
+    const n = types.length, cnt = new Array(n).fill(0);
+    const rec = i => {
+      if (i === n) {
+        const tot = cnt.reduce((a, b) => a + b, 0);
+        if (!tot || (best && tot >= best.length)) return;
+        const add = []; cnt.forEach((k, j) => { for (let m = 0; m < k; m++) add.push(types[j]); });
+        if (ok([...fixed, ...add], r)) best = add;
+        return;
+      }
+      for (let k = 0; k <= 8; k++) { cnt[i] = k; rec(i + 1); }
+      cnt[i] = 0;
+    };
+    rec(0);
+    return best;
+  }
+
+  function paint() {
+    $("n-trial").textContent = Math.min(st.trial + 1, TRIALS) + "/" + TRIALS;
+    $("n-level").textContent = st.level;
+    $("n-score").textContent = st.score;
+  }
+  function note(t) { $("n-note").textContent = t; }
+  function place(card, fixed) {
+    const tb = $("n-table"), d = document.createElement("div");
+    const used = new Set([...tb.children].map(e => e.dataset.slot));
+    const free = [...Array(21).keys()].filter(i => !used.has(String(i)));
+    const slot = free.length ? pick(free) : rnd(21);
+    const col = slot % 7, row = Math.floor(slot / 7);
+    d.className = "ncard" + (fixed ? " fixed" : ""); d.dataset.slot = slot;
+    d.style.left = `calc(${5 + col * 13}% + ${rnd(7) - 3}px)`;
+    d.style.top = (16 + row * 52 + rnd(8) - 4) + "px";
+    d.style.setProperty("--r", (rnd(17) - 8) + "deg");
+    d.innerHTML = svg(card);
+    tb.appendChild(d);
+  }
+  function layTable(cards) {
+    $("n-table").innerHTML = ""; $("n-table").classList.remove("win");
+    st.fixed.forEach(c => place(c, true));
+    cards.forEach(c => place(c, false));
+  }
+  function lockTray(on) { for (const b of $("n-tray").children) b.disabled = on || st.added.length + st.fixed.length >= MAX_CARDS; }
+  function newTrial() {
+    const t = makeRule(st.level) || makeRule(1);
+    Object.assign(st, { rule: t.rule, types: t.types, fixed: t.fixed, sol: t.sol, added: [], tries: 0, busy: false, shown: false });
+    const r = t.rule;
+    $("n-rule").innerHTML = `${gText(r.L)} =<br>${fText(r.f)}${gText(r.R)}`;
+    note("");
+    const tray = $("n-tray"); tray.innerHTML = "";
+    for (const c of st.types) {
+      const b = document.createElement("button"); b.type = "button"; b.innerHTML = svg(c);
+      b.setAttribute("aria-label", `Ajouter ${SYM[c.s][0]} ${COL[c.c][0]}`);
+      b.addEventListener("click", () => addCard(c));
+      tray.appendChild(b);
+    }
+    layTable([]);
+    $("n-help").hidden = st.trial < 2;
+    $("n-submit").textContent = "Valider"; $("n-undo").disabled = false; $("n-submit").disabled = false;
+    lockTray(false); paint();
+  }
+  function addCard(c) {
+    if (!st || !st.playing || st.busy || st.shown) return;
+    if (st.added.length + st.fixed.length >= MAX_CARDS) return;
+    st.added.push(c); place(c, false); lockTray(false);
+  }
+  function undo() {
+    if (!st || !st.playing || st.busy || st.shown || !st.added.length) return;
+    st.added.pop();
+    const cards = [...$("n-table").querySelectorAll(".ncard:not(.fixed)")];
+    cards[cards.length - 1].remove(); lockTray(false);
+  }
+  const winPts = () => Math.round(Math.min(1600, Math.max(150, 150 + 180 * (st.fixed.length + st.added.length - 3))) / 10) * 10;
+  async function submit() {
+    if (!st || !st.playing || st.busy) return;
+    const my = run;
+    if (st.shown) { return next(my); }
+    st.busy = true; lockTray(true);
+    const cards = [...st.fixed, ...st.added];
+    if (ok(cards, st.rule)) {
+      st.streak++; st.correct++;
+      st.score += winPts(); st.level = Math.min(MAX_LEVEL, st.level + (st.tries === 0 ? Math.min(20, 3 + 4 * st.streak) : -5));
+      paint(); note(st.tries === 0 ? "Bravo, le tour est prêt !" : "C'est juste !");
+      $("n-table").classList.add("win");
+      await sleep(900); if (my !== run) return;
+      for (const e of $("n-table").children) e.classList.add("flip");
+      await sleep(700); if (my !== run) return;
+      return next(my);
+    }
+    st.streak = 0;
+    if (st.tries === 0) {
+      st.tries = 1; st.level = Math.max(1, st.level - 5); paint();
+      for (const b of $("n-tray").children) b.classList.add("nback");
+      note("Réessaie.");
+      await sleep(1100); if (my !== run) return;
+      for (const b of $("n-tray").children) b.classList.remove("nback");
+      st.added = []; layTable([]); st.busy = false; lockTray(false);
+      return;
+    }
+    st.level = Math.max(1, st.level - 14);
+    st.score += Math.round(4 * st.level / 10) * 10; paint();
+    st.added = st.sol.slice(); layTable(st.added);
+    note("Voici une réponse correcte.");
+    st.shown = true; st.busy = false;
+    $("n-submit").textContent = "Suivant"; $("n-undo").disabled = true;
+  }
+  async function next(my) {
+    st.trial++; paint();
+    if (st.trial >= TRIALS) return end();
+    await countdown(my); if (my !== run) return;
+    newTrial();
+  }
+  async function countdown(my) {
+    $("n-table").innerHTML = ""; $("n-tray").innerHTML = ""; $("n-rule").textContent = ""; note("");
+    const c = document.createElement("div"); c.className = "mcount"; c.innerHTML = `<b>${st.trial + 1}</b>`; $("n-stage").appendChild(c);
+    await sleep(900); c.remove();
+  }
+  function reset() {
+    run++;
+    st = { level: startLevel(), score: 0, trial: 0, streak: 0, correct: 0, playing: false, busy: false, added: [], fixed: [] };
+    st.start = st.level;
+    paint(); $("n-rule").textContent = ""; note(""); $("n-table").innerHTML = ""; $("n-tray").innerHTML = "";
+    $("n-help").hidden = true; $("n-btns").hidden = true; $("n-helpbox").hidden = true;
+    $("n-start-wrap").hidden = false; $("n-end").hidden = true;
+  }
+  function stop() { run++; }
+  async function start() {
+    const my = run;
+    $("n-start-wrap").hidden = true; st.playing = true;
+    await countdown(my); if (my !== run) return;
+    $("n-btns").hidden = false;
+    newTrial();
+  }
+  function end() {
+    st.playing = false; $("n-btns").hidden = true; $("n-help").hidden = true;
+    $("n-table").innerHTML = ""; $("n-tray").innerHTML = ""; $("n-rule").textContent = ""; note("");
+    const prevBest = bestFor("chance");
+    $("n-final").textContent = st.score;
+    $("n-end-detail").textContent = `${st.correct} tour${st.correct > 1 ? "s" : ""} réussi${st.correct > 1 ? "s" : ""} sur ${TRIALS}. Niveau ${st.start} → ${st.level}.`;
+    $("n-end-record").hidden = !(st.score > prevBest && st.score > 0);
+    $("n-end").hidden = false;
+    addScore({ game: "chance", score: st.score, correct: st.correct, level: st.start, next: st.level, at: new Date().toISOString() });
+  }
+  function help() {
+    const r = st.rule, uni = r.L.length > 1 || r.R.length > 1, [n, d] = r.f;
+    let title, text;
+    if (uni) {
+      title = "Les problèmes avec « ou »";
+      text = "Les cartes reliées par « ou » s'additionnent. Par exemple, chances de (étoile ou cœur) = chances de lune veut dire : étoiles + cœurs = lunes. Une carte qui est à la fois étoile et cœur… n'existe pas, mais une étoile rouge compte pour « étoile » et pour « rouge ».";
+    } else if (d > 1) {
+      title = "Les fractions";
+      text = `« ${n}/${d} × » : pour ${n} carte${n > 1 ? "s" : ""} du premier groupe, il en faut ${d} du second. Commence avec ${n} et ${d}, puis double si besoin.`;
+    } else {
+      title = "Les multiples";
+      text = `« ${n} × » : il faut ${n} fois plus de cartes du premier groupe que du second. Une carte peut compter dans les deux groupes : une lune rouge compte pour « lune » et pour « rouge ».`;
+    }
+    $("n-help-title").textContent = title; $("n-help-text").textContent = text; $("n-helpbox").hidden = false;
+  }
+
+  $("n-undo").addEventListener("click", undo);
+  $("n-submit").addEventListener("click", submit);
+  $("n-help").addEventListener("click", help);
+  $("n-help-close").addEventListener("click", () => { $("n-helpbox").hidden = true; });
+  $("n-start").addEventListener("click", start);
+  $("n-again").addEventListener("click", () => { reset(); start(); });
+  $("n-home").addEventListener("click", () => go("home"));
+  $("n-back").addEventListener("click", () => go("home"));
+  return { reset, stop, _st: () => st, _make: makeRule, _ok: ok };
 })();
 
 /* ---------- Jamais deux fois ---------- */
