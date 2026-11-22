@@ -72,7 +72,7 @@ p { margin: 0; }
 .brand-dots i.on { background: var(--glow); }
 .games { display: grid; gap: 12px; }
 .game {
-  display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center;
+  display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center;
   background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
   padding: 16px; text-align: left; color: inherit; font: inherit; width: 100%;
 }
@@ -81,9 +81,20 @@ button.game:hover { border-color: var(--accent); }
 button.game:active { transform: scale(0.985); }
 .game[aria-disabled="true"] { opacity: 0.6; }
 .game .skill { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
-.game .meta { text-align: right; min-width: 64px; }
-.game .meta b { display: block; font-family: var(--font-display); font-size: 1.3rem; }
-.game .meta small { color: var(--muted); font-size: 0.75rem; }
+.game .note { display: block; }
+.game .meta { display: block; margin-top: 6px; font-size: 0.8rem; color: var(--muted); }
+.game .meta b { font-family: var(--font-display); color: var(--fg); }
+.games { gap: 10px; }
+.ggrid { display: grid; gap: 10px; }
+.gcat { margin-top: 14px; font-size: 1rem; color: var(--muted); letter-spacing: .02em; }
+.gcat:first-child { margin-top: 0; }
+.hometop { display: grid; gap: 24px; }
+@media (min-width: 900px) {
+  .wrap:has(> #home:not([hidden])) { max-width: 1000px; }
+  .ggrid { grid-template-columns: 1fr 1fr; }
+  .ggrid .game { height: 100%; }
+  .hometop { grid-template-columns: 1fr 1fr; align-items: start; }
+}
 .chip { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--tile); color: var(--muted); }
 .icon { width: 44px; height: 44px; border-radius: 10px; background: var(--tile); display: grid; place-items: center; }
 .icon svg { width: 26px; height: 26px; }
@@ -105,7 +116,7 @@ button.game:active { transform: scale(0.985); }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .back {
   font: inherit; font-weight: 700; color: var(--accent); background: none; border: 0;
-  padding: 8px 0; cursor: pointer;
+  padding: 8px 0; cursor: pointer; min-height: 44px; min-width: 44px;
 }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
@@ -476,18 +487,20 @@ button.game:active { transform: scale(0.985); }
       </div>
     </header>
 
+    <div class="hometop">
+      <section class="history">
+        <h3>Progression</h3>
+        <div class="trend" id="trend"></div>
+      </section>
+
+      <section class="history">
+        <h3>Dernières parties</h3>
+        <ol id="history"></ol>
+        <p class="note" id="sync-note">Chargement de tes scores…</p>
+      </section>
+    </div>
+
     <div class="games" id="games"></div>
-
-    <section class="history">
-      <h3>Progression</h3>
-      <div class="trend" id="trend"></div>
-    </section>
-
-    <section class="history">
-      <h3>Dernières parties</h3>
-      <ol id="history"></ol>
-      <p class="note" id="sync-note">Chargement de tes scores…</p>
-    </section>
 
     <section class="history" id="sync-box">
       <h3>Synchronisation</h3>
@@ -1250,7 +1263,18 @@ const fmtDate = iso => {
 function renderHome() {
   const wrap = document.getElementById("games");
   wrap.innerHTML = "";
-  for (const g of GAMES) {
+  const CATS = ["Mémoire", "Attention", "Rapidité", "Adaptabilité", "Raisonnement", "Maths"];
+  const catOf = g => { const w = g.skill.split(/[ ·]/)[0]; return w === "Vitesse" ? "Rapidité" : w; };
+  const groups = CATS.map(c => [c, GAMES.filter(g => catOf(g) === c)]);
+  const rest = GAMES.filter(g => !CATS.includes(catOf(g)));
+  if (rest.length) groups.push(["Autres", rest]);
+  for (const [cat, list] of groups) {
+    if (!list.length) continue;
+    const h = document.createElement("h3"); h.className = "gcat"; h.textContent = cat;
+    wrap.appendChild(h);
+    const grid = document.createElement("div"); grid.className = "ggrid";
+    wrap.appendChild(grid);
+  for (const g of list) {
     const el = document.createElement(g.ready ? "button" : "div");
     el.className = "game";
     if (g.ready) { el.type = "button"; el.addEventListener("click", () => go(g.id)); }
@@ -1259,11 +1283,12 @@ function renderHome() {
     const plays = scores.filter(s => s.game === g.id).length;
     el.innerHTML = `
       <span class="icon" aria-hidden="true">${g.icon}</span>
-      <span style="min-width:0"><span class="skill">${g.skill}</span><h3>${g.name}</h3><span class="note">${g.desc}</span></span>
+      <span style="min-width:0"><span class="skill">${g.skill}</span><h3>${g.name}</h3><span class="note">${g.desc}</span>
       <span class="meta">${g.ready
-        ? `<b class="num">${best || "–"}</b><small>${plays ? "record · " + plays + " partie" + (plays > 1 ? "s" : "") : "pas encore joué"}</small>`
-        : `<span class="chip">Bientôt</span>`}</span>`;
-    wrap.appendChild(el);
+        ? (plays ? `Record <b class="num">${best}</b> · ${plays} partie${plays > 1 ? "s" : ""}` : "Pas encore joué")
+        : `<span class="chip">Bientôt</span>`}</span></span>`;
+    grid.appendChild(el);
+  }
   }
   renderTrend();
   const list = document.getElementById("history");
@@ -4070,7 +4095,7 @@ const J = (() => {
     st = { level: startLevel(), n: 0, score: 0, ok: 0, wrong: 0, streak: 0, playing: false, busy: false, place: new Map(), sel: null, trial: null, impShown: false };
     st.impShown = st.level >= IMPOSSIBLE_FROM;
     $("j-rules").innerHTML = ""; $("j-shelf").innerHTML = ""; $("j-bed").innerHTML = "";
-    $("j-next").hidden = true; $("j-submit").hidden = false; $("j-imp").hidden = true;
+    $("j-next").hidden = true; $("j-submit").hidden = true; $("j-imp").hidden = true;
     $("j-submit").disabled = true;
     $("j-start-wrap").hidden = false; $("j-end").hidden = true;
     say("Place les graines dans le rang en respectant toutes les règles.");
@@ -4078,7 +4103,7 @@ const J = (() => {
   }
   function stop() { run++; if (st) st.playing = false; }
   function start() {
-    $("j-start-wrap").hidden = true;
+    $("j-start-wrap").hidden = true; $("j-submit").hidden = false;
     st.playing = true; next();
   }
   function end() {
